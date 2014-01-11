@@ -3,6 +3,7 @@ package view;
 import helper.DezimalDocument;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -686,6 +687,7 @@ public class LeistungDialog extends JDialog {
 	private boolean checkZeit (String zeit) {
 		if (zeit.equals("00:00:00,00")) {
 			lblZeitError.setText("Bitte geben Sie eine Zeit ein.");
+			lblZeitError.setForeground(Color.RED);
 			return false;
 		}
 		return true;

@@ -56,7 +56,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private JButton btnTrainingsbereich;
 	private JButton btnLeistungskurve;
 	private JScrollPane scrollPane;
-	private JTextField textFieldSlope;
 	private JTextField textFieldSchwelle;
 	private JCheckBox chckbxLeistungenAuswahl;
 	private boolean leistungenAuswahlCheck = false;
@@ -119,14 +118,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		lblAthletName.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panel.add(lblAthletName, "cell 0 0");
 		
-		JLabel lblSlopefaktor = new JLabel("Slope-Faktor:");
-		panel.add(lblSlopefaktor, "cell 0 1,alignx left");
-		
-		textFieldSlope = new JTextField();
-		textFieldSlope.setEditable(false);
-		panel.add(textFieldSlope, "cell 1 1,growx");
-		textFieldSlope.setColumns(10);
-		
 		JLabel lblAnaerobeSchwelle = new JLabel("Anaerobe Schwelle:");
 		panel.add(lblAnaerobeSchwelle, "cell 0 2,alignx left");
 		
@@ -172,7 +163,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnTrainingsbereich.setEnabled(false);
 		panel.add(btnTrainingsbereich, "cell 1 5");
 		
-		btnLeistungskurve = new JButton("Leistungskurve plotten");
+		btnLeistungskurve = new JButton("Leistungskurve als Grafik");
 		btnLeistungskurve.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Diagramm_24x24.png")));
 		btnLeistungskurve.addActionListener(new ActionListener() {
 			@Override
@@ -723,7 +714,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 					tabelleAuswahlAufheben();
 					chckbxLeistungenAuswahl.setSelected(false);
 				} else {
-					textFieldSlope.setText(slopeFaktorString);					
 					anaerobeSchwelle = funktionenController.anaerobeSchwelleBerechnen(leistungAuswahl[0], slopeFaktor);
 					if (anaerobeSchwelle == -1) {
 						JOptionPane.showMessageDialog(this, "Beim Schätzen der anaeroben Schwelle konnte der Wert nicht genau genug festgelegt werden. Der tatächliche Wert kann von dem angezeigten Ergebnis abweichen!"
