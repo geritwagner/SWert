@@ -278,9 +278,9 @@ public class LeistungDialog extends JDialog {
 		buttonPanel = new JPanel();
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		buttonPanel.setLayout(new MigLayout("", "[194px][194px][194px][194px]", "[25px]"));
-		btnAnaerobeSchwelleDirekt = new JButton("Anaerobe Schwelle direkt eingeben");
+		btnAnaerobeSchwelleDirekt = new JButton("Aerob/Anaerobe Schwelle direkt eingeben");
 		buttonPanel.add(btnAnaerobeSchwelleDirekt, "cell 0 0,grow");
-		btnAnaerobeSchwelleDirekt.setToolTipText("Direktes Eingeben einer Strecke oder Geschwindigkeit als anaerobe Schwelle");
+		btnAnaerobeSchwelleDirekt.setToolTipText("Direktes Eingeben einer Strecke oder Geschwindigkeit als Aerob/Anaerobe Schwelle");
 		
 		JButton okButton = new JButton("Best\u00E4tigen");
 		buttonPanel.add(okButton, "cell 2 0,grow");
@@ -588,7 +588,7 @@ public class LeistungDialog extends JDialog {
 	 * Initialisieren der Funktionalität des "MinKm"-RadioButtons
 	 */
 	private void initRadioButtonMinKm() {
-		rdbtnminkm = new JRadioButton("[min/km]:");
+		rdbtnminkm = new JRadioButton("[1.000m Zeit]:");
 		rdbtnminkm.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

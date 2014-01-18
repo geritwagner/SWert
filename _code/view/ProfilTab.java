@@ -118,7 +118,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		lblAthletName.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panel.add(lblAthletName, "cell 0 0");
 		
-		JLabel lblAnaerobeSchwelle = new JLabel("Anaerobe Schwelle:");
+		JLabel lblAnaerobeSchwelle = new JLabel("Aerob/Anaerobe Schwelle:");
 		panel.add(lblAnaerobeSchwelle, "cell 0 2,alignx left");
 		
 		textFieldSchwelle = new JTextField();
@@ -139,7 +139,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		JSeparator separator = new JSeparator();
 		panel.add(separator, "cell 0 4 5 1,growx");
 		
-		btnBestzeiten = new JButton("Bestzeiten sch\u00E4tzen");
+		btnBestzeiten = new JButton("Mögliche Bestzeiten");
 		btnBestzeiten.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Pokal_24x24.png")));
 		btnBestzeiten.addActionListener(new ActionListener() {
 			@Override
@@ -152,7 +152,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnBestzeiten.setEnabled(false);
 		panel.add(btnBestzeiten, "cell 0 5,alignx right");
 		
-		btnTrainingsbereich = new JButton("Trainingsbereiche berechnen");
+		btnTrainingsbereich = new JButton("Trainingsbereiche");
 		btnTrainingsbereich.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Berechnen_24x24.png")));
 		btnTrainingsbereich.addActionListener(new ActionListener() {
 			@Override
@@ -244,7 +244,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
                 "Zeit",
                 "km/h",
                 "m/s",
-                "min/km",
+                "1.000m Zeit",
                 "für Slope-Faktor ausgewählt",
                 "StreckenId",
                 "s/km"};
@@ -716,7 +716,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 				} else {
 					anaerobeSchwelle = funktionenController.anaerobeSchwelleBerechnen(leistungAuswahl[0], slopeFaktor);
 					if (anaerobeSchwelle == -1) {
-						JOptionPane.showMessageDialog(this, "Beim Schätzen der anaeroben Schwelle konnte der Wert nicht genau genug festgelegt werden. Der tatächliche Wert kann von dem angezeigten Ergebnis abweichen!"
+						JOptionPane.showMessageDialog(this, "Beim Schätzen der Aerob/Anaeroben Schwelle konnte der Wert nicht genau genug festgelegt werden. Der tatächliche Wert kann von dem angezeigten Ergebnis abweichen!"
 								, "Wert nicht genau genug",JOptionPane.INFORMATION_MESSAGE);
 						
 					} else {

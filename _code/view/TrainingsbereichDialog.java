@@ -99,7 +99,7 @@ public class TrainingsbereichDialog extends JDialog {
 	 * Initialisieren der "oberen" Komponenenten (Abschnitt: "Allgemeine Daten")
 	 */
 	private void initComponentsGeneral() {
-		JLabel lblAnaerobeSchwelle = new JLabel("Anaerobe Schwelle");
+		JLabel lblAnaerobeSchwelle = new JLabel("Aerob/Anaerobe Schwelle");
 		lblAnaerobeSchwelle.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblAnaerobeSchwelle.setBounds(10, 11, 258, 14);
 		contentPanel.add(lblAnaerobeSchwelle);
@@ -179,7 +179,7 @@ public class TrainingsbereichDialog extends JDialog {
 		    }
 		});
 		
-		JRadioButton rdbtnProfilierteStrecke = new JRadioButton("profilierte Strecke");
+		JRadioButton rdbtnProfilierteStrecke = new JRadioButton("RWH");
 		buttonGroup.add(rdbtnProfilierteStrecke);
 		rdbtnProfilierteStrecke.setBounds(112, 51, 156, 23);
 		contentPanel.add(rdbtnProfilierteStrecke);
@@ -222,7 +222,7 @@ public class TrainingsbereichDialog extends JDialog {
 			berechneTrainingsBereiche(),
 			new String[] {
 				"Bereich", 
-				"min/km",
+				"1.000m Zeit",
 				"km/h",
 				"m/s"
 			}
@@ -251,7 +251,7 @@ public class TrainingsbereichDialog extends JDialog {
 			berechneTrainingsBereicheProfiliert(),
 			new String[] {
 				"Bereich", 
-				"min/km",
+				"1.000m Zeit",
 				"km/h",
 				"m/s",
 				"Gesamtrunde"

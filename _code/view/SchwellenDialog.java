@@ -104,7 +104,7 @@ public class SchwellenDialog extends JDialog {
 	private void initProperties() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(SchwellenDialog.class.getResource("/bilder/NeueLeistung_16x16.png")));
 		setResizable(false);
-		setTitle("Anaerobe Schwelle eingeben");
+		setTitle("Aerob/Anaerobe Schwelle eingeben");
 		setBounds(100, 100, 454, 219);
 		setLocation((int) ((d.getWidth() - this.getWidth()) / 2), (int) ((d.getHeight() - this.getHeight()) / 2));
 		getContentPane().setLayout(new BorderLayout());
@@ -395,7 +395,7 @@ public class SchwellenDialog extends JDialog {
 	 * Initialisieren der Funktionalität des minkm-RadioButtons
 	 */
 	private void initRadioButtonMinKm() {
-		rdbtnminkm = new JRadioButton("[min/km]:");
+		rdbtnminkm = new JRadioButton("[1.000m Zeit]:");
 		rdbtnminkm.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

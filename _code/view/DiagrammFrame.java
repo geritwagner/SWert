@@ -71,7 +71,7 @@ public class DiagrammFrame extends JFrame {
         JFreeChart chart = ChartFactory.createXYLineChart(
         		"Leistungskurven",
                 "Streckenlänge [m]",
-                "Geschwindigkeiten [min/km]",
+                "Geschwindigkeiten [1.000m Zeit]",
                 datenSammlungLeistungen,
                 PlotOrientation.VERTICAL,
                 true,
