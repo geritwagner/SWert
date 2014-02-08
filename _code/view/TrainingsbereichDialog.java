@@ -43,7 +43,9 @@ public class TrainingsbereichDialog extends JDialog {
 	private LeistungController l = new LeistungController();
 		
 	private double anaerobeSchwelle;
+	private double anaerobeProfilierteSchwelle;
 	private JTextField txtAnaerobeSchwelle;
+	private JTextField txtAnaerobeProfilierteSchwelle;
 	private JTable trainingsTabelle;
 	private JSlider slider;
 	private JLabel lblRundenanzahl;
@@ -51,6 +53,9 @@ public class TrainingsbereichDialog extends JDialog {
 	
 	//Entspricht 1 Runde in Sekunden
 	private double winzererRundengeschindigkeit;
+	
+	double winzererAufschlag = 1.03;
+	double winzererRundenlänge = 3.409;
 	
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -60,6 +65,7 @@ public class TrainingsbereichDialog extends JDialog {
 	 */
 	public TrainingsbereichDialog(double anaerobeSchwelle) {
 		this.anaerobeSchwelle = anaerobeSchwelle;
+		this.anaerobeProfilierteSchwelle = anaerobeSchwelle/winzererAufschlag;
 		initProperties();
 		initComponents();
 		setModal(true);
@@ -115,11 +121,11 @@ public class TrainingsbereichDialog extends JDialog {
 	private void initComponentsSpecific() {
 		JLabel lblTrainingsbereiche = new JLabel("Trainingsbereiche");
 		lblTrainingsbereiche.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblTrainingsbereiche.setBounds(10, 131, 258, 14);
+		lblTrainingsbereiche.setBounds(10, 135, 258, 14);
 		contentPanel.add(lblTrainingsbereiche);
 		
 		JSeparator separator_1 = new JSeparator();
-		separator_1.setBounds(10, 146, 324, 2);
+		separator_1.setBounds(10, 150, 324, 2);
 		contentPanel.add(separator_1);		
 			
 		txtAnaerobeSchwelle = new JTextField();
@@ -129,6 +135,12 @@ public class TrainingsbereichDialog extends JDialog {
 		txtAnaerobeSchwelle.setBounds(20, 36, 86, 20);
 		contentPanel.add(txtAnaerobeSchwelle);
 		
+		txtAnaerobeProfilierteSchwelle = new JTextField();
+		txtAnaerobeProfilierteSchwelle.setText(l.parseSecInMinutenstring(anaerobeProfilierteSchwelle));
+		txtAnaerobeProfilierteSchwelle.setEditable(false);
+		txtAnaerobeProfilierteSchwelle.setColumns(10);
+		txtAnaerobeProfilierteSchwelle.setBounds(20, 60, 86, 20);
+		contentPanel.add(txtAnaerobeProfilierteSchwelle);
 		
 		slider = new JSlider();
 		slider.setPaintLabels(true);
@@ -137,7 +149,7 @@ public class TrainingsbereichDialog extends JDialog {
 		slider.setMinimum(1);
 		slider.setValue(1);
 		slider.setMaximum(6);
-		slider.setBounds(112, 81, 115, 39);
+		slider.setBounds(112, 95, 115, 39);
 	    slider.setLabelTable(slider.createStandardLabels(1));	
 	    slider.setVisible(false);	    
 	    
@@ -157,11 +169,11 @@ public class TrainingsbereichDialog extends JDialog {
 		scrollPane.setViewportBorder(null);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBounds(10, 159, 324, 206);
+		scrollPane.setBounds(10, 163, 324, 206);
 		contentPanel.add(scrollPane);
 			
 		lblRundenanzahl = new JLabel("Rundenanzahl");
-		lblRundenanzahl.setBounds(20, 86, 86, 14);
+		lblRundenanzahl.setBounds(20, 95, 86, 14);
 		contentPanel.add(lblRundenanzahl);
 		lblRundenanzahl.setVisible(false);
 		
@@ -181,7 +193,7 @@ public class TrainingsbereichDialog extends JDialog {
 		
 		JRadioButton rdbtnProfilierteStrecke = new JRadioButton("RWH");
 		buttonGroup.add(rdbtnProfilierteStrecke);
-		rdbtnProfilierteStrecke.setBounds(112, 51, 156, 23);
+		rdbtnProfilierteStrecke.setBounds(112, 60, 156, 23);
 		contentPanel.add(rdbtnProfilierteStrecke);
 		rdbtnProfilierteStrecke.addActionListener(new ActionListener(){
 		    @Override
@@ -336,8 +348,7 @@ public class TrainingsbereichDialog extends JDialog {
 		int obereSchranke = 110;
 		int schritt = 5;	
 		int zähler = 0;
-		double winzererAufschlag = 1.03;
-		double winzererRundenlänge = 3.409;
+
 		
 		for (int i = untereSchranke; i <= obereSchranke; i = i + schritt) {
 			double gewichtung = (200-i)/100D;
