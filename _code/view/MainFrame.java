@@ -234,14 +234,14 @@ public class MainFrame {
 		
 		JPanel dummyTab = new JPanel();
 		tabbedPane.addTab("Start", new ImageIcon(MainFrame.class.getResource("/bilder/Logo_16x16.png")), dummyTab, null);
-		dummyTab.setLayout(new MigLayout("", "[205px][grow]", "[14px][2px][23px][20px][][][][2px][23px]"));
+		dummyTab.setLayout(new MigLayout("", "[grow][205px][grow]", "[5:50:200][14px][2px][23px][20px][][][][2px][23px]"));
 		
-		JLabel lblLegenSieHier = new JLabel("Legen Sie hier ein neues Athletenprofil an:");
+		JLabel lblLegenSieHier = new JLabel("Legen Sie hier ein neues Athletenprofil an:", SwingConstants.CENTER);
 		lblLegenSieHier.setFont(new Font("Tahoma", Font.BOLD, 11));
-		dummyTab.add(lblLegenSieHier, "cell 0 0,growx,aligny top");
+		dummyTab.add(lblLegenSieHier, "cell 1 1,growx,aligny top");
 		
 		JSeparator separator_2 = new JSeparator();
-		dummyTab.add(separator_2, "cell 0 1 2 1,growx,aligny top");
+		dummyTab.add(separator_2, "cell 0 2 3 1,growx,aligny top");
 		
 		JButton btnNeuesAthletenprofilAnlegen = new JButton("Neues Athletenprofil anlegen");
 		btnNeuesAthletenprofilAnlegen.setToolTipText("Anlegen eines neuen Athletenprofils");
@@ -253,14 +253,14 @@ public class MainFrame {
 				dialog.setVisible(true);
 			}
 		});
-		dummyTab.add(btnNeuesAthletenprofilAnlegen, "cell 0 2,growx,aligny top");
+		dummyTab.add(btnNeuesAthletenprofilAnlegen, "cell 1 3,growx,aligny top");
 		
 		JLabel lblffnenSieEin = new JLabel("\u00D6ffnen Sie ein bestehendes Athletenprofil:");
 		lblffnenSieEin.setFont(new Font("Tahoma", Font.BOLD, 11));
-		dummyTab.add(lblffnenSieEin, "cell 0 4,alignx left,aligny top");
+		dummyTab.add(lblffnenSieEin, "cell 1 5,alignx left,aligny top");
 		
 		JSeparator separator_3 = new JSeparator();
-		dummyTab.add(separator_3, "cell 0 5 2 1,growx,aligny top");
+		dummyTab.add(separator_3, "cell 0 6 3 1,growx,aligny top");
 		
 		JButton btnAthletenprofilffnen = new JButton("Athletenprofil \u00F6ffnen");
 		btnAthletenprofilffnen.setToolTipText("\u00D6ffnen und Bearbeiten eines bestehende Athletenprofils");
@@ -281,7 +281,7 @@ public class MainFrame {
 				}
 			}
 		});
-		dummyTab.add(btnAthletenprofilffnen, "cell 0 6,growx,aligny top");
+		dummyTab.add(btnAthletenprofilffnen, "cell 1 7,growx,aligny top");
 	}
 	
 	public JFrame getContext() {
