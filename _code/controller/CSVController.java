@@ -2,6 +2,7 @@ package controller;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -12,11 +13,17 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 /**
- * Controller zum Handlen aller Aktionen, die die CSV-Dateien betreffen
+ * Controller für alle Aktionen, die die CSV-Dateien betreffen
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class CSVController {
 
+//----------------------- Variablen -----------------------
+	private String nameAthlet;
+	private long idAthlet;
+	private StreckenController sController;
+	private LeistungController leistungController;
+	
 //----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**
 	 * Methode die eine CSV-Datei einliest und daraus ein Athleten-Profil erstellt;
@@ -25,20 +32,19 @@ public class CSVController {
 	 * @return: TRUE für erfolgreiches Einlesen der CSV
 	 */
 	public boolean lesen (String pfad) {	
-		StreckenController sController = new StreckenController();
-		LeistungController leistungController = Main.leistungController;
+		sController = new StreckenController();
+		leistungController = Main.leistungController;
 		try{			
 		    CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
-		    String [] aktuelleZeile;
-		    if (!verifizieren(pfad)) {
+		    
+		    if (!isSyntacticallyCorrect(pfad)) {
 		    	reader.close();
 		    	return false;
 		    }
-		    //Kopfzeile auslesen
-		    aktuelleZeile = reader.readNext();
-		    String name = aktuelleZeile[1];
-		    long id = Long.parseLong(aktuelleZeile[0]);
-		    if (Main.mainFrame.checkAthletGeöffnet(name,id)) {
+
+		    kopfzeileAuslesen(reader);
+		    		    
+		    if (Main.mainFrame.checkAthletGeöffnet(nameAthlet,idAthlet)) {
 		    	JOptionPane.showMessageDialog(Main.mainFrame.getContext(),
 		    			"Das ausgewählte Athletenprofil ist bereit geöffnet!",
 		    			"Athletenprofil bereits geöffnet",
@@ -46,22 +52,14 @@ public class CSVController {
 		    	reader.close();
 		    	return true;
 		    }
-		    Main.mainFrame.createTab(name,id);		    
-		    int aktivesTab = Main.mainFrame.tabbedPane.getSelectedIndex();
-			ProfilTab tab = (ProfilTab) Main.mainFrame.tabbedPane.getComponentAt(aktivesTab);
+
+		    ProfilTab tab = Main.mainFrame.createTab(nameAthlet,idAthlet);		    
 		    
-			//restlichen Leistungen auslesen
-		    while ((aktuelleZeile = reader.readNext()) != null) {		    	
-		    	String datum = aktuelleZeile[0];
-		    	String strecke = aktuelleZeile[1];
-		    	int streckenId = sController.getStreckenIdByString(strecke);
-		    	String bezeichnung = aktuelleZeile[2];
-		    	double geschwindigkeit = Double.parseDouble(aktuelleZeile[3]);
-		    	Leistung aktuelleLeistung = leistungController.neueLeistung(streckenId, id, geschwindigkeit, bezeichnung, datum);
-		    	tab.addZeile(aktuelleLeistung);
-		    }
+		    restlicheLeistungenImTabOeffnen(reader, tab);
+			
 		    tab.setSpeicherPfad(pfad);
 		    tab.setSpeicherStatus(true);
+		    
 		    reader.close();
 		    return true;
 		}catch (Exception e) {
@@ -84,21 +82,46 @@ public class CSVController {
 		     writer.writeNext(entries);	     
 		     schreibeLeistungen(writer,tab);
 		     writer.close();
-		     if (verifizieren(pfad)) {	    	 
+		     if (isSyntacticallyCorrect(pfad)) {	    	 
 		    	 return true;
 		     } else {
 		    	 return false;
 		     }		    
 	     }catch (Exception e) {
-	    	 //TODO
 	    	e.printStackTrace();
 			return false;
 		}
 	}
 
 //----------------------- PRIVATE METHODEN -----------------------
+	
+	private void kopfzeileAuslesen(CSVReader reader) throws IOException{
+	    String [] aktuelleZeile;
+	    aktuelleZeile = reader.readNext();
+	    nameAthlet = aktuelleZeile[1];
+	    idAthlet = Long.parseLong(aktuelleZeile[0]);
+	}
+	
+	private void restlicheLeistungenImTabOeffnen(CSVReader reader, ProfilTab tab) throws IOException{
+		String [] aktuelleZeile;
+		while ((aktuelleZeile = reader.readNext()) != null) {
+			Leistung naechsteLeistung = leistungAuslesen(aktuelleZeile);
+	    	tab.addZeile(naechsteLeistung);
+	    }
+	}
+	
+	private Leistung leistungAuslesen (String[] leistung){
+		String datum = leistung[0];
+    	String strecke = leistung[1];
+    	int streckenId = sController.getStreckenIdByString(strecke);
+    	String bezeichnung = leistung[2];
+    	double geschwindigkeit = Double.parseDouble(leistung[3]);
+    	return leistungController.neueLeistung(streckenId, idAthlet, geschwindigkeit, bezeichnung, datum);
+    	
+	}
+	
 	/**
-	 * Lest Name und ID des Athlten in dem gegebenen Tab aus 
+	 * Liest Name und ID des Athlten in dem gegebenen Tab aus 
 	 * @param tab: Tab von dem Name und ID geholt werden soll
 	 * @return: [0] enthält die ID, [1] den Namen 
 	 */
@@ -130,30 +153,45 @@ public class CSVController {
 	 * @param pfad: Pfad an dem die CSV, die geprüft werden soll, liegt
 	 * @return TRUE falls CSV erfolgreich verifiziert wurde
 	 */
-	private boolean verifizieren (String pfad) {
+	private boolean isSyntacticallyCorrect (String pfad) {
 		try{
 			CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
-			String[] aktuelleZeile;			
-			//Überschrift prüfen
-			aktuelleZeile = reader.readNext();
-			if (aktuelleZeile.length != 4) {
+					
+			if(!isSyntacticallyCorrectHeading(reader))	{
 				reader.close();
 				return false;
-			}			
-			//Restlichen Leistungen prüfen
-			while ((aktuelleZeile = reader.readNext()) != null) {
-		       if (aktuelleZeile.length != 4) {
-		    	   reader.close();
-		    	   return false;
-		       }
-		    }
+			}
+			
+			if(!isSyntacticallyCorrectLeistungen(reader))	{
+				reader.close();
+				return false;
+			}
+			
 			reader.close();
 			return true;		
 		}catch(Exception e) {
-			//TODO
 			e.printStackTrace();
 			return false;
 		}		
+	}
+	
+	private boolean isSyntacticallyCorrectHeading(CSVReader reader) throws IOException{
+		String[] aktuelleZeile;	
+		aktuelleZeile = reader.readNext();
+		if (aktuelleZeile.length != 4) {
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean isSyntacticallyCorrectLeistungen(CSVReader reader) throws IOException{
+		String[] aktuelleZeile;	
+		while ((aktuelleZeile = reader.readNext()) != null) {
+	       if (aktuelleZeile.length != 4) {
+	    	   return false;
+	       }
+	    }
+		return true;
 	}
 	
 }

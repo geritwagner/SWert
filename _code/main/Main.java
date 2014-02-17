@@ -19,6 +19,7 @@ import controller.StreckenController;
 public class Main {
 	
 //----------------------- VARIABLEN -----------------------
+	
 	public static AthletController athletController;
 	public static LeistungController leistungController;
 	public static StreckenController streckenController;
@@ -27,11 +28,8 @@ public class Main {
 	public static FunktionenController funktionenController;
 	public static MainFrame mainFrame;
 	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
-	/**
-	 * Programmausführung
-	 * @param args
-	 */
+//----------------------- ÖFFENTLICHE METHODEN -------------
+	
 	public static void main (String args[]) {
 		EventQueue.invokeLater(new Runnable() {
 			@Override

@@ -5,7 +5,7 @@ import java.util.prefs.Preferences;
 import model.Athlet;
 
 /**
- * Controller zum Handlen aller Anfragen auf das "Athlet"-Model
+ * Controller für alle Anfragen auf das "Athlet"-Model
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class AthletController{

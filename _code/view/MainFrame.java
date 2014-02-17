@@ -405,12 +405,13 @@ public class MainFrame {
 			tabbedPane.setSelectedIndex(0);	
 	}
 	
-	public void createTab (String name,long id) {
+	public ProfilTab createTab (String name,long id) {
 		Athlet athlet = athletcontroller.neuerAthlet(name,id);
 		ProfilTab newTab = new ProfilTab(athlet);			
 		tabList.add(0, newTab);
 		tabbedPane.insertTab(name+" *", null, newTab, null, 0);
 		tabbedPane.setSelectedIndex(0);
+		return newTab;
 	}
 	
 	public boolean checkAthletGeöffnet (String name, long id) {		
