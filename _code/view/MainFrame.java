@@ -104,7 +104,7 @@ public class MainFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 					try {						
-						DateiPfadÖffnen dö = new DateiPfadÖffnen();
+						DateiPfadOeffnen dö = new DateiPfadOeffnen();
 						String pfad = dö.open();						
 						if (pfad != null) {							
 							if (!csvController.lesen(pfad)){
@@ -269,7 +269,7 @@ public class MainFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {						
-					DateiPfadÖffnen dö = new DateiPfadÖffnen();
+					DateiPfadOeffnen dö = new DateiPfadOeffnen();
 					String pfad = dö.open();						
 					if (pfad != null) {							
 						if (!csvController.lesen(pfad)){

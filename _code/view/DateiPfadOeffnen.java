@@ -10,7 +10,7 @@ import main.Main;
  * Dialog zum Auswählen einer zu öffnenden CSV-Datei
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-public class DateiPfadÖffnen {
+public class DateiPfadOeffnen {
 
 //----------------------- VARIABLEN -----------------------	
 	private JFileChooser chooser = new JFileChooser();
@@ -20,7 +20,7 @@ public class DateiPfadÖffnen {
 	/**
 	 * Standard-Konstruktor
 	 */
-	public DateiPfadÖffnen() {
+	public DateiPfadOeffnen() {
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
         chooser.addChoosableFileFilter(filter); 
 	}

@@ -10,9 +10,10 @@ import model.Leistung;
 import org.jfree.data.xy.XYSeries;
 
 import view.DiagrammFrame;
+import view.ProfilTab;
 
 /**
- * Controller zum Handlen aller Aktionen, die den LeistungsDialog betreffen
+ * Controller für alle Aktionen, die den LeistungsDialog betreffen
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class DiagrammController {
@@ -30,8 +31,9 @@ public class DiagrammController {
 	/**
 	 * Anzeigen des DiagrammFrames
 	 */
-	public void DiagrammOeffnen() {
+	public void DiagrammOeffnen() {		
 		diagramm.setEnabled(true);
+		openAllAthletes();
 		diagramm.setVisible(true);
 	}
 	
@@ -44,12 +46,24 @@ public class DiagrammController {
 		diagramm = new DiagrammFrame();
 	}
 	
+//----------------------- PRIVATE METHODEN -----------------------
+	
+	public void openAllAthletes(){
+		int countAthletes = Main.mainFrame.tabbedPane.getTabCount() - 1;
+		System.out.println(countAthletes);
+		for(int i = 0;i<countAthletes; i++){
+			ProfilTab tab = (ProfilTab) Main.mainFrame.tabbedPane.getComponentAt(i);
+			addAthletBerechneteLeistungsKurve(tab.getAthlet());	
+			addBestzeiten(tab.getAthlet().getLeistungen());
+		}
+;	}
+	
 	/**
 	 * Hinzufügen aller tatsächlich erbrachten Leistungen eines Athleten
 	 * zum Diagramm
 	 * @param athlet
 	 */
-	public void addAthletLeistungsKurve(Athlet athlet) {
+	public void addAthletBerechneteLeistungsKurve(Athlet athlet) {
 		LinkedList<Leistung> leistungen = athlet.getLeistungen();
 		Iterator<Leistung> leistungenIterator = leistungen.iterator();
 		letzterAthlet = athlet.getName();
@@ -69,7 +83,7 @@ public class DiagrammController {
 	 * für die verschiedenen Streckenlängen zum Diagramm
 	 * @param athlet
 	 */
-	public void addBestzeitenKurve (LinkedList<Leistung> bestzeiten) {
+	public void addBestzeiten (LinkedList<Leistung> bestzeiten) {
 		Iterator<Leistung> leistungenIterator = bestzeiten.iterator();
 		final XYSeries athletenSerie = new XYSeries(letzterAthlet);
 		while (leistungenIterator.hasNext()) {

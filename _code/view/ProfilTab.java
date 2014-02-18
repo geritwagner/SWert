@@ -168,9 +168,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnLeistungskurve.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
-				LinkedList<Leistung> bestzeiten = funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
-				mainFrame.diagrammController.addAthletLeistungsKurve(athlet);
-				mainFrame.diagrammController.addBestzeitenKurve(bestzeiten);
+				// LinkedList<Leistung> bestzeiten = funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
+				// mainFrame.diagrammController.addAthletBerechneteLeistungsKurve(athlet);
+				// mainFrame.diagrammController.addBestzeiten(bestzeiten);
 				mainFrame.diagrammController.DiagrammOeffnen();
 			}
 		});
@@ -767,6 +767,10 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	
 	public boolean getSpeicherStatus() {
 		return gespeichert;
+	}
+	
+	public Athlet getAthlet(){
+		return athlet;
 	}
 	
 	public long getAthletenId() {
