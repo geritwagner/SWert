@@ -58,8 +58,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private JScrollPane scrollPane;
 	private JTextField textFieldSchwelle;
 	private JCheckBox chckbxLeistungenAuswahl;
+	// TODO: die folgenden Variablen sollten eig. über den Athlet laufen
 	private boolean leistungenAuswahlCheck = false;
-	private Leistung[] leistungAuswahl = new Leistung[2];
+	// private Leistung[] leistungAuswahl = new Leistung[2];
 	private double slopeFaktor;
 	private double anaerobeSchwelle;
 	
@@ -144,7 +145,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnBestzeiten.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new BestzeitenDialog(leistungAuswahl,slopeFaktor);
+				LinkedList<Leistung> LeistungenForSlopeFaktor = athlet.getLeistungAuswahlForSlopeFaktor();
+				new BestzeitenDialog(LeistungenForSlopeFaktor,slopeFaktor);
 				funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
 				
 			}
@@ -168,10 +170,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnLeistungskurve.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
-				// LinkedList<Leistung> bestzeiten = funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
-				// mainFrame.diagrammController.addAthletBerechneteLeistungsKurve(athlet);
-				// mainFrame.diagrammController.addBestzeiten(bestzeiten);
-				mainFrame.diagrammController.DiagrammOeffnen();
+				// TODO: nächste 3 Zeilen löschen und nur noch mit DiagammOeffnen() arbeiten
+				LinkedList<Leistung> bestzeiten = funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
+				mainFrame.diagrammController.addAthletBerechneteLeistungsKurve(athlet);
+				mainFrame.diagrammController.addBestzeiten(bestzeiten);
+				// mainFrame.diagrammController.DiagrammOeffnen();
 			}
 		});
 		btnLeistungskurve.setEnabled(false);
@@ -704,7 +707,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	/**
 	 * Berechnet die nötigen Werte bzw. gibt entsprechende Fehlermeldungen zurück
 	 */
-	public void werteBerechnen() {								
+	public void werteBerechnen() {
+				// TODO: hier sollte athlet.getSlopeFaktor stehen...
 				slopeFaktor = funktionenController.slopeFaktorBerechnen(leistungAuswahl[0], leistungAuswahl[1]);
 				DecimalFormat f = new DecimalFormat("#0.00");				
 				String slopeFaktorString = f.format(slopeFaktor);
@@ -799,10 +803,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	
 	public double getAnaerobeSchwelle() {
 		return anaerobeSchwelle;
-	}
-	
-	public Leistung[] getLeistungAuswahl() {
-		return leistungAuswahl;
 	}
 	
 	public void leistungsButtonsVerfügbar() {

@@ -1,5 +1,9 @@
 package model;
 
+import main.Main;
+import controller.LeistungController;
+import controller.StreckenController;
+
 /**
  * Model-Klasse für das "Leistung"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
@@ -15,6 +19,9 @@ public class Leistung{
 	private String bezeichnung;
 	private String datum;
 	private boolean berechnungSlopeFaktor;
+
+	private StreckenController streckenController = Main.streckenController;
+	private LeistungController leistungController = Main.leistungController;
 	
 //----------------------- KONSTRUKTOREN -----------------------
 	public Leistung(int id_strecke, long id_athlet, double geschwindigkeit, String bezeichnung, String datum) {
@@ -23,6 +30,35 @@ public class Leistung{
 		this.geschwindigkeit = geschwindigkeit;
 		this.bezeichnung = bezeichnung;
 		this.datum = datum;		
+	}
+
+//----------------------- ÖFFENTLICHE METHODEN -----------------------	
+	
+	/**
+	 * Auslesen der gegebenen Streckenlänge einer Strecke
+	 * @param leistung
+	 * @return: Double-Wert der Streckenlänge
+	 */
+	public double getStrecke() {
+		int streckenID = this.getId_strecke();
+		double geschwindigkeit = this.getGeschwindigkeit();
+		if(streckenID == -1) {
+			return leistungController.berechneStreckeAusGeschwindigkeit(geschwindigkeit);
+		} else {
+			return streckenController.getStreckenlaengeById(streckenID);
+		}
+	}
+	
+	public boolean equals(Leistung andereLeistung){
+		if (this.id_strecke 		== andereLeistung.getId_strecke() &&
+			this.id_athlet 			== andereLeistung.getId_athlet() &&
+			this.geschwindigkeit 	== andereLeistung.getGeschwindigkeit() &&
+			this.bezeichnung 		== andereLeistung.getBezeichnung() &&
+			this.datum 				== andereLeistung.getDatum()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 //----------------------- GETTER UND SETTER -----------------------
@@ -82,11 +118,11 @@ public class Leistung{
 		this.datum = datum;
 	}
 
-	public boolean getBerechnungSlopeFaktor() {
+	public boolean isUsedForSlopeFaktor() {
 		return berechnungSlopeFaktor;
 	}
 
-	public void setBerechnungSlopeFaktor(boolean berechnungSlopeFaktor) {
+	public void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor) {
 		this.berechnungSlopeFaktor = berechnungSlopeFaktor;
 	}
 

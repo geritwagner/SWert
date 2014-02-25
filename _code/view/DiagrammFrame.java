@@ -98,8 +98,41 @@ public class DiagrammFrame extends JFrame {
         contentPane.add(cp);
         pack();
 	}
+
+//----------------------- ÖFFENTLICHE METHODEN -----------------------
+	/**
+	 * Hinzufügen einer Serie mit Leistungen zum Plot (Scatterplot)
+	 * @param serie
+	 */
+	public void addLeistungsSerie(XYSeries serie) {
+		datenLeistungen.addSeries(serie);
+		datenSammlungLeistungen = datenLeistungen;
+		Color farbe = getRandomColor();
+		dotRenderer.setSeriesPaint(datenSammlungLeistungen.getSeriesCount()-1, farbe);
+		letzteFarbe = (Color) dotRenderer.getSeriesPaint(datenSammlungLeistungen.getSeriesCount()-1);
+	}
+	
+	/**
+	 * Hinzufügen einer Serie mit möglichen Bestleistungen zum Plot (Trendlinie)
+	 * @param serie
+	 */
+	public void addBestzeitenSerie(XYSeries serie) {
+		datenBestzeiten.addSeries(serie);
+		datenSammlungBestzeiten = datenBestzeiten;
+		lineRenderer.setSeriesPaint(datenSammlungBestzeiten.getSeriesCount()-1, letzteFarbe);
+	}	
 	
 //----------------------- PRIVATE METHODEN -----------------------
+
+	private Color getRandomColor(){
+		int r = random.nextInt(256);
+		int g = random.nextInt(256);
+		int b = random.nextInt(256);
+		return new Color(r,g,b);
+		
+	}
+	
+
 	/**
 	 * Initialisieren der Eigenschaften des Diagramm-Frames
 	 */
@@ -170,29 +203,5 @@ public class DiagrammFrame extends JFrame {
         renderer.setBaseItemLabelsVisible(true);
 	}
 	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
-	/**
-	 * Hinzufügen einer Serie mit Leistungen zum Plot (Scatterplot)
-	 * @param serie
-	 */
-	public void addLeistungsSerie(XYSeries serie) {
-		datenLeistungen.addSeries(serie);
-		datenSammlungLeistungen = datenLeistungen;
-		int r = random.nextInt(256);
-		int g = random.nextInt(256);
-		int b = random.nextInt(256);
-		Color farbe = new Color(r,g,b);
-		dotRenderer.setSeriesPaint(datenSammlungLeistungen.getSeriesCount()-1, farbe);
-		letzteFarbe = (Color) dotRenderer.getSeriesPaint(datenSammlungLeistungen.getSeriesCount()-1);
-	}
-	
-	/**
-	 * Hinzufügen einer Serie mit möglichen Bestleistungen zum Plot (Trendlinie)
-	 * @param serie
-	 */
-	public void addBestzeitenSerie(XYSeries serie) {
-		datenBestzeiten.addSeries(serie);
-		datenSammlungBestzeiten = datenBestzeiten;
-		lineRenderer.setSeriesPaint(datenSammlungBestzeiten.getSeriesCount()-1, letzteFarbe);
-	}
+
 }

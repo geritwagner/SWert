@@ -4,7 +4,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-import main.Main;
 import model.Leistung;
 
 /**
@@ -16,9 +15,8 @@ public class LeistungController {
 
 //----------------------- ÖFFENTLICHE METHODEN -----------------------
 	public Leistung neueLeistung(int id_strecke, long id_athlet, double geschwindigkeit, String bezeichnung, String datum) {
-		FunktionenController fController = Main.funktionenController;
 		Leistung neueLeistung = new Leistung(id_strecke, id_athlet, geschwindigkeit, bezeichnung, datum);
-		int strecke = (int) (fController.getStrecke(neueLeistung));
+		int strecke = (int) neueLeistung.getStrecke();
 		double sec = berechneZeit(strecke, geschwindigkeit);
 		neueLeistung.setZeit(parseSecInZeitstring(sec));
 		return neueLeistung;

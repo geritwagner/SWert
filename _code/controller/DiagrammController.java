@@ -54,6 +54,8 @@ public class DiagrammController {
 		for(int i = 0;i<countAthletes; i++){
 			ProfilTab tab = (ProfilTab) Main.mainFrame.tabbedPane.getComponentAt(i);
 			addAthletBerechneteLeistungsKurve(tab.getAthlet());	
+			// TODO: statt getLeistungen müssten vermutlich die 2 Punkte, auf deren Grundlage die Schwelle
+			// berechnet wird, zurückgegeben werden...
 			addBestzeiten(tab.getAthlet().getLeistungen());
 		}
 ;	}
@@ -70,7 +72,7 @@ public class DiagrammController {
 		final XYSeries athletenSerie = new XYSeries(letzterAthlet);
 		while (leistungenIterator.hasNext()) {
 			Leistung leistung = leistungenIterator.next();
-			double strecke = Main.funktionenController.getStrecke(leistung);
+			double strecke = leistung.getStrecke();
 			double geschwindigkeit = leistung.getGeschwindigkeit();
 			double zeit = Einheitenumrechner.toMinKm(geschwindigkeit);
 			athletenSerie.add(strecke, zeit);
