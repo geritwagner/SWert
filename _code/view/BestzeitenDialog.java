@@ -27,6 +27,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import main.Main;
+import model.Athlet;
 import model.Leistung;
 import controller.FunktionenController;
 import controller.LeistungController;
@@ -50,7 +51,8 @@ public class BestzeitenDialog extends JDialog {
 	private JTextField txtFieldZeit;
 	private JTextField txtFieldStrecke;
 	
-	private Leistung[] leistungAuswahl;
+	private Athlet athlet;
+	private Leistung leistungAuswahl;
 	private double slopeFaktor;
 
 //----------------------- KONSTRUKTOREN -----------------------
@@ -59,14 +61,14 @@ public class BestzeitenDialog extends JDialog {
 	 * @param leistungAuswahl: Array mit 2 Leistungsobjekten
 	 * @param slopeFaktor
 	 */
-	public BestzeitenDialog(Leistung[] leistungAuswahl, double slopeFaktor) {	
-		this.leistungAuswahl = new Leistung[2];
-		this.leistungAuswahl = leistungAuswahl;
-		this.slopeFaktor = slopeFaktor;
-		initProperties();
-		initComponents();
-		setModal(true);
-		setVisible(true);		
+	public BestzeitenDialog(Athlet inputAthlet) {	
+		this.athlet = inputAthlet;
+		if (athlet.isSetAnaerobeSchwelle()){
+			initProperties();
+			initComponents();
+			setModal(true);
+			setVisible(true);		
+		}
 	}	
 
 //----------------------- PRIVATE METHODEN -----------------------
@@ -209,7 +211,7 @@ public class BestzeitenDialog extends JDialog {
     			return;
     		}
     		
-    		double bestzeit = fController.calculateSpeed(leistungAuswahl[0], strecke, slopeFaktor);
+    		double bestzeit = athlet.calculateSpeed(strecke);
 			String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
 			txtFieldZeit.setText(bestzeitString);
     	}
@@ -226,7 +228,7 @@ public class BestzeitenDialog extends JDialog {
 		for (int i = 0; i < streckenAnzahl; i++) {
 			double streckenLänge = sController.getStreckenlaengeById(i);
 			data[i][0] = sController.getStreckenlaengeStringById(i);
-			double bestzeit = fController.calculateSpeed(leistungAuswahl[0], streckenLänge, slopeFaktor);
+			double bestzeit = athlet.calculateSpeed(streckenLänge);
 			String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
 			data[i][1] = bestzeitString;			
 		}

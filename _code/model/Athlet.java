@@ -51,6 +51,29 @@ public class Athlet {
 		setAnaerobeSchwelle();
 	}
 	
+	/**
+	 * 
+	 * @param referenzLeistung
+	 * @param entfernung
+	 * @param slopeFaktor
+	 * @return
+	 */
+	public double calculateSpeed (double entfernung) {	
+		assert isSetAnaerobeSchwelle() : "Schwelle muss gesetzt sein!";
+		Leistung referenzLeistung = getLeistungAuswahlForSlopeFaktor()[0];
+		double referenzGeschwindigkeit = referenzLeistung.getGeschwindigkeit();
+		double referenzEntfernung = referenzLeistung.getStrecke();
+		//Geschwindigkeit für 1 km
+		double kilometerGeschwindigkeit = referenzGeschwindigkeit + slopeFaktor * (Math.log10(entfernung/referenzEntfernung));
+		//Geschwindigkeit abhängig von entfernung
+		double geschätzteGeschwindigkeit = kilometerGeschwindigkeit*(entfernung/1000);	
+		
+		if (geschätzteGeschwindigkeit <= 0) {
+			return 0;
+		}
+		return geschätzteGeschwindigkeit;
+	}
+	
 	
 //----------------------- PRIVATE METHODEN -----------------------
 
@@ -233,6 +256,15 @@ public class Athlet {
 	
 	public double getAnaerobeSchwelle(){
 		return anaerobeSchwelle;
+	}
+	
+	public boolean isSetAnaerobeSchwelle(){
+		// TODO: check validity condition
+		if (anaerobeSchwelle > 0){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }

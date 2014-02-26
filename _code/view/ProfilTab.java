@@ -141,7 +141,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnBestzeiten.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new BestzeitenDialog(athlet.getLeistungAuswahlForSlopeFaktor(),slopeFaktor);
+				new BestzeitenDialog(athlet);
 				// funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
 				
 			}
