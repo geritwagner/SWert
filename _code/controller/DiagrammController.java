@@ -56,7 +56,8 @@ public class DiagrammController {
 			addAthletBerechneteLeistungsKurve(tab.getAthlet());	
 			// TODO: statt getLeistungen müssten vermutlich die 2 Punkte, auf deren Grundlage die Schwelle
 			// berechnet wird, zurückgegeben werden...
-			addBestzeiten(tab.getAthlet().getLeistungen());
+			// addBestzeiten(tab.getAthlet().getLeistungen());
+			addBestzeiten(tab.getAthlet().getMoeglicheBestzeitenListe());
 		}
 ;	}
 	

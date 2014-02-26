@@ -43,6 +43,8 @@ public class Athlet {
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(false);
+				// TODO: remove output
+				System.out.println("removed " + aktuelleLeistung.getBezeichnung());
 			}
 		}
 		setSlopeFactor();
@@ -58,6 +60,7 @@ public class Athlet {
 			double tempSlopeFaktor = slopeFaktorBerechnen(getLeistungAuswahlForSlopeFaktor());
 			if(isValidSlopeFaktor(tempSlopeFaktor)){
 				this.slopeFaktor = tempSlopeFaktor;
+				System.out.println("slopeFaktor: "+this.slopeFaktor);
 			} else {
 				this.slopeFaktor = 0;
 			}
@@ -76,12 +79,19 @@ public class Athlet {
 	}
 	
 	private boolean isSetLeistungAuswahlForSlopeFaktor(){
+		if (getLeistungAuswahlForSlopeFaktor() == null){
+			return false;
+		}
 		Leistung leistung1 = getLeistungAuswahlForSlopeFaktor()[0];
 		Leistung leistung2 = getLeistungAuswahlForSlopeFaktor()[1];
 		if (leistung1 != null && leistung2 != null){
 			return true;
 		}
 		return false;
+	}
+
+	private double slopeFaktorBerechnen(Leistung[] LeistungAuswahlForSlopeFaktor) {
+		return slopeFaktorBerechnen(LeistungAuswahlForSlopeFaktor[0], LeistungAuswahlForSlopeFaktor[1]);
 	}
 	
 	/**
@@ -110,10 +120,6 @@ public class Athlet {
 		
 		double slopeFaktor = Math.abs((geschwindigkeit2-geschwindigkeit1)/(Math.log10(strecke2/strecke1)));	
 		return slopeFaktor;
-	}
-	
-	private double slopeFaktorBerechnen(Leistung[] LeistungAuswahlForSlopeFaktor) {
-		return slopeFaktorBerechnen(LeistungAuswahlForSlopeFaktor[0], LeistungAuswahlForSlopeFaktor[1]);
 	}
 	
 	/**
@@ -161,10 +167,10 @@ public class Athlet {
 	 * der möglichen Bestzeit entspricht
 	 * @throws Exception 
 	 */
-	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws Exception { 
+	public LinkedList<Leistung> getMoeglicheBestzeitenListe () { 
 		if (!isSetLeistungAuswahlForSlopeFaktor()){
 			// TODO: Exception anpassen
-			throw new Exception();
+			// throw new Exception();
 		}
 		Leistung referenzLeistung = getLeistungAuswahlForSlopeFaktor()[0];
 		LinkedList<Leistung> bestzeitenListe = new LinkedList<Leistung>();

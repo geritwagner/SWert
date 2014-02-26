@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,7 +29,6 @@ import javax.swing.table.TableRowSorter;
 
 import net.miginfocom.swing.MigLayout;
 import controller.Einheitenumrechner;
-import controller.FunktionenController;
 import helper.IntegerComparator;
 import controller.LeistungController;
 import controller.StreckenController;
@@ -49,7 +47,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private MainFrame mainFrame = Main.mainFrame;
 	private StreckenController streckenController = Main.streckenController;
 	private LeistungController leistungController = Main.leistungController;
-	private FunktionenController funktionenController = Main.funktionenController;
 	
 	private JLabel lblAthletName;
 	private JButton btnBestzeiten;
@@ -62,7 +59,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private boolean leistungenAuswahlCheck = false;
 	// private Leistung[] leistungAuswahl = new Leistung[2];
 	private double slopeFaktor;
-	private double anaerobeSchwelle;
 	
 	private JTable leistungenTabelle;
 	private boolean verändert = false;
@@ -145,9 +141,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnBestzeiten.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				LinkedList<Leistung> LeistungenForSlopeFaktor = athlet.getLeistungAuswahlForSlopeFaktor();
-				new BestzeitenDialog(LeistungenForSlopeFaktor,slopeFaktor);
-				funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
+				new BestzeitenDialog(athlet.getLeistungAuswahlForSlopeFaktor(),slopeFaktor);
+				// funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
 				
 			}
 		});
@@ -159,7 +154,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnTrainingsbereich.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new TrainingsbereichDialog(anaerobeSchwelle);
+				new TrainingsbereichDialog(athlet.getAnaerobeSchwelle());
 			}
 		});
 		btnTrainingsbereich.setEnabled(false);
@@ -171,10 +166,10 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
 				// TODO: nächste 3 Zeilen löschen und nur noch mit DiagammOeffnen() arbeiten
-				LinkedList<Leistung> bestzeiten = funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
-				mainFrame.diagrammController.addAthletBerechneteLeistungsKurve(athlet);
-				mainFrame.diagrammController.addBestzeiten(bestzeiten);
-				// mainFrame.diagrammController.DiagrammOeffnen();
+				// LinkedList<Leistung> bestzeiten = funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
+				// mainFrame.diagrammController.addAthletBerechneteLeistungsKurve(athlet);
+				// mainFrame.diagrammController.addBestzeiten(athlet.getMoeglicheBestzeitenListe());
+				mainFrame.diagrammController.DiagrammOeffnen();
 			}
 		});
 		btnLeistungskurve.setEnabled(false);
@@ -371,9 +366,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Erstellt Referenz-Leistungen mit den beiden manuell gewählten Leistungen und berechnet dann die Werte
 	 */	
 	private void berechneWerte() {
-        if (tabelleAuswahlRichtig() && !chckbxLeistungenAuswahl.isSelected()) {  
+        if (!chckbxLeistungenAuswahl.isSelected()) {  
         	setLeistungArray();
-        	werteBerechnen();        	
+        	if (tabelleAuswahlRichtig()){
+            	werteBerechnen();        		
+        	}
         }
 	}
 	
@@ -485,21 +482,22 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Gibt ein Leistungsarray mit den beiden ausgewählten Leistungen zurück
 	 */	
 	public void setLeistungArray() {
-		
 		int zeilenAnzahl = leistungenTabelle.getRowCount();
-		int zähler = 0;
 		int spalte = booleanSpalte;		
 		
+		// remove
 		for (int i = 0; i < zeilenAnzahl; i++) {
-			if (zähler > 1) {
-				break;
+			if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==false){
+				athlet.removeLeistungFromAuswahlForSlopeFaktor(getLeistungInZeile(i));
 			}
-			if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==true){
-				leistungAuswahl[zähler] = getLeistungInZeile(i);
-				zähler++;
-			}				
 		}
 		
+		// add
+		for (int i = 0; i < zeilenAnzahl; i++) {
+			if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==true){
+				athlet.setLeistungToAuswahlForSlopeFaktor(getLeistungInZeile(i));
+			} 
+		}
 	}
 	
 	/**
@@ -515,11 +513,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		leistungenTabelle.setValueAt(true, größteLänge, booleanSpalte);
 		automatischeVerarbeitung = false;
 		
-
-		leistungAuswahl[0] = getLeistungInZeile(kleinsteLänge);
-		leistungAuswahl[1] = getLeistungInZeile(größteLänge);
-		
-		
+		athlet.setLeistungToAuswahlForSlopeFaktor(getLeistungInZeile(kleinsteLänge));
+		athlet.setLeistungToAuswahlForSlopeFaktor(getLeistungInZeile(größteLänge));
+				
 	}
 	
 	/**
@@ -582,8 +578,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 					if (zahl1 == -1 && zahl2 == -1) {
 						Leistung zahl1Leistung = getLeistungInZeile(i);
 						Leistung zahl2Leistung = getLeistungInZeile(j);
-						double zahl1Strecke = funktionenController.getStrecke(zahl1Leistung);
-						double zahl2Strecke = funktionenController.getStrecke(zahl2Leistung);
+						double zahl1Strecke = zahl1Leistung.getStrecke();
+						double zahl2Strecke = zahl2Leistung.getStrecke();
 						if (zahl1Strecke != zahl2Strecke) {
 							return true;
 						}
@@ -709,16 +705,16 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 */
 	public void werteBerechnen() {
 				// TODO: hier sollte athlet.getSlopeFaktor stehen...
-				slopeFaktor = funktionenController.slopeFaktorBerechnen(leistungAuswahl[0], leistungAuswahl[1]);
+				// slopeFaktor = funktionenController.slopeFaktorBerechnen(leistungAuswahl[0], leistungAuswahl[1]);
 				DecimalFormat f = new DecimalFormat("#0.00");				
-				String slopeFaktorString = f.format(slopeFaktor);
+				String slopeFaktorString = f.format(athlet.getSlopeFaktor());
 				if (slopeFaktor==-1) {
 					JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
 							, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
 					tabelleAuswahlAufheben();
 					chckbxLeistungenAuswahl.setSelected(false);
 				} else {
-					anaerobeSchwelle = funktionenController.anaerobeSchwelleBerechnen(leistungAuswahl[0], slopeFaktor);
+					double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
 					if (anaerobeSchwelle == -1) {
 						JOptionPane.showMessageDialog(this, "Beim Schätzen der Aerob/Anaeroben Schwelle konnte der Wert nicht genau genug festgelegt werden. Der tatächliche Wert kann von dem angezeigten Ergebnis abweichen!"
 								, "Wert nicht genau genug",JOptionPane.INFORMATION_MESSAGE);
@@ -802,7 +798,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 	
 	public double getAnaerobeSchwelle() {
-		return anaerobeSchwelle;
+		return athlet.getAnaerobeSchwelle();
 	}
 	
 	public void leistungsButtonsVerfügbar() {
