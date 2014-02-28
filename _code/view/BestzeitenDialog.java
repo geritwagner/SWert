@@ -28,8 +28,6 @@ import javax.swing.table.DefaultTableModel;
 
 import main.Main;
 import model.Athlet;
-import model.Leistung;
-import controller.FunktionenController;
 import controller.LeistungController;
 import controller.StreckenController;
 
@@ -45,15 +43,12 @@ public class BestzeitenDialog extends JDialog {
 	private Dimension d = this.getToolkit().getScreenSize();
 	private LeistungController lController = Main.leistungController;
 	private StreckenController sController = Main.streckenController;
-	private FunktionenController fController = Main.funktionenController;
 	
 	private JTable trainingsTabelle;
 	private JTextField txtFieldZeit;
 	private JTextField txtFieldStrecke;
 	
 	private Athlet athlet;
-	private Leistung leistungAuswahl;
-	private double slopeFaktor;
 
 //----------------------- KONSTRUKTOREN -----------------------
 	/**
@@ -63,7 +58,7 @@ public class BestzeitenDialog extends JDialog {
 	 */
 	public BestzeitenDialog(Athlet inputAthlet) {	
 		this.athlet = inputAthlet;
-		if (athlet.isSetAnaerobeSchwelle()){
+		if ("set" == athlet.getSlopeFaktorStatus()){
 			initProperties();
 			initComponents();
 			setModal(true);
@@ -118,7 +113,6 @@ public class BestzeitenDialog extends JDialog {
 		separator3.setBounds(10, 330, 234, 2);
 		contentPanel.add(separator3);
 		
-		
 		JLabel lblStreckenlnge = new JLabel("Streckenl\u00E4nge");
 		lblStreckenlnge.setBounds(10, 280, 93, 14);
 		contentPanel.add(lblStreckenlnge);
@@ -126,7 +120,6 @@ public class BestzeitenDialog extends JDialog {
 		JLabel lblBestzeit = new JLabel("Bestzeit");
 		lblBestzeit.setBounds(10, 305, 93, 14);
 		contentPanel.add(lblBestzeit);
-		
 		
 		txtFieldZeit = new JTextField();
 		txtFieldZeit.setEditable(false);
@@ -164,7 +157,6 @@ public class BestzeitenDialog extends JDialog {
 		});
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
-
 	}
 	
 	/**
@@ -210,7 +202,7 @@ public class BestzeitenDialog extends JDialog {
     		if (strecke == -1) {
     			return;
     		}
-    		
+
     		double bestzeit = athlet.calculateSpeed(strecke);
 			String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
 			txtFieldZeit.setText(bestzeitString);
@@ -223,6 +215,7 @@ public class BestzeitenDialog extends JDialog {
 	 * @return: Array mit [][0] als Streckenlänge (String) und [][1] als Bestzeit (String: 00:00,00)
 	 */
 	private Object[][] berechneBestzeit() {
+		// TODO: duplikat zu athlet.getMoeglicheBestzeitenListe()?? - wer macht was??
 		int streckenAnzahl = sController.getStreckenLength();
 		Object[][] data = new Object [streckenAnzahl][2];
 		for (int i = 0; i < streckenAnzahl; i++) {

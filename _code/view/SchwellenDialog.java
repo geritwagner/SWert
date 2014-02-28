@@ -194,6 +194,7 @@ public class SchwellenDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(actionBestaetigen()) {
+					// TODO: nächste Zeile löschen?
 					mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
 					SchwellenDialog.this.setVisible(false);
 					SchwellenDialog.this.dispose();					
@@ -697,7 +698,7 @@ public class SchwellenDialog extends JDialog {
 		}
 		
 		if(ok) {
-			long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthletenId();
+			long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthlet().getId();
 			int id_strecke = -1;
 			Leistung leistung = lController.neueLeistung(id_strecke,id_athlet,geschwindigkeit,bezeichnungString,datumString);
 			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);			

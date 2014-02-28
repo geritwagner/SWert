@@ -26,8 +26,8 @@ public class TabelleLeistungsListener implements ListSelectionListener{
     		return;
         }
 
-        mainFrame.leistungBearbeitenVerfügbar();
-        mainFrame.leistungLöschenVerfügbar();
+        mainFrame.leistungBearbeitenMenüVerfügbar();
+        mainFrame.leistungLöschenMenüVerfügbar();
         profilTab.leistungsButtonsVerfügbar();
     }
 }

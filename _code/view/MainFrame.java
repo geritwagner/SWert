@@ -345,7 +345,7 @@ public class MainFrame {
 		if (tab.getSpeicherPfad()==null){
 			try{
 				DateiPfadSpeichern ds = new DateiPfadSpeichern();
-				String pfad = ds.save(tab.getAthletenName());
+				String pfad = ds.save(tab.getAthlet().getName());
 				if (pfad == null) {
 					return;
 				}
@@ -381,7 +381,7 @@ public class MainFrame {
 		ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());			
 		try{
 			DateiPfadSpeichern ds = new DateiPfadSpeichern();
-			String pfad = ds.save(tab.getAthletenName());
+			String pfad = ds.save(tab.getAthlet().getName());
 			if (pfad == null) {
 				return;
 			}
@@ -417,8 +417,8 @@ public class MainFrame {
 	public boolean checkAthletGeöffnet (String name, long id) {		
 		for (int i = 0; i < tabList.size(); i++) {			
 			ProfilTab tab = tabList.get(i);
-			String tabName = tab.getAthletenName();
-			long tabId = tab.getAthletenId();			
+			String tabName = tab.getAthlet().getName();
+			long tabId = tab.getAthlet().getId();			
 			if (tabName.equals(name) && id == tabId) {
 				return true;
 			}			
@@ -449,19 +449,19 @@ public class MainFrame {
 		return -1;		
 	}
 	
-	public void leistungBearbeitenVerfügbar() {
+	public void leistungBearbeitenMenüVerfügbar() {
 		mntmLeistungenBearbeiten.setEnabled(true);
 	}
 	
-	public void leistungBearbeitenAusgrauen() {
+	public void leistungBearbeitenMenüAusgrauen() {
 		mntmLeistungenBearbeiten.setEnabled(false);
 	}
 	
-	public void leistungLöschenVerfügbar() {
+	public void leistungLöschenMenüVerfügbar() {
 		mntmLeistungenLoeschen.setEnabled(true);
 	}
 	
-	public void leistungLöschenAusgrauen() {
+	public void leistungLöschenMenüAusgrauen() {
 		mntmLeistungenLoeschen.setEnabled(false);
 	}
 }

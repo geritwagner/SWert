@@ -127,8 +127,8 @@ public class CSVController {
 	 */
 	private String[] getAthletenInfo(ProfilTab tab) {
 		String[] athletInfo = new String[4];
-		athletInfo[0] = String.valueOf(tab.getAthletenId());
-		athletInfo[1] = tab.getAthletenName();
+		athletInfo[0] = String.valueOf(tab.getAthlet().getId());
+		athletInfo[1] = tab.getAthlet().getName();
 		return athletInfo;
 	}
 	

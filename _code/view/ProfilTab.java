@@ -55,10 +55,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private JScrollPane scrollPane;
 	private JTextField textFieldSchwelle;
 	private JCheckBox chckbxLeistungenAuswahl;
-	// TODO: die folgenden Variablen sollten eig. über den Athlet laufen
 	private boolean leistungenAuswahlCheck = false;
-	// private Leistung[] leistungAuswahl = new Leistung[2];
-	private double slopeFaktor;
 	
 	private JTable leistungenTabelle;
 	private boolean verändert = false;
@@ -86,8 +83,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Layout des Athleten-Profils erstellen
 	 */
 	private void initLayout() {
-		mainFrame.leistungBearbeitenAusgrauen();
-		mainFrame.leistungLöschenAusgrauen();
+		mainFrame.leistungBearbeitenMenüAusgrauen();
+		mainFrame.leistungLöschenMenüAusgrauen();
 		setLayout(new MigLayout("", "[grow]", "[grow][][][grow]"));
 		
 		JSplitPane splitPane = new JSplitPane();
@@ -194,8 +191,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				leistungenTabelle.getSelectionModel().clearSelection();
-				mainFrame.leistungBearbeitenAusgrauen();
-				mainFrame.leistungLöschenAusgrauen();
+				mainFrame.leistungBearbeitenMenüAusgrauen();
+				mainFrame.leistungLöschenMenüAusgrauen();
 				btnLeistungBearbeiten.setEnabled(false);
 				btnLeistungLöschen.setEnabled(false);
 				LeistungDialog dialog = new LeistungDialog();		
@@ -330,6 +327,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	       
 		//Verhindern, dass mehr als 2 Leistungen ausgewählt werden
         if (spalte == booleanSpalte && !automatischeVerarbeitung && !tabelleAuswahlZulässig()) {
+//        if (spalte == booleanSpalte && !tabelleAuswahlZulässig()) {
         	automatischeVerarbeitung = true;        	
         	model.setValueAt(false, zeile, spalte);
         	automatischeVerarbeitung = false;
@@ -339,7 +337,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
         aktualisiereSpeicherStatus(spalte);
 	    uncheckAutoAuswahl(spalte);
         berechneWerte(); 
-        }
+    }
 	
 	/**
 	 * Boolean umschalten, falls in der Tabelle etwas geändert wurde
@@ -351,13 +349,27 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 	
 	/**
+	 * Visuelle Anzeige im Tab, falls etwas im Profil geändert wurde
+	 */
+	public void setSpeicherStatus (boolean gespeichert) {
+		this.gespeichert = gespeichert;
+		int tabStelle = mainFrame.tabbedPane.getSelectedIndex();
+		if (gespeichert) {
+			mainFrame.tabbedPane.setTitleAt(tabStelle, athlet.getName());
+		} else {
+			mainFrame.tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
+		}
+	}
+	
+	/**
 	 * Sobald 2 Checkboxen ausgewählt sind, wird das Auswählen einer dritten wieder rückgängig gemacht
 	 */
 	private void uncheckAutoAuswahl(int spalte) {
-		
+		// TODO: wird 2x aufgerufen, wenn Leistung eingefügt wird?!??!
         if (!verändert && spalte == booleanSpalte && !leistungenAuswahlCheck) {
         	verändert = true;
         	chckbxLeistungenAuswahl.setSelected(false);
+        	System.out.println("Here");
         	verändert = false;        	
         } 
  	}
@@ -397,8 +409,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * @return art
 	 */
 	public int tabSchließen() {
-		mainFrame.leistungBearbeitenAusgrauen();
-    	mainFrame.leistungLöschenAusgrauen();
+		mainFrame.leistungBearbeitenMenüAusgrauen();
+    	mainFrame.leistungLöschenMenüAusgrauen();
         int i = mainFrame.tabbedPane.getSelectedIndex();
         int art = -1;
         if (i != -1) {
@@ -419,20 +431,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
         }
         return art;
 	}
-	
-	/**
-	 * Visuelle Anzeige im Tab, falls etwas im Profil geändert wurde
-	 */
-	public void setSpeicherStatus (boolean gespeichert) {
-		this.gespeichert = gespeichert;
-		int tabStelle = mainFrame.tabbedPane.getSelectedIndex();
-		if (gespeichert) {
-			mainFrame.tabbedPane.setTitleAt(tabStelle, athlet.getName());
-		} else {
-			mainFrame.tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
-		}
-	}
-
 	
 	/**
 	 * Prüft, ob mehr als 2 Haken in die letzte Spalte gesetzt werden wollen
@@ -504,32 +502,31 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Gibt ein Leistungsarray mit den beiden besten Leistungen zurück
 	 */	
 	public void setLeistungAutomatisch() {		
-		int kleinsteLänge = 0;
-		int größteLänge = leistungenTabelle.getRowCount()-1;
+		int kürzereStrecke = 0;
+		int längereStrecke = leistungenTabelle.getRowCount()-1;
 
 		tabelleAuswahlAufheben();		
 		automatischeVerarbeitung = true;
-		leistungenTabelle.setValueAt(true, kleinsteLänge, booleanSpalte);
-		leistungenTabelle.setValueAt(true, größteLänge, booleanSpalte);
+		leistungenTabelle.setValueAt(true, kürzereStrecke, booleanSpalte);
+		leistungenTabelle.setValueAt(true, längereStrecke, booleanSpalte);
 		automatischeVerarbeitung = false;
 		
-		athlet.setLeistungToAuswahlForSlopeFaktor(getLeistungInZeile(kleinsteLänge));
-		athlet.setLeistungToAuswahlForSlopeFaktor(getLeistungInZeile(größteLänge));
-				
+		Leistung leistungKurzeStrecke = getLeistungInZeile(kürzereStrecke);
+		Leistung leistungLangeStrecke = getLeistungInZeile(längereStrecke);
+		athlet.setLeistungToAuswahlForSlopeFaktor(leistungKurzeStrecke);
+		athlet.setLeistungToAuswahlForSlopeFaktor(leistungLangeStrecke);		
 	}
 	
 	/**
 	 * Hebt die Auswahl auf
 	 */	
 	public void tabelleAuswahlAufheben() {
-		
 		int zeilenAnzahl = leistungenTabelle.getRowCount();		
 		int spalte = booleanSpalte;			
 		for (int i = 0; i < zeilenAnzahl; i++) {
 			if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==true){
 				leistungenTabelle.setValueAt(false, i, spalte);
 			}
-					
 		}		
 	}
 	
@@ -559,13 +556,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		int zeilenAnzahl = leistungenTabelle.getRowCount();
 		int streckenIdSpalte = 8;
 		
-		
 		if (!chckbxLeistungenAuswahl.isSelected()) {
 			return false;
 		}
 		
 		if (zeilenAnzahl>1) {
-			
 			for (int i = 0; i < zeilenAnzahl-1; i++) {
 				String zahl1String = String.valueOf(leistungenTabelle.getValueAt(i, streckenIdSpalte));
 				int zahl1 = Integer.parseInt(zahl1String);				
@@ -591,8 +586,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			return false;
 		}
 	}
-
-
 	
 	/**
 	 * Methoden um eine neue Zeile in der Tabelle hinzuzufügen oder bestehende zu löschen
@@ -629,8 +622,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		model.addRow(daten);	
 		leistungsAuswahlBeiZeileHinzufügen();
-
-	}	
+	}
+	
 	/**
 	 * Prüft, ob automatische Auswahl bei einer neuen Zeile durchgeführt werden soll
 	 */
@@ -645,7 +638,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 */
 	public void deleteZeileAction() {
 		if (JOptionPane.showConfirmDialog(this, "Wollen Sie die Leistung wirklich löschen?", "Leistung löschen", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-			deleteZeile();
+			deleteLeistung();
 		}
 	}
 	
@@ -655,34 +648,37 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 */
 	public void deleteZeileAusDialog() {
 		ausDialog = true;
-		deleteZeile();
+		deleteLeistung();
 		ausDialog = false;
 	}
 	
 	/**
-	 * Löscht eine ausgewählte Zeile
+	 * Löscht eine ausgewählte Leistung 
 	 */
-	public void deleteZeile() {
+	public void deleteLeistung() {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		try {		
-		model.removeRow(leistungenTabelle.convertRowIndexToModel(leistungenTabelle.getSelectedRow()));	
+		int rowToDelete = leistungenTabelle.getSelectedRow();
+		Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
+		
+		System.out.println("rowToDelete" + rowToDelete);		
+		
+		model.removeRow(leistungenTabelle.convertRowIndexToModel(rowToDelete));	
+		
+		// TODO: umstrukturieren!!
+		// ausDialog: wird dann auf true gesetzt, wenn deleteLeistungDialog() vom LeistungDialog aufgerufen wird
 		if (!ausDialog) {
 			leistungsAuswahlBeiZeileLöschen();
+			athlet.removeLeistung(leistungToRemove);
 		}
-		mainFrame.leistungBearbeitenAusgrauen();
-		mainFrame.leistungLöschenAusgrauen();
+			
+		setLeistungUnselected();		
+	}
+	
+	private void setLeistungUnselected(){
+		mainFrame.leistungBearbeitenMenüAusgrauen();
+		mainFrame.leistungLöschenMenüAusgrauen();
 		btnLeistungBearbeiten.setEnabled(false);
 		btnLeistungLöschen.setEnabled(false);
-		athlet.resetLeistungen();
-		if(getZeilenAnzahl() != 0) {
-			for (int i = 0; i < leistungenTabelle.getRowCount(); i++) {
-				Leistung leistung = getLeistungInZeile(i);
-				athlet.addLeistung(leistung);
-			}
-		}
-		}catch (Exception e) {
-			//TODO Log-File schreiben			
-		}
 	}
 	
 	/**
@@ -704,30 +700,33 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Berechnet die nötigen Werte bzw. gibt entsprechende Fehlermeldungen zurück
 	 */
 	public void werteBerechnen() {
-				// TODO: hier sollte athlet.getSlopeFaktor stehen...
-				// slopeFaktor = funktionenController.slopeFaktorBerechnen(leistungAuswahl[0], leistungAuswahl[1]);
-				DecimalFormat f = new DecimalFormat("#0.00");				
-				String slopeFaktorString = f.format(athlet.getSlopeFaktor());
-				if (slopeFaktor==-1) {
-					JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
-							, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
-					tabelleAuswahlAufheben();
-					chckbxLeistungenAuswahl.setSelected(false);
-				} else {
-					double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
-					if (anaerobeSchwelle == -1) {
-						JOptionPane.showMessageDialog(this, "Beim Schätzen der Aerob/Anaeroben Schwelle konnte der Wert nicht genau genug festgelegt werden. Der tatächliche Wert kann von dem angezeigten Ergebnis abweichen!"
-								, "Wert nicht genau genug",JOptionPane.INFORMATION_MESSAGE);
-						
-					} else {
-						LeistungController l = new LeistungController();
-						textFieldSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
-						btnBestzeiten.setEnabled(true);
-						btnLeistungskurve.setEnabled(true);
-						btnTrainingsbereich.setEnabled(true);						
-					}
-				}		
+		// TODO: split and simplify? ggf. mit exceptions oder status-codes arbeiten, die im model abgefragt werden...
+		// gleiche Leistungen: sollte vorher schon abgefangen werdne?!??!
+		// if (athlet.getSlopeFaktor() ==- 1) {
+		if ("set" != athlet.getSlopeFaktorStatus()) {
+			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
+					, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
+			tabelleAuswahlAufheben();
+			chckbxLeistungenAuswahl.setSelected(false);
+			return;
+		} 
+		
+		double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
+		if (anaerobeSchwelle == -1) {
+			JOptionPane.showMessageDialog(this, "Beim Schätzen der Aerob/Anaeroben Schwelle konnte der Wert nicht genau genug festgelegt werden. Der tatächliche Wert kann von dem angezeigten Ergebnis abweichen!"
+					, "Wert nicht genau genug",JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		LeistungController l = new LeistungController();
+		textFieldSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
+		
+		// auslagern:
+		btnBestzeiten.setEnabled(true);
+		btnLeistungskurve.setEnabled(true);
+		btnTrainingsbereich.setEnabled(true);							
 	}
+	
 	//----------------------- GET/SET METHODEN  -----------------------
 	
 	/**
@@ -772,19 +771,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	public Athlet getAthlet(){
 		return athlet;
 	}
-	
-	public long getAthletenId() {
-		return athlet.getId();
-	}
-	
-	public void setAthletenId(long id) {
-		athlet.setId(id);		
-	}
-	
-	public String getAthletenName() {
-		return athlet.getName();
-	}
-	
+		
 	public String getSpeicherPfad() {
 		return speicherPfad;
 	}
@@ -792,15 +779,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	public void setSpeicherPfad(String speicherPfad) {
 		this.speicherPfad = speicherPfad;
 	}	
-	
-	public double getSlopeFaktor() {
-		return slopeFaktor;
-	}
-	
-	public double getAnaerobeSchwelle() {
-		return athlet.getAnaerobeSchwelle();
-	}
-	
+			
 	public void leistungsButtonsVerfügbar() {
 		btnLeistungBearbeiten.setEnabled(true);
 		btnLeistungLöschen.setEnabled(true);

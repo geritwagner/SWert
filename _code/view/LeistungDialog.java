@@ -289,7 +289,7 @@ public class LeistungDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(actionBestaetigen()) {
-					mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
+					// mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
 					LeistungDialog.this.setVisible(false);
 					LeistungDialog.this.dispose();					
 				} else {
@@ -930,7 +930,7 @@ public class LeistungDialog extends JDialog {
 		}
 		
 		if(ok) {
-			long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthletenId();
+			long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthlet().getId();
 			int id_strecke = comboBoxStrecke.getSelectedIndex();
 			Leistung leistung = lController.neueLeistung(id_strecke,id_athlet,geschwindigkeit,bezeichnungString,datumString);
 			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);			

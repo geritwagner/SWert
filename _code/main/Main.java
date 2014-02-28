@@ -8,7 +8,6 @@ import view.MainFrame;
 import controller.AthletController;
 import controller.CSVController;
 import controller.DiagrammController;
-import controller.FunktionenController;
 import controller.LeistungController;
 import controller.StreckenController;
 
@@ -25,7 +24,6 @@ public class Main {
 	public static StreckenController streckenController;
 	public static CSVController csvController;
 	public static DiagrammController diagrammController;
-	public static FunktionenController funktionenController;
 	public static MainFrame mainFrame;
 	
 //----------------------- ÖFFENTLICHE METHODEN -------------
@@ -41,7 +39,6 @@ public class Main {
 					diagrammController = new DiagrammController();
 					leistungController = new LeistungController();
 					streckenController = new StreckenController();
-					funktionenController = new FunktionenController();
 					mainFrame = new MainFrame();
 					mainFrame.getContext().setVisible(true);
 				} catch (Exception e) {
