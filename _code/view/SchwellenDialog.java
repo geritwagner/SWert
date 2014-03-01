@@ -700,7 +700,7 @@ public class SchwellenDialog extends JDialog {
 		if(ok) {
 			long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthlet().getId();
 			int id_strecke = -1;
-			Leistung leistung = lController.neueLeistung(id_strecke,id_athlet,geschwindigkeit,bezeichnungString,datumString);
+			Leistung leistung = new Leistung(id_strecke,id_athlet,geschwindigkeit,bezeichnungString,datumString);
 			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);			
 		}
 		return ok;

@@ -41,7 +41,6 @@ public class Athlet implements AthletInterface{
 	}
 	
 	public boolean addLeistung(Leistung leistung) {
-		System.out.println(leistung.toString());
 		alleLeistungen.add(leistung);
 		return true;
 	}
@@ -95,7 +94,14 @@ public class Athlet implements AthletInterface{
 		assert i<3;
 		return LeistungAuswahlForSlopeFaktor;
 	}
-		
+	
+	public void resetLeistungAuswahlForSlopeFaktor(){
+		for (Leistung aktuelleLeistung: alleLeistungen){
+			aktuelleLeistung.setIsUsedForSlopeFaktor(false);
+		}
+	}
+
+	
 	public boolean isSetSlopeFaktor(){
 		if ( isValidSlopeFaktor(slopeFaktor) && isValidLeistungAuswahlForSlopeFaktor()){
 				return true;
@@ -242,11 +248,6 @@ public class Athlet implements AthletInterface{
 			}
 			distance = newGuess;
 		}
-		// TODO: nicht genau genug: irrelevant?
-		System.out.println(counter);
-		if (counter == maxIter) {
-			this.anaerobeSchwelle = -1;
-		}
 		double speed = timeToSearch / distance;		
 		this.anaerobeSchwelle = speed;
 	}
@@ -261,8 +262,7 @@ public class Athlet implements AthletInterface{
 	}
 	
 	private boolean isValidSlopeFaktor(double inputSlopeFaktor){
-		// TODO: Obergrenze ggf. geringer ansetzen
-		if (inputSlopeFaktor > 1 && inputSlopeFaktor < 500){
+		if (inputSlopeFaktor > 15 && inputSlopeFaktor < 200){
 			return true;
 		} else {
 			return false;

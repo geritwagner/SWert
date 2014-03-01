@@ -4,8 +4,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-import model.Leistung;
-
 /**
  * Controller zum Handlen aller Aktionen, die einzelne Leistungen betreffen
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
@@ -14,13 +12,6 @@ public class LeistungController {
 	
 
 //----------------------- ÖFFENTLICHE METHODEN -----------------------
-	public Leistung neueLeistung(int id_strecke, long id_athlet, double geschwindigkeit, String bezeichnung, String datum) {
-		Leistung neueLeistung = new Leistung(id_strecke, id_athlet, geschwindigkeit, bezeichnung, datum);
-		int strecke = (int) neueLeistung.getStrecke();
-		double sec = berechneZeit(strecke, geschwindigkeit);
-		neueLeistung.setZeit(parseSecInZeitstring(sec));
-		return neueLeistung;
-	}
 	
 	/**
 	 * Berechnen der Geschwindigkeit anhand Streckenlänge und formatiertem Zeitstring

@@ -116,7 +116,7 @@ public class CSVController {
     	int streckenId = sController.getStreckenIdByString(strecke);
     	String bezeichnung = leistung[2];
     	double geschwindigkeit = Double.parseDouble(leistung[3]);
-    	return leistungController.neueLeistung(streckenId, idAthlet, geschwindigkeit, bezeichnung, datum);
+    	return new Leistung(streckenId, idAthlet, geschwindigkeit, bezeichnung, datum);
     	
 	}
 	

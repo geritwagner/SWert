@@ -15,6 +15,7 @@ interface AthletInterface {
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung);
 	public void removeLeistungFromAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung);
 	public Leistung[] getLeistungAuswahlForSlopeFaktor();
+	public void resetLeistungAuswahlForSlopeFaktor();
 
 	public boolean isSetSlopeFaktor();
 	public String getSlopeFaktorStatus();

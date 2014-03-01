@@ -8,17 +8,17 @@ import controller.StreckenController;
  * Model-Klasse für das "Leistung"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-public class Leistung{
+public class Leistung implements LeistungInterface{
 	
 //----------------------- VARIABLEN -----------------------
-	private long id;
+	private long id_leistung;
 	private int id_strecke;
 	private long id_athlet;
-	private String zeit;
+	private double zeit;
 	private double geschwindigkeit;
 	private String bezeichnung;
 	private String datum;
-	private boolean berechnungSlopeFaktor;
+	private boolean selectedForCalculatingSlopeFaktor;
 
 	private StreckenController streckenController = Main.mainFrame.streckenController;
 	private LeistungController leistungController = Main.mainFrame.leistungController;
@@ -28,48 +28,18 @@ public class Leistung{
 		this.id_strecke = id_strecke;
 		this.id_athlet = id_athlet;
 		this.geschwindigkeit = geschwindigkeit;
+		this.zeit = leistungController.berechneZeit(getStrecke(), geschwindigkeit);
 		this.bezeichnung = bezeichnung;
-		this.datum = datum;		
+		this.datum = datum;	
+		this.selectedForCalculatingSlopeFaktor = false;
 	}
 
 //----------------------- ÖFFENTLICHE METHODEN -----------------------	
 	
-	/**
-	 * Auslesen der gegebenen Streckenlänge einer Strecke
-	 * @param leistung
-	 * @return: Double-Wert der Streckenlänge
-	 */
-	public double getStrecke() {
-		int streckenID = this.getId_strecke();
-		double geschwindigkeit = this.getGeschwindigkeit();
-		if(streckenID == -1) {
-			return leistungController.berechneStreckeAusGeschwindigkeit(geschwindigkeit);
-		} else {
-			return streckenController.getStreckenlaengeById(streckenID);
-		}
-	}
-	
-	public boolean equals(Leistung andereLeistung){
-		if (this.id_strecke 		== andereLeistung.getId_strecke() &&
-			this.id_athlet 			== andereLeistung.getId_athlet() &&
-			this.geschwindigkeit 	== andereLeistung.getGeschwindigkeit() &&
-			this.bezeichnung 		== andereLeistung.getBezeichnung() &&
-			this.datum 				== andereLeistung.getDatum()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-//----------------------- GETTER UND SETTER -----------------------
 	public long getId() {
-		return id;
+		return id_leistung;
 	}
 	
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	public int getId_strecke() {
 		return id_strecke;
 	}
@@ -77,29 +47,19 @@ public class Leistung{
 	public void setId_strecke(int id_strecke) {
 		this.id_strecke = id_strecke;
 	}
-
+	
 	public long getId_athlet() {
 		return id_athlet;
 	}
-
-	public void setId_athlet(long id_athlet) {
-		this.id_athlet = id_athlet;
-	}
-
-	public String getZeit() {
-		return zeit;
-	}
 	
-	public void setZeit(String zeit) {
-		this.zeit = zeit;
-	}
-	
-	public double getGeschwindigkeit() {
-		return geschwindigkeit;
-	}
-
-	public void setGeschwindigkeit(double geschwindigkeit) {
-		this.geschwindigkeit = geschwindigkeit;
+	public int getStrecke() {
+		int streckenID = this.getId_strecke();
+		double geschwindigkeit = this.getGeschwindigkeit();
+		if(streckenID == -1) {
+			return leistungController.berechneStreckeAusGeschwindigkeit(geschwindigkeit);
+		} else {
+			return streckenController.getStreckenlaengeById(streckenID);
+		}
 	}
 
 	public String getBezeichnung() {
@@ -119,14 +79,58 @@ public class Leistung{
 	}
 
 	public boolean isUsedForSlopeFaktor() {
-		return berechnungSlopeFaktor;
+		return selectedForCalculatingSlopeFaktor;
 	}
 
 	public void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor) {
-		this.berechnungSlopeFaktor = berechnungSlopeFaktor;
+		this.selectedForCalculatingSlopeFaktor = berechnungSlopeFaktor;
 	}
 
 	public String toString(){
-		return getId_strecke() + "; " + getStrecke() + ";" + getGeschwindigkeit() + ";" + getBezeichnung() + ";" + getDatum() + ";"; 
+		return getId_strecke() + "; " + getStrecke() + ";" + getGeschwindigkeit() + ";" + 
+				getBezeichnung() + ";" + getDatum() + ";" + ";" + getZeitString(); 
+	}
+	
+	public boolean equals(Leistung andereLeistung){
+		if (this.id_strecke 		== andereLeistung.getId_strecke() &&
+			this.id_athlet 			== andereLeistung.getId_athlet() &&
+			this.geschwindigkeit 	== andereLeistung.getGeschwindigkeit() &&
+			this.bezeichnung 		== andereLeistung.getBezeichnung() &&
+			this.datum 				== andereLeistung.getDatum()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	
+	public double getGeschwindigkeit() {
+		return geschwindigkeit;
+	}
+
+	public String getZeitString() {
+		return leistungController.parseSecInZeitstring(zeit);
+	}
+	
+	public double getZeit(){
+		return this.zeit;
+	}
+	
+
+	
+	public void setZeitFromString(String inputZeitString) {
+		this.zeit = leistungController.parseZeitInSec(inputZeitString);
+		this.geschwindigkeit = leistungController.berechneGeschwindigkeit(getStrecke(), inputZeitString);		
+	}
+
+	public void setZeit(double inputZeit) {
+		this.zeit = inputZeit;
+		this.geschwindigkeit = leistungController.berechneGeschwindigkeit(getStrecke(), getZeitString());		
+	}
+
+	public void setGeschwindigkeit(double inputGeschwindigkeit) {
+		this.geschwindigkeit = inputGeschwindigkeit;
+		this.zeit = leistungController.berechneZeit(getStrecke(), inputGeschwindigkeit);
 	}
 }

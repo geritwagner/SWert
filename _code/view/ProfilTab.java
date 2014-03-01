@@ -161,11 +161,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnLeistungskurve.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Diagramm_24x24.png")));
 		btnLeistungskurve.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {				
-				// TODO: nächste 3 Zeilen löschen und nur noch mit DiagammOeffnen() arbeiten
-				// LinkedList<Leistung> bestzeiten = funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
-				// mainFrame.diagrammController.addAthletBerechneteLeistungsKurve(athlet);
-				// mainFrame.diagrammController.addBestzeiten(athlet.getMoeglicheBestzeitenListe());
+			public void actionPerformed(ActionEvent arg0) {
 				mainFrame.diagrammController.DiagrammOeffnen();
 			}
 		});
@@ -513,6 +509,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		
 		Leistung leistungKurzeStrecke = getLeistungInZeile(kürzereStrecke);
 		Leistung leistungLangeStrecke = getLeistungInZeile(längereStrecke);
+
+		athlet.resetLeistungAuswahlForSlopeFaktor();
 		athlet.setLeistungToAuswahlForSlopeFaktor(leistungKurzeStrecke);
 		athlet.setLeistungToAuswahlForSlopeFaktor(leistungLangeStrecke);		
 	}
@@ -612,7 +610,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		Object[] daten = {leistung.getDatum(),
 						  streckenString,
 						  leistung.getBezeichnung(),
-						  leistung.getZeit(),
+						  leistung.getZeitString(),
 						  f.format(kmH),
 						  f.format(mS),
 						  leistungController.parseSecInMinutenstring(geschwindigkeit),
@@ -659,16 +657,16 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		int rowToDelete = leistungenTabelle.getSelectedRow();
 		Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
-		
-		System.out.println("rowToDelete" + rowToDelete);		
-		
+
 		model.removeRow(leistungenTabelle.convertRowIndexToModel(rowToDelete));	
 		
 		// TODO: umstrukturieren!!
 		// ausDialog: wird dann auf true gesetzt, wenn deleteLeistungDialog() vom LeistungDialog aufgerufen wird
 		if (!ausDialog) {
-			leistungsAuswahlBeiZeileLöschen();
+
+			//athlet.removeLeistungFromAuswahlForSlopeFaktor(leistungToRemove);
 			athlet.removeLeistung(leistungToRemove);
+			leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen();
 		}
 			
 		setLeistungUnselected();		
@@ -685,7 +683,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Schaltet eine automatische Auswahl ab, falls diese nicht möglich ist und
 	 * berechnet ansonsten die neuen Werte
 	 */
-	private void leistungsAuswahlBeiZeileLöschen() {
+	private void leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen() {
 		if (!automatischeAuswahlZulässig()) {
 			chckbxLeistungenAuswahl.setSelected(false);
 		} else {
@@ -712,11 +710,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		} 
 		
 		double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
-		if (anaerobeSchwelle == -1) {
-			JOptionPane.showMessageDialog(this, "Beim Schätzen der Aerob/Anaeroben Schwelle konnte der Wert nicht genau genug festgelegt werden. Der tatächliche Wert kann von dem angezeigten Ergebnis abweichen!"
-					, "Wert nicht genau genug",JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
 		
 		LeistungController l = new LeistungController();
 		textFieldSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
@@ -743,7 +736,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		int streckenId = streckenController.getStreckenIdByString(streckenlaenge);
 		String bezeichnung = (String) model.getValueAt(zeile, 2);
 		double geschwindigkeit = Double.parseDouble((String)model.getValueAt(zeile, 9));
-		Leistung leistung = leistungController.neueLeistung(streckenId, athlet.getId(), geschwindigkeit, bezeichnung, datum);
+		Leistung leistung = new Leistung(streckenId, athlet.getId(), geschwindigkeit, bezeichnung, datum);
 		return leistung;
 	}
 	
