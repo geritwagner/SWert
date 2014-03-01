@@ -53,7 +53,7 @@ public class SchwellenDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize(); 
 	
-	private final LeistungController lController = Main.leistungController;
+	private final LeistungController lController = Main.mainFrame.leistungController;
 	private MainFrame mainFrame = Main.mainFrame;
 	
 	private JRadioButton rdbtnStrecke;

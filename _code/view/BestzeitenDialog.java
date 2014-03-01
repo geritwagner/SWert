@@ -41,8 +41,8 @@ public class BestzeitenDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel = new JPanel();
 	private Dimension d = this.getToolkit().getScreenSize();
-	private LeistungController lController = Main.leistungController;
-	private StreckenController sController = Main.streckenController;
+	private LeistungController lController = Main.mainFrame.leistungController;
+	private StreckenController sController = Main.mainFrame.streckenController;
 	
 	private JTable trainingsTabelle;
 	private JTextField txtFieldZeit;

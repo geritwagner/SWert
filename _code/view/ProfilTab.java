@@ -45,8 +45,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private Athlet athlet;
 
 	private MainFrame mainFrame = Main.mainFrame;
-	private StreckenController streckenController = Main.streckenController;
-	private LeistungController leistungController = Main.leistungController;
+	private StreckenController streckenController = Main.mainFrame.streckenController;
+	private LeistungController leistungController = Main.mainFrame.leistungController;
 	
 	private JLabel lblAthletName;
 	private JButton btnBestzeiten;

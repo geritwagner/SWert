@@ -33,7 +33,7 @@ public class CSVController {
 	 */
 	public boolean lesen (String pfad) {	
 		sController = new StreckenController();
-		leistungController = Main.leistungController;
+		leistungController = Main.mainFrame.leistungController;
 		try{			
 		    CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
 		    

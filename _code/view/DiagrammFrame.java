@@ -142,7 +142,7 @@ public class DiagrammFrame extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				Main.diagrammController.DiagrammSchlieﬂen();
+				Main.mainFrame.diagrammController.DiagrammSchlieﬂen();
 			}
 		});
 		setBounds(100, 100, 700, 432);

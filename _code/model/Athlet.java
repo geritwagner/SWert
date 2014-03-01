@@ -18,7 +18,7 @@ public class Athlet implements AthletInterface{
 	private double anaerobeSchwelle;
 	private LinkedList<Leistung> alleLeistungen = new LinkedList<Leistung>();
 
-	private StreckenController streckenController = Main.streckenController;
+	private StreckenController streckenController = Main.mainFrame.streckenController;
 	
 //----------------------- KONSTRUKTOREN -----------------------
 	public Athlet(long id, String name) {
@@ -41,6 +41,7 @@ public class Athlet implements AthletInterface{
 	}
 	
 	public boolean addLeistung(Leistung leistung) {
+		System.out.println(leistung.toString());
 		alleLeistungen.add(leistung);
 		return true;
 	}

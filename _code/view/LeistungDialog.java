@@ -65,8 +65,8 @@ public class LeistungDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize();
 	private MainFrame mainFrame = Main.mainFrame;
-	private final LeistungController lController = Main.leistungController;
-	private final StreckenController sController = Main.streckenController;
+	private final LeistungController lController = Main.mainFrame.leistungController;
+	private final StreckenController sController = Main.mainFrame.streckenController;
 	
 	private JTextField textFieldBezeichnung;
 	private JLabel lblBezeichnungError;

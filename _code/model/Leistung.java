@@ -20,8 +20,8 @@ public class Leistung{
 	private String datum;
 	private boolean berechnungSlopeFaktor;
 
-	private StreckenController streckenController = Main.streckenController;
-	private LeistungController leistungController = Main.leistungController;
+	private StreckenController streckenController = Main.mainFrame.streckenController;
+	private LeistungController leistungController = Main.mainFrame.leistungController;
 	
 //----------------------- KONSTRUKTOREN -----------------------
 	public Leistung(int id_strecke, long id_athlet, double geschwindigkeit, String bezeichnung, String datum) {
@@ -126,4 +126,7 @@ public class Leistung{
 		this.berechnungSlopeFaktor = berechnungSlopeFaktor;
 	}
 
+	public String toString(){
+		return getId_strecke() + "; " + getStrecke() + ";" + getGeschwindigkeit() + ";" + getBezeichnung() + ";" + getDatum() + ";"; 
+	}
 }

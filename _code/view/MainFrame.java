@@ -30,12 +30,13 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import main.Main;
 import model.Athlet;
 import net.miginfocom.swing.MigLayout;
 import controller.AthletController;
 import controller.CSVController;
 import controller.DiagrammController;
+import controller.LeistungController;
+import controller.StreckenController;
 
 
 public class MainFrame {
@@ -43,11 +44,13 @@ public class MainFrame {
 	private JFrame mainFrame = new JFrame();
 	public JTabbedPane tabbedPane;
 	public LinkedList<ProfilTab> tabList = new LinkedList<ProfilTab>();
-	public DiagrammController diagrammController = Main.diagrammController;
-	private CSVController csvController = Main.csvController;
+	public DiagrammController diagrammController;
+	private CSVController csvController;
+	public LeistungController leistungController;
+	public StreckenController streckenController;
 	
 	private Dimension d = mainFrame.getToolkit().getScreenSize();
-	private AthletController athletcontroller = Main.athletController;
+	private AthletController athletcontroller;
 	private JMenuItem mntmAthletenprofilSchlieen;
 	private JMenu mnBearbeiten;
 	private JMenuItem mntmLeistungenBearbeiten;
@@ -59,13 +62,22 @@ public class MainFrame {
 	 * Create the application.
 	 */
 	public MainFrame() {
-		initialize();
+		initializeControllers();
+		initializeFrame();
 	}
 
+	public void initializeControllers() {
+		athletcontroller 	= new AthletController();
+		csvController 		= new CSVController();
+		diagrammController 	= new DiagrammController();
+		leistungController 	= new LeistungController();
+		streckenController 	= new StreckenController();
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {		
+	private void initializeFrame() {		
 		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/bilder/Logo_32x32.png")));
 		mainFrame.addWindowListener(new WindowAdapter() {
 			@Override
