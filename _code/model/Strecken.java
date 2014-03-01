@@ -20,9 +20,9 @@ public class Strecken {
 			5000,
 			10000,
 			15000,
-			21000,
+			21098,
 			25000,
-			42000};
+			42195};
 	
 	/*
 	 * Streckenlängen als Strings
