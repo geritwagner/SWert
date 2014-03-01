@@ -1,488 +1,478 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="controller.Einheitenumrechner" project="SWert 3.2" 
-    file="/SWert 3.2/_code/controller/Einheitenumrechner.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="189" width="165" x="131" y="30"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="2" language="java" name="controller.CSVController" project="SWert 3.2" 
-    file="/SWert 3.2/_code/controller/CSVController.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="297" width="318" x="336" y="30"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="3" language="java" name="controller.FunktionenController" project="SWert 3.2" 
-    file="/SWert 3.2/_code/controller/FunktionenController.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="142" x="694" y="30"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="4" language="java" name="controller.AthletController" project="SWert 3.2" 
-    file="/SWert 3.2/_code/controller/AthletController.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="171" width="172" x="876" y="30"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="5" language="java" name="controller.StreckenController" project="SWert 3.2" 
-    file="/SWert 3.2/_code/controller/StreckenController.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="662" y="732"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="6" language="java" name="controller.LeistungController" project="SWert 3.2" 
-    file="/SWert 3.2/_code/controller/LeistungController.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="228" y="550"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="7" language="java" name="controller.DiagrammController" project="SWert 3.2" 
-    file="/SWert 3.2/_code/controller/DiagrammController.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="207" width="263" x="1088" y="30"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="8" language="java" name="helper.IntegerComparator" project="SWert 3.2" 
-    file="/SWert 3.2/_code/helper/IntegerComparator.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="155" x="324" y="219"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="9" language="java" name="helper.DezimalDocument" project="SWert 3.2" 
-    file="/SWert 3.2/_code/helper/DezimalDocument.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="214" x="70" y="219"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="10" language="java" name="helper.TabelleLeistungsListener" project="SWert 3.2" 
-    file="/SWert 3.2/_code/helper/TabelleLeistungsListener.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="153" width="227" x="519" y="219"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="11" language="java" name="helper.IntegerDocument" project="SWert 3.2" 
-    file="/SWert 3.2/_code/helper/IntegerDocument.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="214" x="786" y="219"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="12" language="java" name="model.AthletTest" project="SWert 3.2" 
-    file="/SWert 3.2/_code/model/AthletTest.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="743" y="477"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="13" language="java" name="model.sameDistanceForSlopeFaktorException" project="SWert 3.2" 
-    file="/SWert 3.2/_code/model/sameDistanceForSlopeFaktorException.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="248" x="1343" y="300"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="14" language="java" name="model.Strecken" project="SWert 3.2" file="/SWert 3.2/_code/model/Strecken.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="171" width="194" x="1631" y="300"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="15" language="java" name="model.Leistung" project="SWert 3.2" file="/SWert 3.2/_code/model/Leistung.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="549" width="216" x="987" y="853"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="16" language="java" name="model.Athlet" project="SWert 3.2" file="/SWert 3.2/_code/model/Athlet.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="513" width="316" x="987" y="300"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="17" language="java" name="view.TrainingsbereichDialog" project="SWert 3.2" 
+  <class id="1" language="java" name="view.TrainingsbereichDialog" project="SWert 3.2" 
     file="/SWert 3.2/_code/view/TrainingsbereichDialog.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="218" y="1083"/>    
+    <position height="-1" width="-1" x="2489" y="1024"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="18" language="java" name="view.BestzeitenDialog" project="SWert 3.2" 
+  <class id="2" language="java" name="view.BestzeitenDialog" project="SWert 3.2" 
     file="/SWert 3.2/_code/view/BestzeitenDialog.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="315" width="168" x="1109" y="43"/>    
+    <position height="-1" width="-1" x="2472" y="1139"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="19" language="java" name="view.SchwellenDialog.IntegerDocumentListener" project="SWert 3.2" 
+  <class id="3" language="java" name="view.SchwellenDialog.IntegerDocumentListener" project="SWert 3.2" 
     file="/SWert 3.2/_code/view/SchwellenDialog.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="135" width="208" x="2582" y="1208"/>    
+    <position height="-1" width="-1" x="2505" y="764"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="20" language="java" name="view.DateiPfadOeffnen" project="SWert 3.2" 
+  <class id="4" language="java" name="view.DateiPfadOeffnen" project="SWert 3.2" 
     file="/SWert 3.2/_code/view/DateiPfadOeffnen.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="135" width="134" x="935" y="43"/>    
+    <position height="99" width="124" x="472" y="-88"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="21" language="java" name="view.MainFrame" project="SWert 3.2" file="/SWert 3.2/_code/view/MainFrame.java" 
+  <class id="5" language="java" name="view.MainFrame" project="SWert 3.2" file="/SWert 3.2/_code/view/MainFrame.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="531" width="226" x="2128" y="1208"/>    
+    <position height="-1" width="-1" x="1577" y="280"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="22" language="java" name="view.LeistungDialog" project="SWert 3.2" 
-    file="/SWert 3.2/_code/view/LeistungDialog.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="1125" width="268" x="1820" y="43"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="23" language="java" name="view.AthletDialog" project="SWert 3.2" 
-    file="/SWert 3.2/_code/view/AthletDialog.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="261" width="159" x="1317" y="43"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="24" language="java" name="view.ProfilTab" project="SWert 3.2" file="/SWert 3.2/_code/view/ProfilTab.java" 
+  <class id="6" language="java" name="model.Athlet" project="SWert 3.2" file="/SWert 3.2/_code/model/Athlet.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="1053" width="237" x="2128" y="43"/>    
+    <position height="-1" width="-1" x="841" y="715"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="25" language="java" name="view.SchwellenDialog" project="SWert 3.2" 
+  <class id="7" language="java" name="view.SchwellenDialog" project="SWert 3.2" 
     file="/SWert 3.2/_code/view/SchwellenDialog.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="855" width="271" x="2582" y="43"/>    
+    <position height="-1" width="-1" x="2472" y="904"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="26" language="java" name="view.DiagrammFrame" project="SWert 3.2" 
+  <class id="8" language="java" name="view.DiagrammFrame" project="SWert 3.2" 
     file="/SWert 3.2/_code/view/DiagrammFrame.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="405" width="264" x="1516" y="43"/>    
+    <position height="-1" width="-1" x="2498" y="77"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="27" language="java" name="view.DateiPfadSpeichern" project="SWert 3.2" 
+  <class id="9" language="java" name="view.DateiPfadSpeichern" project="SWert 3.2" 
     file="/SWert 3.2/_code/view/DateiPfadSpeichern.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="153" width="137" x="2405" y="43"/>    
+    <position height="-1" width="-1" x="2466" y="-38"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="28" language="java" name="view.BestzeitenDialog.IntegerDocumentListener" project="SWert 3.2" 
+  <class id="10" language="java" name="model.Strecken" project="SWert 3.2" file="/SWert 3.2/_code/model/Strecken.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="854" y="1588"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="model.Leistung" project="SWert 3.2" file="/SWert 3.2/_code/model/Leistung.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="843" y="1279"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="view.AthletDialog" project="SWert 3.2" 
+    file="/SWert 3.2/_code/view/AthletDialog.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="353" y="-44"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="view.LeistungDialog" project="SWert 3.2" 
+    file="/SWert 3.2/_code/view/LeistungDialog.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2441" y="1445"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="view.ProfilTab" project="SWert 3.2" file="/SWert 3.2/_code/view/ProfilTab.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2517" y="417"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="view.BestzeitenDialog.IntegerDocumentListener" project="SWert 3.2" 
     file="/SWert 3.2/_code/view/BestzeitenDialog.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="135" width="208" x="1109" y="1208"/>    
+    <position height="-1" width="-1" x="2504" y="1262"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
+  <class id="16" language="java" name="helper.IntegerComparator" project="SWert 3.2" 
+    file="/SWert 3.2/_code/helper/IntegerComparator.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="728" y="402"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="17" language="java" name="helper.DezimalDocument" project="SWert 3.2" 
+    file="/SWert 3.2/_code/helper/DezimalDocument.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="513" y="92"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="18" language="java" name="helper.TabelleLeistungsListener" project="SWert 3.2" 
+    file="/SWert 3.2/_code/helper/TabelleLeistungsListener.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2093" y="281"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="19" language="java" name="controller.Einheitenumrechner" project="SWert 3.2" 
+    file="/SWert 3.2/_code/controller/Einheitenumrechner.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="717" y="209"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="20" language="java" name="controller.CSVController" project="SWert 3.2" 
+    file="/SWert 3.2/_code/controller/CSVController.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1715" y="749"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="21" language="java" name="helper.IntegerDocument" project="SWert 3.2" 
+    file="/SWert 3.2/_code/helper/IntegerDocument.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="817" y="-12"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="22" language="java" name="controller.AthletController" project="SWert 3.2" 
+    file="/SWert 3.2/_code/controller/AthletController.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1242" y="279"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="23" language="java" name="controller.StreckenController" project="SWert 3.2" 
+    file="/SWert 3.2/_code/controller/StreckenController.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1569" y="1627"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="24" language="java" name="controller.LeistungController" project="SWert 3.2" 
+    file="/SWert 3.2/_code/controller/LeistungController.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1391" y="1063"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="25" language="java" name="controller.DiagrammController" project="SWert 3.2" 
+    file="/SWert 3.2/_code/controller/DiagrammController.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2113" y="76"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <association id="26">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="27" name="csvController"/>      
+      <multiplicity id="28" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="20" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="29">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="30" name="sController"/>      
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="30" name="athlet"/>      
       <multiplicity id="31" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="32">    
-    <end type="SOURCE" refId="24" navigable="false">      
+    <end type="SOURCE" refId="14" navigable="false">      
       <attribute id="33" name="streckenController"/>      
       <multiplicity id="34" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="35">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="36" name="sController"/>      
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="36" name="mainFrame"/>      
       <multiplicity id="37" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="38">    
-    <end type="SOURCE" refId="18" navigable="false">      
+    <end type="SOURCE" refId="2" navigable="false">      
       <attribute id="39" name="lController"/>      
       <multiplicity id="40" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="41">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="42" name="profilTab"/>      
-      <multiplicity id="43" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="24" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <association id="41">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="42" name="diagrammController"/>      
+      <multiplicity id="43" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="25" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="44">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="45" name="mainFrame"/>      
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="45" name="sController"/>      
       <multiplicity id="46" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
+    <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="47">    
-    <end type="SOURCE" refId="21" navigable="false">      
-      <attribute id="48" name="diagrammController"/>      
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="48" name="streckenController"/>      
       <multiplicity id="49" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="50">    
-    <end type="SOURCE" refId="27" navigable="false">      
-      <attribute id="51" name="mainFrame"/>      
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="51" name="leistungController"/>      
       <multiplicity id="52" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
+    <end type="TARGET" refId="24" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="53">    
-    <end type="SOURCE" refId="21" navigable="false">      
-      <attribute id="54" name="csvController"/>      
-      <multiplicity id="55" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="56">    
-    <end type="SOURCE" refId="24" navigable="false">      
-      <attribute id="57" name="athlet"/>      
-      <multiplicity id="58" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="59">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="60" name="strecken"/>      
-      <multiplicity id="61" minimum="0" maximum="1"/>    
+  <nesting id="53">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="3"/>  
+  </nesting>  
+  <association id="54">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="55" name="profilTab"/>      
+      <multiplicity id="56" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="14" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="62">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="63" name="streckenController"/>      
-      <multiplicity id="64" minimum="0" maximum="1"/>    
+  <association id="57">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="58" name="tabList"/>      
+      <multiplicity id="59" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="14" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="65">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="19"/>  
+  <nesting id="60">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="15"/>  
   </nesting>  
-  <association id="66">    
-    <end type="SOURCE" refId="21" navigable="false">      
-      <attribute id="67" name="athletcontroller"/>      
-      <multiplicity id="68" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="69">    
-    <end type="SOURCE" refId="25" navigable="false">      
-      <attribute id="70" name="lController"/>      
-      <multiplicity id="71" minimum="0" maximum="1"/>    
+  <association id="61">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="62" name="athlet"/>      
+      <multiplicity id="63" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="72">    
-    <end type="SOURCE" refId="21" navigable="false">      
-      <attribute id="73" name="tabList"/>      
-      <multiplicity id="74" minimum="0" maximum="2147483647"/>    
+  <association id="64">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="65" name="leistungController"/>      
+      <multiplicity id="66" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="24" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="75">    
-    <end type="SOURCE" refId="25" navigable="false">      
-      <attribute id="76" name="mainFrame"/>      
-      <multiplicity id="77" minimum="0" maximum="1"/>    
+  <association id="67">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="68" name="sController"/>      
+      <multiplicity id="69" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
+    <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="78">    
-    <end type="SOURCE" refId="24" navigable="false">      
-      <attribute id="79" name="leistungController"/>      
-      <multiplicity id="80" minimum="0" maximum="1"/>    
+  <association id="70">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="71" name="lController"/>      
+      <multiplicity id="72" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
+    <end type="TARGET" refId="24" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="81">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="82" name="mainFrame"/>      
-      <multiplicity id="83" minimum="0" maximum="1"/>    
+  <association id="73">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="74" name="l"/>      
+      <multiplicity id="75" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
+    <end type="TARGET" refId="24" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="84">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="85" name="l"/>      
-      <multiplicity id="86" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="87">    
-    <end type="SOURCE" refId="15" navigable="false">      
-      <attribute id="88" name="leistungController"/>      
-      <multiplicity id="89" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="90">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="91" name="leistungController"/>      
-      <multiplicity id="92" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="93">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="94" name="alleLeistungen"/>      
-      <multiplicity id="95" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="96">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="97" name="sController"/>      
-      <multiplicity id="98" minimum="0" maximum="1"/>    
+  <association id="76">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="77" name="mainFrame"/>      
+      <multiplicity id="78" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="99">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="28"/>  
-  </nesting>  
+  <association id="79">    
+    <bendpoint x="1982" y="-37"/>    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="80" name="mainFrame"/>      
+      <multiplicity id="81" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="82">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="83" name="athletcontroller"/>      
+      <multiplicity id="84" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="22" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="85">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="86" name="strecken"/>      
+      <multiplicity id="87" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="88">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="89" name="alleLeistungen"/>      
+      <multiplicity id="90" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="91">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="92" name="leistungController"/>      
+      <multiplicity id="93" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="94">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="95" name="streckenController"/>      
+      <multiplicity id="96" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="23" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="97">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="98" name="lController"/>      
+      <multiplicity id="99" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <association id="100">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="101" name="athlet"/>      
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="101" name="mainFrame"/>      
       <multiplicity id="102" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="103">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="104" name="diagramm"/>      
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="104" name="sController"/>      
       <multiplicity id="105" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="26" navigable="true"/>    
+    <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="106">    
-    <end type="SOURCE" refId="24" navigable="false">      
-      <attribute id="107" name="mainFrame"/>      
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="107" name="streckenController"/>      
       <multiplicity id="108" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
+    <end type="TARGET" refId="23" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="109">    
-    <end type="SOURCE" refId="15" navigable="false">      
-      <attribute id="110" name="streckenController"/>      
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="110" name="mainFrame"/>      
       <multiplicity id="111" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="112">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="113" name="lController"/>      
+    <end type="SOURCE" refId="25" navigable="false">      
+      <attribute id="113" name="diagramm"/>      
       <multiplicity id="114" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="115">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="116" name="leistungController"/>      
+      <multiplicity id="117" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="24" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
