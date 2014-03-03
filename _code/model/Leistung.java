@@ -24,11 +24,12 @@ public class Leistung implements LeistungInterface{
 	private LeistungController leistungController = Main.mainFrame.leistungController;
 	
 //----------------------- KONSTRUKTOREN -----------------------
-	public Leistung(int id_strecke, long id_athlet, double geschwindigkeit, String bezeichnung, String datum) {
+	public Leistung(int id_strecke, long id_athlet, double zeit, String bezeichnung, String datum) {
 		this.id_strecke = id_strecke;
 		this.id_athlet = id_athlet;
-		this.geschwindigkeit = geschwindigkeit;
-		this.zeit = leistungController.berechneZeit(getStrecke(), geschwindigkeit);
+		this.zeit = zeit;
+		String zeitString = leistungController.parseSecInZeitstring(zeit);
+		this.geschwindigkeit = leistungController.berechneGeschwindigkeit(getStrecke(), zeitString);
 		this.bezeichnung = bezeichnung;
 		this.datum = datum;	
 		this.selectedForCalculatingSlopeFaktor = false;

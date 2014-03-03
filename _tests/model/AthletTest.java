@@ -62,16 +62,16 @@ public class AthletTest {
 	public void testCalculations() {
 		testAthlet = new Athlet(12, "Tester");
 
-		Leistung leistung1Langsam = new Leistung(1, 12, 183.125, "800m-Leistung (langsam)", "01-01-2014");
-		Leistung leistung2Langsam = new Leistung(7, 12, 261.53000000000003, "10.00m-Leistung (langsam)", "01-01-2014");
+		Leistung leistung1Langsam = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
+		Leistung leistung2Langsam = new Leistung(7, 12, 2615.3, "10.00m-Leistung (langsam)", "01-01-2014");
 		double schwelleLangsam = 270.4;
 		
-		Leistung leistung1Mittel = new Leistung(1, 12, 165.25, "800m-Leistung (mittel)", "01-01-2014");
-		Leistung leistung2Mittel= new Leistung(7, 12, 218.6, "10.00m-Leistung (mittel)", "01-01-2014");
+		Leistung leistung1Mittel = new Leistung(1, 12, 132.2, "800m-Leistung (mittel)", "01-01-2014");
+		Leistung leistung2Mittel= new Leistung(7, 12, 2186.4, "10.00m-Leistung (mittel)", "01-01-2014");
 		double schwelleMittel = 228.3;
 		
-		Leistung leistung1Schnell = new Leistung(1, 12, 137, "800m-Leistung (schnell)", "01-01-2014");
-		Leistung leistung2Schnell= new Leistung(7, 12, 171.5 , "10.00m-Leistung (schnell)", "01-01-2014");
+		Leistung leistung1Schnell = new Leistung(1, 12, 109.6, "800m-Leistung (schnell)", "01-01-2014");
+		Leistung leistung2Schnell= new Leistung(7, 12, 1714.7 , "10.00m-Leistung (schnell)", "01-01-2014");
 		double schwelleSchnell = 180.9;
 		
 		// bestzeiten und calculateSpeed testen:
@@ -82,57 +82,56 @@ public class AthletTest {
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Langsam);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Langsam);
 		try {
-			System.out.println("Ab hier");
 			assertEquals(schwelleLangsam, testAthlet.getAnaerobeSchwelle(), 0.1);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			assert false;
 		}
-//		// TODO: test bestzeit und calculateSpeed
-//		testAthlet.removeLeistung(leistung1Langsam);
-//		testAthlet.removeLeistung(leistung2Langsam);
-//		
-//		// test normal profile
-//		testAthlet.addLeistung(leistung1Mittel);
-//		testAthlet.addLeistung(leistung2Mittel);
-//		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Mittel);
-//		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Mittel);
-//		try {
-//			assertEquals(schwelleMittel, testAthlet.getAnaerobeSchwelle(), 0.1);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//			assert false;
-//		}
-//		// TODO: test bestzeit und calculateSpeed
-//		testAthlet.removeLeistung(leistung1Mittel);
-//		testAthlet.removeLeistung(leistung2Mittel);
-//		
-//		// test fast profile
-//		testAthlet.addLeistung(leistung1Schnell);
-//		testAthlet.addLeistung(leistung2Schnell);
-//		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Schnell);
-//		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Schnell);
-//		try {
-//			assertEquals(schwelleSchnell, testAthlet.getAnaerobeSchwelle(), 0.1);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//			assert false;
-//		}
-//		LinkedList<Leistung> bestzeiten;
-//		try {
-//			bestzeiten = testAthlet.getMoeglicheBestzeitenListe ();
-//			assertEquals(bestzeiten.get(5).getZeit(), 465.1, 0.1);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			assert false;
-//		}
-//		try {
-//			assertEquals(testAthlet.calculateSpeed(3000), 465.1, 0.1);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			assert false;
-//		}
-//		testAthlet.removeLeistung(leistung1Schnell);
-//		testAthlet.removeLeistung(leistung2Schnell);	
+		// TODO: test bestzeit und calculateSpeed/Time/etc.
+		testAthlet.removeLeistung(leistung1Langsam);
+		testAthlet.removeLeistung(leistung2Langsam);
+		
+		// test normal profile
+		testAthlet.addLeistung(leistung1Mittel);
+		testAthlet.addLeistung(leistung2Mittel);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Mittel);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Mittel);
+		try {
+			assertEquals(schwelleMittel, testAthlet.getAnaerobeSchwelle(), 0.1);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			assert false;
+		}
+		// TODO: test bestzeit und calculateSpeed
+		testAthlet.removeLeistung(leistung1Mittel);
+		testAthlet.removeLeistung(leistung2Mittel);
+		
+		// test fast profile
+		testAthlet.addLeistung(leistung1Schnell);
+		testAthlet.addLeistung(leistung2Schnell);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Schnell);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Schnell);
+		try {
+			assertEquals(schwelleSchnell, testAthlet.getAnaerobeSchwelle(), 0.1);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			assert false;
+		}
+		LinkedList<Leistung> bestzeiten;
+		try {
+			bestzeiten = testAthlet.getMoeglicheBestzeitenListe ();
+			assertEquals(465.1, bestzeiten.get(5).getZeit(), 0.1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			assert false;
+		}
+		try {
+			assertEquals(465.1, testAthlet.calculateTime(3000.0), 0.1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			assert false;
+		}
+		testAthlet.removeLeistung(leistung1Schnell);
+		testAthlet.removeLeistung(leistung2Schnell);	
 	}
 }
