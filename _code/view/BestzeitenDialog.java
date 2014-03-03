@@ -203,9 +203,15 @@ public class BestzeitenDialog extends JDialog {
     			return;
     		}
 
-    		double bestzeit = athlet.calculateSpeed(strecke);
-			String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
-			txtFieldZeit.setText(bestzeitString);
+    		double bestzeit;
+			try {
+				bestzeit = athlet.calculateSpeedSecondsPerKm(strecke);
+				String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
+				txtFieldZeit.setText(bestzeitString);
+			} catch (Exception e) {
+				e.printStackTrace();
+				// Wenn der Slope-Faktor nicht gesetzt ist sollte man den Dialog nicht öffnen können.
+			}
     	}
 	}
 	
@@ -221,9 +227,15 @@ public class BestzeitenDialog extends JDialog {
 		for (int i = 0; i < streckenAnzahl; i++) {
 			double streckenLänge = sController.getStreckenlaengeById(i);
 			data[i][0] = sController.getStreckenlaengeStringById(i);
-			double bestzeit = athlet.calculateSpeed(streckenLänge);
-			String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
-			data[i][1] = bestzeitString;			
+			double bestzeit;
+			try {
+				bestzeit = athlet.calculateSpeedSecondsPerKm(streckenLänge);
+				String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
+				data[i][1] = bestzeitString;			
+			} catch (Exception e) {
+				e.printStackTrace();
+				// Wenn der Slope-Faktor nicht gesetzt ist sollte man den Dialog nicht öffnen können.
+			}
 		}
 		return data;
 	}

@@ -57,7 +57,12 @@ public class DiagrammController {
 			// TODO: statt getLeistungen müssten vermutlich die 2 Punkte, auf deren Grundlage die Schwelle
 			// berechnet wird, zurückgegeben werden...
 			// addBestzeiten(tab.getAthlet().getLeistungen());
-			addBestzeiten(tab.getAthlet().getMoeglicheBestzeitenListe());
+			try {
+				addBestzeiten(tab.getAthlet().getMoeglicheBestzeitenListe());
+			} catch (Exception e) {
+				e.printStackTrace();
+				// Bestzeiten können nur für Athleten berechnet werden, bei denen der Slope-Faktor bekannt ist.
+			}
 		}
 ;	}
 	

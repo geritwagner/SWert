@@ -137,13 +137,14 @@ public class CSVController {
 	 * @param writer
 	 * @param tab: Tab von dem die Leistungen geschrieben werden sollen
 	 */
+	// TODO: besser: param: Leistungen<>
 	private void schreibeLeistungen (CSVWriter writer, ProfilTab tab) {
 		for (int i = 0; i < tab.getZeilenAnzahl(); i++) {
 			String[] eingaben = new String[4];
-			eingaben[0] = tab.getValueAt(i, 0);
-			eingaben[1] = tab.getValueAt(i, 1);
-			eingaben[2] = tab.getValueAt(i, 2);
-			eingaben[3] = tab.getValueAt(i, 9);
+			eingaben[0] = tab.getStringAt(i, 0);
+			eingaben[1] = tab.getStringAt(i, 1);
+			eingaben[2] = tab.getStringAt(i, 2);
+			eingaben[3] = tab.getStringAt(i, 9);
 			writer.writeNext(eingaben);
 		} 
 	}

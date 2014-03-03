@@ -70,21 +70,46 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private boolean ausDialog = false;
 	private JButton btnTabSchlieen;
 	
-	//----------------------- KONSTRUKTOR -----------------------
+	//----------------------- für presenter/controller -----------------------
+
 	
+	//----------------------- view logik -----------------------
+
 	public ProfilTab(Athlet athlet) {
+		// TODO: Athlet nicht speichern - nur darstellen!
 		this.athlet = athlet;
 		this.speicherPfad = null;
-		initLayout();
-		initJTable();	
+		initLayout(athlet.getName());
+		setAnalysenVerfügbar(false);
+		initJTable();
+		setBearbeitenStatus(false);
 	}
 	
+	public void bestzeitenButtonPressed(){
+		new BestzeitenDialog(athlet);
+		// TODO: comment?
+		// funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
+	}
+	
+	public void trainingsBereichButtonPressed(){
+		Double schwelle;
+		try {
+			schwelle = athlet.getAnaerobeSchwelle();
+			new TrainingsbereichDialog(schwelle);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Für die Berechnung der Trainingsbereiche müssen zwei Leistungen für die Berechnung" +
+					"des Slope-Faktors ausgewählt werden."
+					, "Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	//----------------------- view darstellung -----------------------
+
 	/**
 	 * Layout des Athleten-Profils erstellen
 	 */
-	private void initLayout() {
-		mainFrame.leistungBearbeitenMenüAusgrauen();
-		mainFrame.leistungLöschenMenüAusgrauen();
+	private void initLayout(String Athletenname) {
+		
 		setLayout(new MigLayout("", "[grow]", "[grow][][][grow]"));
 		
 		JSplitPane splitPane = new JSplitPane();
@@ -108,7 +133,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		});
 		panel.add(btnTabSchlieen, "cell 4 0,alignx right");
 		
-		lblAthletName = new JLabel("<html><u>"+athlet.getName()+"</u></<html>");
+		lblAthletName = new JLabel("<html><u>"+Athletenname+"</u></<html>");
 		lblAthletName.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panel.add(lblAthletName, "cell 0 0");
 		
@@ -138,12 +163,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnBestzeiten.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new BestzeitenDialog(athlet);
-				// funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
-				
+				bestzeitenButtonPressed();				
 			}
 		});
-		btnBestzeiten.setEnabled(false);
 		panel.add(btnBestzeiten, "cell 0 5,alignx right");
 		
 		btnTrainingsbereich = new JButton("Trainingsbereiche");
@@ -151,10 +173,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnTrainingsbereich.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new TrainingsbereichDialog(athlet.getAnaerobeSchwelle());
+				trainingsBereichButtonPressed();
 			}
 		});
-		btnTrainingsbereich.setEnabled(false);
 		panel.add(btnTrainingsbereich, "cell 1 5");
 		
 		btnLeistungskurve = new JButton("Leistungskurve als Grafik");
@@ -165,7 +186,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 				mainFrame.diagrammController.DiagrammOeffnen();
 			}
 		});
-		btnLeistungskurve.setEnabled(false);
 		panel.add(btnLeistungskurve, "cell 2 5,alignx left");
 
 		scrollPane = new JScrollPane();
@@ -187,10 +207,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				leistungenTabelle.getSelectionModel().clearSelection();
-				mainFrame.leistungBearbeitenMenüAusgrauen();
-				mainFrame.leistungLöschenMenüAusgrauen();
-				btnLeistungBearbeiten.setEnabled(false);
-				btnLeistungLöschen.setEnabled(false);
+				setBearbeitenStatus(false);
 				LeistungDialog dialog = new LeistungDialog();		
 				dialog.setVisible(true);
 			}
@@ -205,7 +222,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 				leistungBearbeiten();
 			}
 		});
-		btnLeistungBearbeiten.setEnabled(false);
 		
 		btnLeistungLöschen = new JButton("Leistung l\u00F6schen");
 		btnLeistungLöschen.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/LeistungLoeschen_24x24.png")));
@@ -216,12 +232,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 				deleteZeileAction();
 			}
 		});
-		btnLeistungLöschen.setEnabled(false);
 	}
-	
-	
-	//----------------------- JTABLE METHODEN -----------------------
-	
+		
 	/**
 	 * eigentliche JTable erzeugen
 	 * @param leistungenTabelle
@@ -308,6 +320,115 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		return leistungenTabelle;
 	}
 	
+	public void setBearbeitenStatus(boolean editable){
+		if (editable){
+			btnLeistungBearbeiten.setEnabled(true);
+			btnLeistungLöschen.setEnabled(true);
+	        mainFrame.leistungBearbeitenMenüVerfügbar();
+	        mainFrame.leistungLöschenMenüVerfügbar();
+		} else {
+			mainFrame.leistungBearbeitenMenüAusgrauen();
+			mainFrame.leistungLöschenMenüAusgrauen();
+			btnLeistungBearbeiten.setEnabled(false);
+			btnLeistungLöschen.setEnabled(false);
+		}
+	}
+	
+	public void setAnalysenVerfügbar(boolean AnalyseVerfügbar){
+		if(AnalyseVerfügbar){
+			btnBestzeiten.setEnabled(true);
+			btnLeistungskurve.setEnabled(true);
+			btnTrainingsbereich.setEnabled(true);										
+		} else {
+			btnBestzeiten.setEnabled(false);
+			btnLeistungskurve.setEnabled(false);
+			btnTrainingsbereich.setEnabled(false);										
+		}
+	}
+	
+	/**
+	 * Schließt das Profil-Tab
+	 * @return art
+	 */
+	public void tabSchließen() {
+		setBearbeitenStatus(false);
+        int i = mainFrame.tabbedPane.getSelectedIndex();
+        int art = -1;
+        if (i != -1) {
+        	if (gespeichert) {
+        		mainFrame.tabbedPane.remove(i); 
+        		mainFrame.tabList.remove(i);
+        	} else {
+        		art = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
+        		if (art == 0) {
+        			mainFrame.speichern();
+        			mainFrame.tabbedPane.remove(i); 
+            		mainFrame.tabList.remove(i);
+        		} else if (art == 1) {
+        			mainFrame.tabbedPane.remove(i); 
+            		mainFrame.tabList.remove(i);
+        		}
+        	}
+        }
+	}
+	
+	/**
+	 * Visuelle Anzeige im Tab, falls etwas im Profil geändert wurde
+	 */
+	public void setSpeicherStatus (boolean gespeichert) {
+		this.gespeichert = gespeichert;
+		int tabStelle = mainFrame.tabbedPane.getSelectedIndex();
+		if (gespeichert) {
+			mainFrame.tabbedPane.setTitleAt(tabStelle, athlet.getName());
+		} else {
+			mainFrame.tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
+		}
+	}
+	
+	/**
+	 *  Gibt die Auswahl der Leistungen für die Berechnung des Slope-Faktors gem. der Checkboxen zurück.
+	 */	
+	public Leistung[] getAusgewählteLeistungenForSlopeFaktorFromCheckbox() {
+		int zeilenAnzahl = leistungenTabelle.getRowCount();
+		int spalte = booleanSpalte;
+		Leistung[] ausgewählteLeistungen = new Leistung[2];
+		int counter = 0;
+		for (int i = 0; i < zeilenAnzahl; i++) {
+			if (true == getBooleanAt(i, spalte) && counter < 2){
+				ausgewählteLeistungen[counter] = getLeistungInZeile(i);
+				counter++;
+			} 
+		}
+		return ausgewählteLeistungen;
+	}
+
+	
+	
+	
+	
+	
+	// view bis hier hin überprüft	
+	// TODO: ab hier sortieren:	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Methodenaufrufe, falls Änderungen in Tabelle vorgenommen werden
 	 */
@@ -336,7 +457,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
     }
 	
 	/**
-	 * Boolean umschalten, falls in der Tabelle etwas geändert wurde
+	 * Boolean umschalten, falls Checkboxen der Tabelle geändert wurden
 	 */
 	private void aktualisiereSpeicherStatus(int spalte) {         
 		if (spalte != booleanSpalte) {
@@ -345,27 +466,12 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 	
 	/**
-	 * Visuelle Anzeige im Tab, falls etwas im Profil geändert wurde
-	 */
-	public void setSpeicherStatus (boolean gespeichert) {
-		this.gespeichert = gespeichert;
-		int tabStelle = mainFrame.tabbedPane.getSelectedIndex();
-		if (gespeichert) {
-			mainFrame.tabbedPane.setTitleAt(tabStelle, athlet.getName());
-		} else {
-			mainFrame.tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
-		}
-	}
-	
-	/**
 	 * Sobald 2 Checkboxen ausgewählt sind, wird das Auswählen einer dritten wieder rückgängig gemacht
 	 */
 	private void uncheckAutoAuswahl(int spalte) {
-		// TODO: wird 2x aufgerufen, wenn Leistung eingefügt wird?!??!
         if (!verändert && spalte == booleanSpalte && !leistungenAuswahlCheck) {
         	verändert = true;
         	chckbxLeistungenAuswahl.setSelected(false);
-        	System.out.println("Here");
         	verändert = false;        	
         } 
  	}
@@ -375,9 +481,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 */	
 	private void berechneWerte() {
         if (!chckbxLeistungenAuswahl.isSelected()) {  
-        	setLeistungArray();
-        	if (tabelleAuswahlRichtig()){
-            	werteBerechnen();        		
+    		if (tabelleAuswahlRichtig()){
+    			athlet.resetLeistungAuswahlForSlopeFaktor();
+        		athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[0]);
+               	athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[1]);
+    			werteBerechnen();        		
         	}
         }
 	}
@@ -401,44 +509,15 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 	
 	/**
-	 * Schließt das Profil-Tab
-	 * @return art
-	 */
-	public int tabSchließen() {
-		mainFrame.leistungBearbeitenMenüAusgrauen();
-    	mainFrame.leistungLöschenMenüAusgrauen();
-        int i = mainFrame.tabbedPane.getSelectedIndex();
-        int art = -1;
-        if (i != -1) {
-        	if (gespeichert) {
-        		mainFrame.tabbedPane.remove(i); 
-        		mainFrame.tabList.remove(i);
-        	} else {
-        		art = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
-        		if (art == 0) {
-        			mainFrame.speichern();
-        			mainFrame.tabbedPane.remove(i); 
-            		mainFrame.tabList.remove(i);
-        		} else if (art == 1) {
-        			mainFrame.tabbedPane.remove(i); 
-            		mainFrame.tabList.remove(i);
-        		}
-        	}
-        }
-        return art;
-	}
-	
-	/**
 	 * Prüft, ob mehr als 2 Haken in die letzte Spalte gesetzt werden wollen
 	 */	
 	public boolean tabelleAuswahlZulässig() {
 		
 		int zeilenAnzahl = leistungenTabelle.getRowCount();
 		int zähler = 0;
-		int spalte = booleanSpalte;		
 		
 		for (int i = 0; i < zeilenAnzahl; i++) {
-			if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==true){
+			if (true == getBooleanAt(i, booleanSpalte)){
 				zähler++;
 			}
 			if (zähler >= 3) {
@@ -455,10 +534,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		try{
 			int zeilenAnzahl = leistungenTabelle.getRowCount();
 			int zähler = 0;
-			int spalte = booleanSpalte;		
 			
 			for (int i = 0; i < zeilenAnzahl; i++) {
-				if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==true){
+				if (true == getBooleanAt(i, booleanSpalte)){
 					zähler++;
 				}
 			}
@@ -473,35 +551,13 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 	
 	/**
-	 * Gibt ein Leistungsarray mit den beiden ausgewählten Leistungen zurück
-	 */	
-	public void setLeistungArray() {
-		int zeilenAnzahl = leistungenTabelle.getRowCount();
-		int spalte = booleanSpalte;		
-		
-		// remove
-		for (int i = 0; i < zeilenAnzahl; i++) {
-			if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==false){
-				athlet.removeLeistungFromAuswahlForSlopeFaktor(getLeistungInZeile(i));
-			}
-		}
-		
-		// add
-		for (int i = 0; i < zeilenAnzahl; i++) {
-			if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==true){
-				athlet.setLeistungToAuswahlForSlopeFaktor(getLeistungInZeile(i));
-			} 
-		}
-	}
-	
-	/**
-	 * Gibt ein Leistungsarray mit den beiden besten Leistungen zurück
+	 * Wählt die Leistungen über die kürzeste und längste Distanz für die Berechnung des Slope-Faktors aus.
 	 */	
 	public void setLeistungAutomatisch() {		
 		int kürzereStrecke = 0;
 		int längereStrecke = leistungenTabelle.getRowCount()-1;
 
-		tabelleAuswahlAufheben();		
+		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben();		
 		automatischeVerarbeitung = true;
 		leistungenTabelle.setValueAt(true, kürzereStrecke, booleanSpalte);
 		leistungenTabelle.setValueAt(true, längereStrecke, booleanSpalte);
@@ -518,12 +574,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	/**
 	 * Hebt die Auswahl auf
 	 */	
-	public void tabelleAuswahlAufheben() {
-		int zeilenAnzahl = leistungenTabelle.getRowCount();		
-		int spalte = booleanSpalte;			
+	public void tabelleCheckboxenFürSlopeFaktorAuswahlAufheben() {
+		int zeilenAnzahl = leistungenTabelle.getRowCount();
 		for (int i = 0; i < zeilenAnzahl; i++) {
-			if ((boolean)(leistungenTabelle.getValueAt(i, spalte))==true){
-				leistungenTabelle.setValueAt(false, i, spalte);
+			if (true == getBooleanAt(i, booleanSpalte)){
+				leistungenTabelle.setValueAt(false, i, booleanSpalte);
 			}
 		}		
 	}
@@ -532,16 +587,19 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Prüft, ob die Auswahl richtig ist und gibt entsprechend eine Meldung zurück oder berechnet die Werte
 	 */
 	public void checkboxLeistungenAuswahlprüfen() {		
+		// TODO: refactor: check or calculate!
 		if (chckbxLeistungenAuswahl.isSelected()) {
         	if (!automatischeAuswahlZulässig()) {
 				JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
 						, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
 				chckbxLeistungenAuswahl.setSelected(false);
         	} else {
+        		// TODO: Unterschied?: leistungenAuswahlCheck, chckbxLeistungenAuswahl.isSelected(), automatischeVerarbeitung        		
         		leistungenAuswahlCheck = true;
-        		tabelleAuswahlAufheben(); 
+        		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben(); 
         		leistungenAuswahlCheck = false;
         		setLeistungAutomatisch();
+        		chckbxLeistungenAuswahl.setSelected(true);
         		werteBerechnen();
         	}
     	}
@@ -560,11 +618,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		
 		if (zeilenAnzahl>1) {
 			for (int i = 0; i < zeilenAnzahl-1; i++) {
-				String zahl1String = String.valueOf(leistungenTabelle.getValueAt(i, streckenIdSpalte));
-				int zahl1 = Integer.parseInt(zahl1String);				
+				int zahl1 = getIntAt(i, streckenIdSpalte);				
 				for (int j = i; j < zeilenAnzahl; j++) {
-					String zahl2String = String.valueOf(leistungenTabelle.getValueAt(j, streckenIdSpalte));
-					int zahl2 = Integer.parseInt(zahl2String);	
+					int zahl2 = getIntAt(j, streckenIdSpalte);
 					if (zahl1 != zahl2) {
 						return true;
 					}
@@ -589,6 +645,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Methoden um eine neue Zeile in der Tabelle hinzuzufügen oder bestehende zu löschen
 	 */
 	public void addZeile(Leistung leistung) {
+		
+		//TODO: Änderung des Models nicht im View!
 		athlet.addLeistung(leistung);
 		
 		DecimalFormat f = new DecimalFormat("#0.00");
@@ -669,14 +727,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen();
 		}
 			
-		setLeistungUnselected();		
-	}
-	
-	private void setLeistungUnselected(){
-		mainFrame.leistungBearbeitenMenüAusgrauen();
-		mainFrame.leistungLöschenMenüAusgrauen();
-		btnLeistungBearbeiten.setEnabled(false);
-		btnLeistungLöschen.setEnabled(false);
+		setBearbeitenStatus(false);		
 	}
 	
 	/**
@@ -704,20 +755,22 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		if ("set" != athlet.getSlopeFaktorStatus()) {
 			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
 					, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
-			tabelleAuswahlAufheben();
+			tabelleCheckboxenFürSlopeFaktorAuswahlAufheben();
 			chckbxLeistungenAuswahl.setSelected(false);
 			return;
 		} 
 		
-		double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
-		
-		LeistungController l = new LeistungController();
-		textFieldSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
-		
-		// auslagern:
-		btnBestzeiten.setEnabled(true);
-		btnLeistungskurve.setEnabled(true);
-		btnTrainingsbereich.setEnabled(true);							
+		double anaerobeSchwelle;
+		try {
+			anaerobeSchwelle = athlet.getAnaerobeSchwelle();
+			LeistungController l = new LeistungController();
+			textFieldSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
+			
+			setAnalysenVerfügbar(true);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//----------------------- GET/SET METHODEN  -----------------------
@@ -729,13 +782,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 */
 	public Leistung getLeistungInZeile(int zeile) {	
 		zeile = leistungenTabelle.convertRowIndexToModel(zeile);
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-
-		String datum = (String) model.getValueAt(zeile, 0);
-		String streckenlaenge = (String) model.getValueAt(zeile, 1);
+		String datum = getStringAt(zeile, 0);
+		String streckenlaenge = getStringAt(zeile, 1);
 		int streckenId = streckenController.getStreckenIdByString(streckenlaenge);
-		String bezeichnung = (String) model.getValueAt(zeile, 2);
-		double geschwindigkeit = Double.parseDouble((String)model.getValueAt(zeile, 9));
+		String bezeichnung = getStringAt(zeile, 2);
+		double geschwindigkeit = getDoubleAt(zeile, 9);
 		Leistung leistung = new Leistung(streckenId, athlet.getId(), geschwindigkeit, bezeichnung, datum);
 		return leistung;
 	}
@@ -744,13 +795,24 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		return leistungenTabelle.getRowCount();
 	}
 	
-	public int getSpaltenAnzahl() {
-		return leistungenTabelle.getColumnCount();
-	}
-
-	public String getValueAt (int zeile, int spalte) {
+	public String getStringAt (int zeile, int spalte) {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		return (String) model.getValueAt(zeile, spalte);		
+	}
+	
+	public boolean getBooleanAt (int zeile, int spalte) {
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		return (boolean) model.getValueAt(zeile, spalte);		
+	}
+	
+	public int getIntAt (int zeile, int spalte) {
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		return (int) model.getValueAt(zeile, spalte);		
+	}
+	
+	public double getDoubleAt(int zeile, int spalte){
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		return Double.parseDouble((String) model.getValueAt(zeile, spalte));				
 	}
 	
 	public int getBooleanSpalte() {
@@ -772,9 +834,4 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	public void setSpeicherPfad(String speicherPfad) {
 		this.speicherPfad = speicherPfad;
 	}	
-			
-	public void leistungsButtonsVerfügbar() {
-		btnLeistungBearbeiten.setEnabled(true);
-		btnLeistungLöschen.setEnabled(true);
-	}
 }

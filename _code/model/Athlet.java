@@ -11,7 +11,10 @@ import controller.StreckenController;
  */
 public class Athlet implements AthletInterface{
 
-//----------------------- VARIABLEN -----------------------
+	private final int ANZAHL_LEISTUNGEN_FÜR_BERECHNUNG_DES_SLOPE_FAKTORS = 2;
+	private final int MINIMUM_VALID_SLOPE_FAKTOR = 15;
+	private final int MAXIMUM_VALID_SLOPE_FAKTOR = 200;
+	
 	private long id;
 	private String name;
 	private double slopeFaktor;
@@ -20,13 +23,10 @@ public class Athlet implements AthletInterface{
 
 	private StreckenController streckenController = Main.mainFrame.streckenController;
 	
-//----------------------- KONSTRUKTOREN -----------------------
 	public Athlet(long id, String name) {
 		this.id = id;
 		this.name = name;		
 	}
-
-//----------------------- METHODEN -----------------------
 	
 	public long getId() {
 		return id;
@@ -58,7 +58,7 @@ public class Athlet implements AthletInterface{
 
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung){
 		assert inAlleLeistungenEnthalten(ausgewaehlteLeistung);
-		// bis jetzt wurde keine oder eine Leistung ausgewählt, d.h. es muss noch eine Leistung ausgewähltwerden
+		// bis jetzt wurde keine oder eine Leistung ausgewählt, d.h. es muss noch eine Leistung ausgewählt werden
 		assert getLeistungAuswahlForSlopeFaktor()[1] == null;
 		// Keine gleichen Strecken akzeptieren!
 		if (getLeistungAuswahlForSlopeFaktor()[0] != null && 
@@ -83,7 +83,8 @@ public class Athlet implements AthletInterface{
 	}
 	
 	public Leistung[] getLeistungAuswahlForSlopeFaktor() {
-		Leistung[] LeistungAuswahlForSlopeFaktor = new Leistung[2];
+		Leistung[] LeistungAuswahlForSlopeFaktor = 
+				new Leistung[ANZAHL_LEISTUNGEN_FÜR_BERECHNUNG_DES_SLOPE_FAKTORS];
 		int i = 0;
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if (aktuelleLeistung.isUsedForSlopeFaktor()){
@@ -91,7 +92,7 @@ public class Athlet implements AthletInterface{
 				i++;
 			}
 		}
-		assert i<3;
+		assert i <= ANZAHL_LEISTUNGEN_FÜR_BERECHNUNG_DES_SLOPE_FAKTORS;
 		return LeistungAuswahlForSlopeFaktor;
 	}
 	
@@ -119,64 +120,59 @@ public class Athlet implements AthletInterface{
 		if (isSetSlopeFaktor()){
 			return "set";
 		}
-		// TODO: weitere Stati?
 		return "notSet";
 	}
 	
+	private void requireSlopeFaktor() throws Exception{
+		if ("set" != getSlopeFaktorStatus()){
+			throw new Exception();
+			// TODO: change to SlopeFaktorNotSetException
+		}
+	}
+	
 	/**
-	 * Schätzen der möglichen Bestzeiten anhand SlopeFaktor und einer Referenzleistung
-	 * @return: Liste mit Leistungen für jede Streckenlänge, bei der die angegebene Zeit
-	 * der möglichen Bestzeit entspricht
+	 * Schätzen der möglichen Bestzeiten anhand SlopeFaktor und einer ReferenzleistungW
+	 * @throws Exception 
 	 */
-	public LinkedList<Leistung> getMoeglicheBestzeitenListe () { 
-		assert "set" == getSlopeFaktorStatus();
-		triggerCalculations();
+	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws Exception { 
+		requireSlopeFaktor();
 
-		Leistung referenzLeistung = getLeistungAuswahlForSlopeFaktor()[0];
 		LinkedList<Leistung> bestzeitenListe = new LinkedList<Leistung>();
-		double referenzGeschwindigkeit = referenzLeistung.getGeschwindigkeit();
-		double referenzEntfernung = referenzLeistung.getStrecke();
 		for (int i = 0; i < streckenController.getStreckenLength(); i++) { 
 			double entfernung = streckenController.getStreckenlaengeById(i); 
-			double bestzeit = referenzGeschwindigkeit + slopeFaktor * (Math.log10(entfernung/referenzEntfernung)); 
+			double bestzeit = calculateTime(entfernung);
+			// -1: mögliche Bestzeiten werden dem Athleten nicht direkt zugewiesen
 			bestzeitenListe.add(new Leistung (i,-1,bestzeit,null,null)); 
 		} 
 		return bestzeitenListe; 
 	}
 	
-	/**
-	 * 
-	 * @param entfernung
-	 * @return
-	 */
-	public double calculateSpeed (double entfernung) {
-		assert "set" == getSlopeFaktorStatus();
-		triggerCalculations();
-		
+	public double calculateSpeedSecondsPerKm(double entfernung) throws Exception {
 		Leistung referenzLeistung = getLeistungAuswahlForSlopeFaktor()[0];
 		double referenzGeschwindigkeit = referenzLeistung.getGeschwindigkeit();
 		double referenzEntfernung = referenzLeistung.getStrecke();
-		//Geschwindigkeit für 1 km
-		double kilometerGeschwindigkeit = referenzGeschwindigkeit + slopeFaktor * (Math.log10(entfernung/referenzEntfernung));
-		//Geschwindigkeit abhängig von entfernung
+		return referenzGeschwindigkeit + slopeFaktor * (Math.log10(entfernung/referenzEntfernung));
+	}
+	
+	public double calculateTime (double entfernung) throws Exception {
+		requireSlopeFaktor();
+		
+		double kilometerGeschwindigkeit = calculateSpeedSecondsPerKm(entfernung);
 		double geschätzteGeschwindigkeit = kilometerGeschwindigkeit*(entfernung/1000);	
 		
+		// TODO: sinnvoller Fall?
 		if (geschätzteGeschwindigkeit <= 0) {
 			return 0;
 		}
 		return geschätzteGeschwindigkeit;
 	}
 	
-	public double getAnaerobeSchwelle(){
-		assert "set" == getSlopeFaktorStatus();
-		triggerCalculations();
+	public double getAnaerobeSchwelle() throws Exception{
+		requireSlopeFaktor();
 		return anaerobeSchwelle;
 	}
-	
-		
-//----------------------- PRIVATE METHODEN -----------------------
 
-	private void triggerCalculations(){
+	private void triggerCalculations() throws Exception{
 		setSlopeFactor();
 		setAnaerobeSchwelle();
 	}
@@ -194,14 +190,8 @@ public class Athlet implements AthletInterface{
 		}
 	}
 	
-	private double slopeFaktorBerechnen(Leistung[] LeistungAuswahlForSlopeFaktor) {
-		return slopeFaktorBerechnen(LeistungAuswahlForSlopeFaktor[0], LeistungAuswahlForSlopeFaktor[1]);
-	}
-	
 	/**
 	 * Berechnen des Slope-Faktors anhand zweier Leistungen
-	 * @param leistung1
-	 * @param leistung2
 	 * @return: slopeFaktor
 	 */
 	private double  slopeFaktorBerechnen(Leistung leistung1, Leistung leistung2) {
@@ -220,39 +210,39 @@ public class Athlet implements AthletInterface{
 		
 		return Math.abs((geschwindigkeit2-geschwindigkeit1)/(Math.log10(strecke2/strecke1)));	
 	}
+
+	private double slopeFaktorBerechnen(Leistung[] LeistungAuswahlForSlopeFaktor) {
+		return slopeFaktorBerechnen(LeistungAuswahlForSlopeFaktor[0], LeistungAuswahlForSlopeFaktor[1]);
+	}
 	
 	/**
 	 * Schätzen der anaerobe Schwelle in s/km
 	 */
-	private void setAnaerobeSchwelle () {
-		Leistung referenzLeistung = getLeistungAuswahlForSlopeFaktor()[0];
-		double referenzGeschwindigkeit = referenzLeistung.getGeschwindigkeit();
-		double referenzStrecke = (referenzLeistung.getStrecke()/1000D);		
-		int referenzId = referenzLeistung.getId_strecke();
-		if (referenzId == -1) {
-			this.anaerobeSchwelle = referenzGeschwindigkeit;
+	private void setAnaerobeSchwelle () throws Exception {
+		if (!isSetSlopeFaktor()){
+			return;
 		}
+		
 		int maxIter = 1000;
-		double accuracy = 0.001;
+		double accuracy = 1;
 		double timeToSearch = 3600.0;
 		double diff;
-		double newGuess;
-		double distance = 10.0;
+		double newGuessKm;
+		double distanceMeter = 10000;
 		int counter;
-		
 		for (counter = 0; counter < maxIter; counter++){
-			newGuess = timeToSearch / (referenzGeschwindigkeit + this.slopeFaktor * (Math.log10(distance/referenzStrecke)));
-			diff = Math.abs(newGuess-distance);
+			newGuessKm = timeToSearch / (calculateSpeedSecondsPerKm(distanceMeter));
+			diff = Math.abs(newGuessKm*1000 - distanceMeter);
 			if (diff<accuracy) {
 				break;
 			}
-			distance = newGuess;
+			distanceMeter = newGuessKm*1000;
 		}
-		double speed = timeToSearch / distance;		
+		double speed = timeToSearch / distanceMeter*1000;	
 		this.anaerobeSchwelle = speed;
 	}
 	
-	public boolean inAlleLeistungenEnthalten(Leistung ausgewaehlteLeistung) {
+	private boolean inAlleLeistungenEnthalten(Leistung ausgewaehlteLeistung) {
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				return true;
@@ -262,7 +252,8 @@ public class Athlet implements AthletInterface{
 	}
 	
 	private boolean isValidSlopeFaktor(double inputSlopeFaktor){
-		if (inputSlopeFaktor > 15 && inputSlopeFaktor < 200){
+		if (inputSlopeFaktor > MINIMUM_VALID_SLOPE_FAKTOR 
+				&& inputSlopeFaktor < MAXIMUM_VALID_SLOPE_FAKTOR){
 			return true;
 		} else {
 			return false;
@@ -280,5 +271,4 @@ public class Athlet implements AthletInterface{
 		}
 		return false;
 	}
-
 }

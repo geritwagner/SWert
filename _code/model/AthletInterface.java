@@ -21,8 +21,9 @@ interface AthletInterface {
 	public String getSlopeFaktorStatus();
 
 	// Berechnete Leistungen
-	public LinkedList<Leistung> getMoeglicheBestzeitenListe ();
-	public double calculateSpeed (double entfernung);
-	public double getAnaerobeSchwelle();
+	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws Exception;
+	public double calculateSpeedSecondsPerKm (double entfernung) throws Exception;
+	public double calculateTime (double entfernung) throws Exception;
+	public double getAnaerobeSchwelle() throws Exception;
 	
 }
