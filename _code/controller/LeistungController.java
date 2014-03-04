@@ -1,7 +1,6 @@
 package controller;
 
-import java.text.NumberFormat;
-import java.text.ParseException;
+import java.text.*;
 import java.util.Locale;
 
 /**
@@ -9,28 +8,23 @@ import java.util.Locale;
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class LeistungController {
-	
 
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
-	
 	/**
-	 * Berechnen der Geschwindigkeit anhand Streckenlänge und formatiertem Zeitstring
-	 * @param strecke [m]
-	 * @param zeit (Form: 00:00:00:000 --> HH:MinMin:SecSec,MSecMSec)
-	 * @return geschwindigkeit [s/km]
+	 * Berechnen der Geschwindigkeit [s/km] anhand Streckenlänge [m] und formatiertem Zeitstring (Form: 00:00:00:000 --> HH:MinMin:SecSec,MSecMSec)
 	 */
 	public double berechneGeschwindigkeit(int strecke, String zeit) {
 		double sec = parseZeitInSec(zeit);
+		return berechneGeschwindigkeit(strecke, sec);
+	}
+	
+	public double berechneGeschwindigkeit (int strecke, double zeit){
 		double streckeInKm = strecke/1000D;
-		double geschwindigkeit = sec/streckeInKm;
+		double geschwindigkeit = zeit/streckeInKm;
 		return geschwindigkeit;
 	}
 	
 	 /**
-	  * Berechnen der Zeit anhand Streckenlänge und Geschwindigkeit
-	  * @param Strecke [m]
-	  * @param geschwindigkeit: [s/km]
-	  * @return [sec]
+	  * Berechnen der Zeit [sec] anhand Streckenlänge und Geschwindigkeit [s/km]
 	  */
 	public double berechneZeit(int strecke, double geschwindigkeit) {
 		double sec = 0;
@@ -41,8 +35,6 @@ public class LeistungController {
 	
 	/**
 	 * Umwandeln des formatierten Strings in [sec]
-	 * @param minutenString
-	 * @return [sec]
 	 */
 	public double parseMinStringToSec (String minutenString) {
 		double sec = 0D;
@@ -63,8 +55,6 @@ public class LeistungController {
 	 
 	/**
 	 * Umwandeln der [sec] in formatierten Zeitstring (00:00:00,00)
-	 * @param minutenString
-	 * @return [sec]
 	 */
 	public String parseSecInZeitstring (double sec) {
 		String zeitString = null;
@@ -80,8 +70,6 @@ public class LeistungController {
 	
 	/**
 	 * Umwandeln der [sec] in formatierten Zeitstring ("00:00:00,00" ODER "00:00,00")
-	 * @param minutenString
-	 * @return [sec]
 	 */
 	public String parseSecInMinutenstring (double sec) {
 		String zeitString = null;
@@ -98,11 +86,6 @@ public class LeistungController {
 	/**
 	 * Aufbauen des formatierten Zeitstrings (00:00:00,00) aus
 	 * Integer-Repräsentationen der Stunden, Minuten, Sekunden und Millisekunden
-	 * @param stunden
-	 * @param minuten
-	 * @param sekunden
-	 * @param milSekunden
-	 * @return
 	 */
 	public String buildZeitString(int stunden, int minuten, int sekunden, int milSekunden) {
 		String zeitString = null;
@@ -131,11 +114,6 @@ public class LeistungController {
 	/**
 	 * Aufbauen des formatierten Zeitstrings ("00:00:00,00" ODER "00:00,00") aus
 	 * Integer-Repräsentationen der Stunden, Minuten, Sekunden und Millisekunden
-	 * @param stunden
-	 * @param minuten
-	 * @param sekunden
-	 * @param milSekunden
-	 * @return
 	 */
 	public String buildMinutenString(int stunden, int minuten, int sekunden, int milSekunden) {
 		String zeitString = null;	
@@ -168,8 +146,6 @@ public class LeistungController {
 	/**
 	 * Ersetzen des Dezimal-Kommes innerhalb eines String ("12,34") durch
 	 * Punkt und parsen des entstehenden Double-Wertes (12.34)
-	 * @param geschwindigkeitString
-	 * @return
 	 */
 	public double convertGeschwindigkeitStringToDouble (String geschwindigkeitString) {
 		NumberFormat format = NumberFormat.getInstance(Locale.GERMANY);
@@ -187,8 +163,6 @@ public class LeistungController {
 	
 	/**
 	 * Umwandeln des formatierten Strings ("00:00:00,00") in [sec]
-	 * @param minutenString
-	 * @return zeit
 	 */
 	public double parseZeitInSec (String zeit) {
 		double sec = 0;
@@ -209,11 +183,9 @@ public class LeistungController {
 	}
 	
 	/**
-	 * Berechnen der Streckenlänge aus Geschwindigkeit und Zeit (1h = 3600s)
-	 * @param geschwindigkeit [s/km]
-	 * @return [m]
+	 * Berechnen der Streckenlänge [m] aus Geschwindigkeit [s/km] und Zeit (1h = 3600s)
 	 */
-	public int berechneStreckeAusGeschwindigkeit(double geschwindigkeit) {
+	public int berechneSchwellenStreckeAusGeschwindigkeit(double geschwindigkeit) {
 		int strecke = 0;
 		int sec = 3600;
 		geschwindigkeit = Einheitenumrechner.toMS(geschwindigkeit);

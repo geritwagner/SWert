@@ -11,9 +11,9 @@ import controller.StreckenController;
  */
 public class Athlet implements AthletInterface{
 
-	private final int ANZAHL_LEISTUNGEN_FÜR_BERECHNUNG_DES_SLOPE_FAKTORS = 2;
-	private final int MINIMUM_VALID_SLOPE_FAKTOR = 15;
-	private final int MAXIMUM_VALID_SLOPE_FAKTOR = 200;
+	private static final int ANZAHL_LEISTUNGEN_FÜR_BERECHNUNG_DES_SLOPE_FAKTORS = 2;
+	private static final int MINIMUM_VALID_SLOPE_FAKTOR = 15;
+	private static final int MAXIMUM_VALID_SLOPE_FAKTOR = 200;
 	
 	private long id;
 	private String name;
@@ -57,7 +57,9 @@ public class Athlet implements AthletInterface{
 	}
 
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung){
-		assert inAlleLeistungenEnthalten(ausgewaehlteLeistung);
+		if(!inAlleLeistungenEnthalten(ausgewaehlteLeistung)){
+			return;
+		}
 		// bis jetzt wurde keine oder eine Leistung ausgewählt, d.h. es muss noch eine Leistung ausgewählt werden
 		assert getLeistungAuswahlForSlopeFaktor()[1] == null;
 		// Keine gleichen Strecken akzeptieren!
@@ -74,7 +76,9 @@ public class Athlet implements AthletInterface{
 	}
 
 	public void removeLeistungFromAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung){
-		assert inAlleLeistungenEnthalten(ausgewaehlteLeistung);
+		if(!inAlleLeistungenEnthalten(ausgewaehlteLeistung)){
+			return;
+		}
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(false);
@@ -151,7 +155,8 @@ public class Athlet implements AthletInterface{
 		Leistung referenzLeistung = getLeistungAuswahlForSlopeFaktor()[0];
 		double referenzGeschwindigkeit = referenzLeistung.getGeschwindigkeit();
 		double referenzEntfernung = referenzLeistung.getStrecke();
-		return referenzGeschwindigkeit + slopeFaktor * (Math.log10(entfernung/referenzEntfernung));
+		double speed = referenzGeschwindigkeit + slopeFaktor * (Math.log10(entfernung/referenzEntfernung));
+		return speed;
 	}
 	
 	public double calculateTime (double entfernung) throws Exception {
@@ -159,11 +164,6 @@ public class Athlet implements AthletInterface{
 		
 		double kilometerGeschwindigkeit = calculateSpeedSecondsPerKm(entfernung);
 		double geschätzteGeschwindigkeit = kilometerGeschwindigkeit*(entfernung/1000);	
-		
-		// TODO: sinnvoller Fall?
-		if (geschätzteGeschwindigkeit <= 0) {
-			return 0;
-		}
 		return geschätzteGeschwindigkeit;
 	}
 	

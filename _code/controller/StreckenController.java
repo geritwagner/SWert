@@ -8,17 +8,14 @@ import model.Strecken;
  */
 public class StreckenController {
 	
-//----------------------- VARIABLEN -----------------------
-	private Strecken strecken = new Strecken();
-	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
+	//----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**
 	 * Auslesen des Integers-Wertes der Streckenlänge an der Arraystelle id
 	 * @param id: Arraystelle des auszulesenden Streckenlängewertes
 	 * @return
 	 */
 	public int getStreckenlaengeById(int id) {
-		int streckenlaenge = strecken.getStreckenlaenge(id);
+		int streckenlaenge = Strecken.getStreckenlaenge(id);
 		return streckenlaenge;
 	}
 	
@@ -28,7 +25,7 @@ public class StreckenController {
 	 * @return
 	 */
 	public String getStreckenlaengeStringById(int id) {
-		return strecken.getStreckenlaengeString(id);		
+		return Strecken.getStreckenlaengeString(id);		
 	}
 	
 	/**
@@ -37,8 +34,8 @@ public class StreckenController {
 	 * @return
 	 */
 	public int getStreckenIdByString(String strecke) {
-		for (int zaehler = 0; zaehler < strecken.getStringArrayLength(); zaehler++) {
-			String aktuellerStreckenString = strecken.getStreckenlaengeString(zaehler);
+		for (int zaehler = 0; zaehler < Strecken.getStringArrayLength(); zaehler++) {
+			String aktuellerStreckenString = Strecken.getStreckenlaengeString(zaehler);
 			if(strecke.equals(aktuellerStreckenString)) {
 				return zaehler;
 			}
@@ -51,6 +48,6 @@ public class StreckenController {
 	 * @return
 	 */
 	public int getStreckenLength() {
-		return strecken.getStringArrayLength();
+		return Strecken.getStringArrayLength();
 	}
 }

@@ -621,7 +621,7 @@ public class SchwellenDialog extends JDialog {
 	 * @param geschwindigkeit: Zugrundeliegende Geschwindigkeit
 	 */
 	private void setzeStrecke(double geschwindigkeit) {
-		int strecke = lController.berechneStreckeAusGeschwindigkeit(geschwindigkeit);
+		int strecke = lController.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
 		textFieldStrecke.setText(String.valueOf(strecke));
 	}
 	

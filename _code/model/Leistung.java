@@ -9,9 +9,9 @@ import controller.StreckenController;
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class Leistung implements LeistungInterface{
-	
-//----------------------- VARIABLEN -----------------------
+
 	private long id_leistung;
+//	kein Setter für id_strecke, da auch Zeit, Geschwindigeit etc. geändert werden müssten (Gefahr der Inkonsistenz!)
 	private int id_strecke;
 	private long id_athlet;
 	private double zeit;
@@ -19,11 +19,12 @@ public class Leistung implements LeistungInterface{
 	private String bezeichnung;
 	private String datum;
 	private boolean selectedForCalculatingSlopeFaktor;
-
+	
+	private static final int ID_SCHWELLENLEISTUNG = -1;
+	
 	private StreckenController streckenController = Main.mainFrame.streckenController;
 	private LeistungController leistungController = Main.mainFrame.leistungController;
 	
-//----------------------- KONSTRUKTOREN -----------------------
 	public Leistung(int id_strecke, long id_athlet, double zeit, String bezeichnung, String datum) {
 		this.id_strecke = id_strecke;
 		this.id_athlet = id_athlet;
@@ -34,8 +35,6 @@ public class Leistung implements LeistungInterface{
 		this.datum = datum;	
 		this.selectedForCalculatingSlopeFaktor = false;
 	}
-
-//----------------------- ÖFFENTLICHE METHODEN -----------------------	
 	
 	public long getId() {
 		return id_leistung;
@@ -43,10 +42,6 @@ public class Leistung implements LeistungInterface{
 	
 	public int getId_strecke() {
 		return id_strecke;
-	}
-
-	public void setId_strecke(int id_strecke) {
-		this.id_strecke = id_strecke;
 	}
 	
 	public long getId_athlet() {
@@ -56,8 +51,8 @@ public class Leistung implements LeistungInterface{
 	public int getStrecke() {
 		int streckenID = this.getId_strecke();
 		double geschwindigkeit = this.getGeschwindigkeit();
-		if(streckenID == -1) {
-			return leistungController.berechneStreckeAusGeschwindigkeit(geschwindigkeit);
+		if(streckenID == ID_SCHWELLENLEISTUNG) {
+			return leistungController.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
 		} else {
 			return streckenController.getStreckenlaengeById(streckenID);
 		}
@@ -67,16 +62,8 @@ public class Leistung implements LeistungInterface{
 		return bezeichnung;
 	}
 
-	public void setBezeichnung(String bezeichnung) {
-		this.bezeichnung = bezeichnung;
-	}
-
 	public String getDatum() {
 		return datum;
-	}
-
-	public void setDatum(String datum) {
-		this.datum = datum;
 	}
 
 	public boolean isUsedForSlopeFaktor() {
@@ -88,8 +75,8 @@ public class Leistung implements LeistungInterface{
 	}
 
 	public String toString(){
-		return getId_strecke() + "; " + getStrecke() + ";" + getGeschwindigkeit() + ";" + 
-				getBezeichnung() + ";" + getDatum() + ";" + ";" + getZeitString(); 
+		return getId_strecke() + "; " + getStrecke() + "; " + getZeit() + "(= " + getZeitString() + "); " + 
+				getBezeichnung() + "; " + getDatum() + "; geschwindigkeit= " + getGeschwindigkeit() + ";" ; 
 	}
 	
 	public boolean equals(Leistung andereLeistung){
@@ -125,12 +112,12 @@ public class Leistung implements LeistungInterface{
 		this.geschwindigkeit = leistungController.berechneGeschwindigkeit(getStrecke(), inputZeitString);		
 	}
 
-	public void setZeit(double inputZeit) {
+	public void setZeitAndGeschwindigkeit(double inputZeit) {
 		this.zeit = inputZeit;
 		this.geschwindigkeit = leistungController.berechneGeschwindigkeit(getStrecke(), getZeitString());		
 	}
 
-	public void setGeschwindigkeit(double inputGeschwindigkeit) {
+	public void setGeschwindigkeitAndGeschwindigkeit(double inputGeschwindigkeit) {
 		this.geschwindigkeit = inputGeschwindigkeit;
 		this.zeit = leistungController.berechneZeit(getStrecke(), inputGeschwindigkeit);
 	}

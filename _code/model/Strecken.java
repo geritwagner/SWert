@@ -4,13 +4,10 @@ package model;
  * Model-Klasse für die Strecken
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-public class Strecken {
-
-//----------------------- VARIABLEN -----------------------
-	/*
-	 * Streckenlängen als Interger-Werte
-	 */
-	private int[] streckenlaengen = {
+// TODO: auf statisch umschreiben und StreckenController entfernen!
+public abstract class Strecken {
+	
+	private static int[] streckenlaengen = {
 			400,
 			800,
 			1000,
@@ -24,10 +21,7 @@ public class Strecken {
 			25000,
 			42195};
 	
-	/*
-	 * Streckenlängen als Strings
-	 */
-	private String[] streckenlaengenString = {
+	private static String[] streckenlaengenString = {
 			"400m",
 			"800m",
 			"1.000m",
@@ -41,16 +35,15 @@ public class Strecken {
 			"25km",
 			"Marathon"};
 
-//----------------------- GETTER UND SETTER -----------------------
-	public int getStreckenlaenge(int id) {		
+	public static int getStreckenlaenge(int id) {		
 		return streckenlaengen[id];
 	}
 	
-	public String getStreckenlaengeString (int id) {
+	public static String getStreckenlaengeString (int id) {
 		return streckenlaengenString[id];
 	}
 	
-	public int getStringArrayLength() {
+	public static int getStringArrayLength() {
 		return streckenlaengenString.length;
 	}
 }

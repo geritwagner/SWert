@@ -30,13 +30,14 @@ public class AthletTest {
 		assertTrue( testAthlet.getLeistungen().get(0).equals(testLeistung));
 		assertTrue( 50 == testAthlet.getLeistungen().get(0).getGeschwindigkeit());
 		testAthlet.removeLeistung(testLeistung);
+		testAthlet.removeLeistung(testLeistung);
 		assertTrue( 0 == testAthlet.getLeistungen().size());
 	}
 	
 	@Test
 	public void testSlopeFaktorLogik() {
 		testAthlet = new Athlet(12, "Tester");
-		Leistung leistung1 = new Leistung(1, 12, 183.125, "800m-Leistung (langsam)", "01-01-2014");
+		Leistung leistung1 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
 		Leistung leistung2 = new Leistung(7, 12, 61.5300003, "10.00m-Leistung (langsam)", "01-01-2014");
 		testAthlet.addLeistung(leistung1);
 		testAthlet.addLeistung(leistung2);
@@ -49,13 +50,30 @@ public class AthletTest {
 		assertFalse(testAthlet.isSetSlopeFaktor());
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		
-		leistung2 = new Leistung(7, 12, 261.53000000000003, "10.00m-Leistung (langsam)", "01-01-2014");
+		leistung2 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung (langsam)", "01-01-2014");
 		testAthlet.addLeistung(leistung2);
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		assertFalse(testAthlet.isSetSlopeFaktor());
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "set");
 		assertTrue(testAthlet.isSetSlopeFaktor());
+		
+		Leistung nichtEnthalteneLeistung = new Leistung(7, 132, 1436.5, "nicht in der Leistungs-Liste enthalten", "01-01-2014");
+		testAthlet.removeLeistungFromAuswahlForSlopeFaktor(nichtEnthalteneLeistung);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(nichtEnthalteneLeistung);
+
+		// BruteForce Test verschiedene Slope-Faktoren und Distanzen
+//		for (int zeit = 1800; zeit<4000; zeit++){
+//			leistung2.setZeitAndGeschwindigkeit(zeit);
+//			try {
+//				for (int m = 1; m<100000; m++){
+//					double b = testAthlet.calculateSpeedSecondsPerKm(m);					
+//				}
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 	@Test
@@ -111,6 +129,8 @@ public class AthletTest {
 		testAthlet.addLeistung(leistung2Schnell);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Schnell);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Schnell);
+		testAthlet.removeLeistungFromAuswahlForSlopeFaktor(leistung1Schnell);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Schnell);
 		try {
 			assertEquals(schwelleSchnell, testAthlet.getAnaerobeSchwelle(), 0.1);
 		} catch (Exception e1) {
@@ -132,6 +152,6 @@ public class AthletTest {
 			assert false;
 		}
 		testAthlet.removeLeistung(leistung1Schnell);
-		testAthlet.removeLeistung(leistung2Schnell);	
+		testAthlet.resetLeistungAuswahlForSlopeFaktor();
 	}
 }

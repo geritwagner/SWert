@@ -657,7 +657,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		int streckenID = leistung.getId_strecke();
 		String streckenString;
 		if(streckenID == -1) {
-			int strecke = leistungController.berechneStreckeAusGeschwindigkeit(geschwindigkeit);
+			int strecke = leistungController.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
 			DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.GERMANY);
 			streckenString = formatter.format(strecke);
 			streckenString = streckenString+"m";
