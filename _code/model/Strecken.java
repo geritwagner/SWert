@@ -4,7 +4,6 @@ package model;
  * Model-Klasse für die Strecken
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-// TODO: auf statisch umschreiben und StreckenController entfernen!
 public abstract class Strecken {
 	
 	private static int[] streckenlaengen = {
@@ -35,15 +34,25 @@ public abstract class Strecken {
 			"25km",
 			"Marathon"};
 
-	public static int getStreckenlaenge(int id) {		
+	public static int getStreckenlaengeById(int id) {		
 		return streckenlaengen[id];
 	}
 	
-	public static String getStreckenlaengeString (int id) {
+	public static String getStreckenlaengeStringById (int id) {
 		return streckenlaengenString[id];
 	}
 	
-	public static int getStringArrayLength() {
+	public static int getStreckenArrayLength() {
 		return streckenlaengenString.length;
+	}
+
+	public static int getStreckenIdByString(String strecke) {
+		for (int zaehler = 0; zaehler < getStreckenArrayLength(); zaehler++) {
+			String aktuellerStreckenString = getStreckenlaengeStringById(zaehler);
+			if(strecke.equals(aktuellerStreckenString)) {
+				return zaehler;
+			}
+		}
+		return -1;
 	}
 }

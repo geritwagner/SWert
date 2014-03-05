@@ -2,9 +2,6 @@ package model;
 
 import java.util.LinkedList;
 
-import main.Main;
-import controller.StreckenController;
-
 /**
  * Model-Klasse für das "Athlet"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
@@ -21,7 +18,6 @@ public class Athlet implements AthletInterface{
 	private double anaerobeSchwelle;
 	private LinkedList<Leistung> alleLeistungen = new LinkedList<Leistung>();
 
-	private StreckenController streckenController = Main.mainFrame.streckenController;
 	
 	public Athlet(long id, String name) {
 		this.id = id;
@@ -143,8 +139,8 @@ public class Athlet implements AthletInterface{
 		requireSlopeFaktor();
 
 		LinkedList<Leistung> bestzeitenListe = new LinkedList<Leistung>();
-		for (int i = 0; i < streckenController.getStreckenLength(); i++) { 
-			double entfernung = streckenController.getStreckenlaengeById(i); 
+		for (int i = 0; i < Strecken.getStreckenArrayLength(); i++) { 
+			double entfernung = Strecken.getStreckenlaengeById(i); 
 			double bestzeit = calculateTime(entfernung);
 			// -1: mögliche Bestzeiten werden dem Athleten nicht direkt zugewiesen
 			bestzeitenListe.add(new Leistung (i,-1,bestzeit,null,null)); 

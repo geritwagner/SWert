@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import main.Main;
 import model.Leistung;
+import model.Strecken;
 import view.ProfilTab;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -21,8 +22,6 @@ public class CSVController {
 //----------------------- Variablen -----------------------
 	private String nameAthlet;
 	private long idAthlet;
-	private StreckenController sController;
-	private LeistungController leistungController;
 	
 //----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**
@@ -32,8 +31,6 @@ public class CSVController {
 	 * @return: TRUE für erfolgreiches Einlesen der CSV
 	 */
 	public boolean lesen (String pfad) {	
-		sController = new StreckenController();
-		leistungController = Main.mainFrame.leistungController;
 		try{			
 		    CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
 		    
@@ -113,7 +110,7 @@ public class CSVController {
 	private Leistung leistungAuslesen (String[] leistung){
 		String datum = leistung[0];
     	String strecke = leistung[1];
-    	int streckenId = sController.getStreckenIdByString(strecke);
+    	int streckenId = Strecken.getStreckenIdByString(strecke);
     	String bezeichnung = leistung[2];
     	double geschwindigkeit = Double.parseDouble(leistung[3]);
     	return new Leistung(streckenId, idAthlet, geschwindigkeit, bezeichnung, datum);

@@ -43,12 +43,12 @@ import javax.swing.text.MaskFormatter;
 
 import main.Main;
 import model.Leistung;
+import model.Strecken;
 
 import com.toedter.calendar.JDateChooser;
 
 import controller.Einheitenumrechner;
 import controller.LeistungController;
-import controller.StreckenController;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -66,7 +66,6 @@ public class LeistungDialog extends JDialog {
 	private final Dimension d = this.getToolkit().getScreenSize();
 	private MainFrame mainFrame = Main.mainFrame;
 	private final LeistungController lController = Main.mainFrame.leistungController;
-	private final StreckenController sController = Main.mainFrame.streckenController;
 	
 	private JTextField textFieldBezeichnung;
 	private JLabel lblBezeichnungError;
@@ -811,7 +810,7 @@ public class LeistungDialog extends JDialog {
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeitFormat = 0D;
 		String zeit = textFieldZeit.getText();		
-		int strecke = sController.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
+		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
 		double geschwindigkeit = lController.berechneGeschwindigkeit(strecke, zeit);
 		this.geschwindigkeit = geschwindigkeit;
 		switch (geschwindigkeitArt) {
@@ -872,7 +871,7 @@ public class LeistungDialog extends JDialog {
 	 * @param geschwindigkeit: [s/km]
 	 */
 	private void setzeZeit(double geschwindigkeit) {
-		int strecke = sController.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
+		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
 		double sec = lController.berechneZeit(strecke, geschwindigkeit);
 		textFieldZeit.setValue(lController.parseSecInZeitstring(sec));
 	}

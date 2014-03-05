@@ -36,7 +36,6 @@ import controller.AthletController;
 import controller.CSVController;
 import controller.DiagrammController;
 import controller.LeistungController;
-import controller.StreckenController;
 
 
 public class MainFrame {
@@ -47,7 +46,6 @@ public class MainFrame {
 	public DiagrammController diagrammController;
 	private CSVController csvController;
 	public LeistungController leistungController;
-	public StreckenController streckenController;
 	
 	private Dimension d = mainFrame.getToolkit().getScreenSize();
 	private AthletController athletcontroller;
@@ -71,7 +69,6 @@ public class MainFrame {
 		csvController 		= new CSVController();
 		diagrammController 	= new DiagrammController();
 		leistungController 	= new LeistungController();
-		streckenController 	= new StreckenController();
 	}
 	
 	/**

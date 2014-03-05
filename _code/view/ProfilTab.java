@@ -31,11 +31,11 @@ import net.miginfocom.swing.MigLayout;
 import controller.Einheitenumrechner;
 import helper.IntegerComparator;
 import controller.LeistungController;
-import controller.StreckenController;
 import helper.TabelleLeistungsListener;
 import main.Main;
 import model.Athlet;
 import model.Leistung;
+import model.Strecken;
 
 import javax.swing.ImageIcon;
 import java.awt.Font;
@@ -45,7 +45,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private Athlet athlet;
 
 	private MainFrame mainFrame = Main.mainFrame;
-	private StreckenController streckenController = Main.mainFrame.streckenController;
 	private LeistungController leistungController = Main.mainFrame.leistungController;
 	
 	private JLabel lblAthletName;
@@ -672,7 +671,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			streckenString = formatter.format(strecke);
 			streckenString = streckenString+"m";
 		} else {
-			streckenString = streckenController.getStreckenlaengeStringById(streckenID);
+			streckenString = Strecken.getStreckenlaengeStringById(streckenID);
 		}
 		
 		Object[] daten = {leistung.getDatum(),
@@ -794,7 +793,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		zeile = leistungenTabelle.convertRowIndexToModel(zeile);
 		String datum = getStringAt(zeile, 0);
 		String streckenlaenge = getStringAt(zeile, 1);
-		int streckenId = streckenController.getStreckenIdByString(streckenlaenge);
+		int streckenId = Strecken.getStreckenIdByString(streckenlaenge);
 		String bezeichnung = getStringAt(zeile, 2);
 		double geschwindigkeit = getDoubleAt(zeile, 9);
 		Leistung leistung = new Leistung(streckenId, athlet.getId(), geschwindigkeit, bezeichnung, datum);

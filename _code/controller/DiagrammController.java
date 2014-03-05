@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import main.Main;
 import model.Athlet;
 import model.Leistung;
+import model.Strecken;
 
 import org.jfree.data.xy.XYSeries;
 
@@ -96,7 +97,7 @@ public class DiagrammController {
 		final XYSeries athletenSerie = new XYSeries(letzterAthlet);
 		while (leistungenIterator.hasNext()) {
 			Leistung leistung = leistungenIterator.next();
-			int strecke = Main.mainFrame.streckenController.getStreckenlaengeById(leistung.getId_strecke());
+			int strecke = Strecken.getStreckenlaengeById(leistung.getId_strecke());
 			double geschwindigkeit = leistung.getGeschwindigkeit();
 			double zeit = Einheitenumrechner.toMinKm(geschwindigkeit);
 			athletenSerie.add(strecke, zeit);

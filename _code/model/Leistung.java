@@ -2,7 +2,6 @@ package model;
 
 import main.Main;
 import controller.LeistungController;
-import controller.StreckenController;
 
 /**
  * Model-Klasse für das "Leistung"-Objekt
@@ -22,7 +21,6 @@ public class Leistung implements LeistungInterface{
 	
 	private static final int ID_SCHWELLENLEISTUNG = -1;
 	
-	private StreckenController streckenController = Main.mainFrame.streckenController;
 	private LeistungController leistungController = Main.mainFrame.leistungController;
 	
 	public Leistung(int id_strecke, long id_athlet, double zeit, String bezeichnung, String datum) {
@@ -54,7 +52,7 @@ public class Leistung implements LeistungInterface{
 		if(streckenID == ID_SCHWELLENLEISTUNG) {
 			return leistungController.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
 		} else {
-			return streckenController.getStreckenlaengeById(streckenID);
+			return Strecken.getStreckenlaengeById(streckenID);
 		}
 	}
 

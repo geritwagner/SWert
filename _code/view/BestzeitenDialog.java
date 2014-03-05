@@ -28,8 +28,8 @@ import javax.swing.table.DefaultTableModel;
 
 import main.Main;
 import model.Athlet;
+import model.Strecken;
 import controller.LeistungController;
-import controller.StreckenController;
 
 /**
  * Dialog zum Anzeigen der möglichen Bestzeiten des Athleten über eine wählbare Strecke
@@ -42,7 +42,6 @@ public class BestzeitenDialog extends JDialog {
 	private JPanel contentPanel = new JPanel();
 	private Dimension d = this.getToolkit().getScreenSize();
 	private LeistungController lController = Main.mainFrame.leistungController;
-	private StreckenController sController = Main.mainFrame.streckenController;
 	
 	private JTable trainingsTabelle;
 	private JTextField txtFieldZeit;
@@ -222,11 +221,11 @@ public class BestzeitenDialog extends JDialog {
 	 */
 	private Object[][] berechneBestzeit() {
 		// TODO: duplikat zu athlet.getMoeglicheBestzeitenListe()?? - wer macht was??
-		int streckenAnzahl = sController.getStreckenLength();
+		int streckenAnzahl = Strecken.getStreckenArrayLength();
 		Object[][] data = new Object [streckenAnzahl][2];
 		for (int i = 0; i < streckenAnzahl; i++) {
-			double streckenLänge = sController.getStreckenlaengeById(i);
-			data[i][0] = sController.getStreckenlaengeStringById(i);
+			double streckenLänge = Strecken.getStreckenlaengeById(i);
+			data[i][0] = Strecken.getStreckenlaengeStringById(i);
 			double bestzeit;
 			try {
 				bestzeit = athlet.calculateSpeedSecondsPerKm(streckenLänge);
