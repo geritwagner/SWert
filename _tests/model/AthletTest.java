@@ -6,13 +6,19 @@ import java.util.LinkedList;
 
 import main.Main;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 import view.MainFrame;
 
 public class AthletTest {
 
 	Athlet testAthlet;
 	
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();
+    
 	@Before
     public void initTest() {
 		Main.mainFrame = new MainFrame();
@@ -35,7 +41,7 @@ public class AthletTest {
 	}
 	
 	@Test
-	public void testSlopeFaktorLogik() {
+	public void testSlopeFaktorLogik() throws Exception {
 		testAthlet = new Athlet(12, "Tester");
 		Leistung leistung1 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
 		Leistung leistung2 = new Leistung(7, 12, 61.5300003, "10.00m-Leistung (langsam)", "01-01-2014");
@@ -51,6 +57,7 @@ public class AthletTest {
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		
 		leistung2 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung (langsam)", "01-01-2014");
+		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		testAthlet.addLeistung(leistung2);
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		assertFalse(testAthlet.isSetSlopeFaktor());
@@ -61,7 +68,38 @@ public class AthletTest {
 		Leistung nichtEnthalteneLeistung = new Leistung(7, 132, 1436.5, "nicht in der Leistungs-Liste enthalten", "01-01-2014");
 		testAthlet.removeLeistungFromAuswahlForSlopeFaktor(nichtEnthalteneLeistung);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(nichtEnthalteneLeistung);
+		
+		// Werden die Leistungen getauscht, wenn sie nicht nach aufsteigender Streckenlänge hinzugefügt werden?
+		leistung1 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung (langsam)", "01-01-2014");
+		leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
+		testAthlet = new Athlet(12, "Tester");
+		testAthlet.addLeistung(leistung1);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
+		testAthlet.addLeistung(leistung2);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
+		assertEquals("set", testAthlet.getSlopeFaktorStatus());
 
+		// Es sollten keine Leistungen über die gleiche Strecke als Slope-Faktor gesetzt werden können
+		
+		// 
+		leistung1 = new Leistung(7, 12, 1832, "10.000m-Leistung (langsam)", "01-01-2014");
+		leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
+		testAthlet = new Athlet(12, "Tester");
+		// zu gute Slope-Faktoren sollten nicht akzeptiert werden
+		testAthlet.addLeistung(leistung1);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
+		testAthlet.addLeistung(leistung2);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
+		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
+
+		// zu schlechte Slope-Faktoren sollten nicht akzeptiert werden
+		testAthlet.removeLeistung(leistung1);
+		leistung1 = new Leistung(7, 12, 188432, "10.000m-Leistung (langsam)", "01-01-2014");
+		testAthlet.addLeistung(leistung1);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
+		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
+
+		
 		// BruteForce Test verschiedene Slope-Faktoren und Distanzen
 //		for (int zeit = 1800; zeit<4000; zeit++){
 //			leistung2.setZeitAndGeschwindigkeit(zeit);
@@ -75,10 +113,20 @@ public class AthletTest {
 //			}
 //		}
 	}
-
+	
 	@Test
-	public void testCalculations() {
+	public void testCalculations() throws Exception {
 		testAthlet = new Athlet(12, "Tester");
+
+		// TODO: test Exceptions (z.B. bei getMoeglicheBestzeitenListe)
+		// ECLEMMA: Bug expectedException - http://www.eclemma.org/faq.html#trouble05
+//		try{
+//			thrown.expect(Exception.class);
+//			@SuppressWarnings("unused")
+//			LinkedList<Leistung> liste = testAthlet.getMoeglicheBestzeitenListe();
+////			fail("no Exception thrown");
+//		} catch (Exception e){
+//		}
 
 		Leistung leistung1Langsam = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
 		Leistung leistung2Langsam = new Leistung(7, 12, 2615.3, "10.00m-Leistung (langsam)", "01-01-2014");
@@ -99,12 +147,8 @@ public class AthletTest {
 		testAthlet.addLeistung(leistung2Langsam);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Langsam);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Langsam);
-		try {
-			assertEquals(schwelleLangsam, testAthlet.getAnaerobeSchwelle(), 0.1);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			assert false;
-		}
+		assertEquals(schwelleLangsam, testAthlet.getAnaerobeSchwelle(), 0.1);
+
 		// TODO: test bestzeit und calculateSpeed/Time/etc.
 		testAthlet.removeLeistung(leistung1Langsam);
 		testAthlet.removeLeistung(leistung2Langsam);
@@ -114,12 +158,8 @@ public class AthletTest {
 		testAthlet.addLeistung(leistung2Mittel);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Mittel);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Mittel);
-		try {
-			assertEquals(schwelleMittel, testAthlet.getAnaerobeSchwelle(), 0.1);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			assert false;
-		}
+		assertEquals(schwelleMittel, testAthlet.getAnaerobeSchwelle(), 0.1);
+
 		// TODO: test bestzeit und calculateSpeed
 		testAthlet.removeLeistung(leistung1Mittel);
 		testAthlet.removeLeistung(leistung2Mittel);
@@ -129,28 +169,14 @@ public class AthletTest {
 		testAthlet.addLeistung(leistung2Schnell);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Schnell);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2Schnell);
+
 		testAthlet.removeLeistungFromAuswahlForSlopeFaktor(leistung1Schnell);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1Schnell);
-		try {
-			assertEquals(schwelleSchnell, testAthlet.getAnaerobeSchwelle(), 0.1);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			assert false;
-		}
+		assertEquals(schwelleSchnell, testAthlet.getAnaerobeSchwelle(), 0.1);
 		LinkedList<Leistung> bestzeiten;
-		try {
-			bestzeiten = testAthlet.getMoeglicheBestzeitenListe ();
-			assertEquals(465.1, bestzeiten.get(5).getZeit(), 0.1);
-		} catch (Exception e) {
-			e.printStackTrace();
-			assert false;
-		}
-		try {
-			assertEquals(465.1, testAthlet.calculateTime(3000.0), 0.1);
-		} catch (Exception e) {
-			e.printStackTrace();
-			assert false;
-		}
+		bestzeiten = testAthlet.getMoeglicheBestzeitenListe ();
+		assertEquals(465.1, bestzeiten.get(5).getZeit(), 0.1);
+		assertEquals(465.1, testAthlet.calculateTime(3000.0), 0.1);
 		testAthlet.removeLeistung(leistung1Schnell);
 		testAthlet.resetLeistungAuswahlForSlopeFaktor();
 	}

@@ -56,18 +56,19 @@ public class Athlet implements AthletInterface{
 		return false;
 	}
 
-	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung){
+	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception{
 		if(!inAlleLeistungenEnthalten(ausgewaehlteLeistung)){
 			return;
 		}
 		// bis jetzt wurde keine oder eine Leistung ausgewählt, d.h. es muss noch eine Leistung ausgewählt werden
-		assert getLeistungAuswahlForSlopeFaktor()[1] == null;
+		if (getLeistungAuswahlForSlopeFaktor()[1] != null){
+			throw new Exception();
+		}
 		// Keine gleichen Strecken akzeptieren!
 		if (getLeistungAuswahlForSlopeFaktor()[0] != null && 
 				getLeistungAuswahlForSlopeFaktor()[0].getStrecke() == ausgewaehlteLeistung.getStrecke()){
-			return;
-		}
-		
+			throw new Exception();
+		}		
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(true);
@@ -261,9 +262,6 @@ public class Athlet implements AthletInterface{
 	}
 
 	private boolean isValidLeistungAuswahlForSlopeFaktor() {
-		if (getLeistungAuswahlForSlopeFaktor() == null){
-			return false;
-		}
 		Leistung leistung1 = getLeistungAuswahlForSlopeFaktor()[0];
 		Leistung leistung2 = getLeistungAuswahlForSlopeFaktor()[1];
 		if (leistung1 != null && leistung2 != null && leistung1.getStrecke() != leistung2.getStrecke()){

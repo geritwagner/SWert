@@ -483,8 +483,13 @@ public class ProfilTab extends JPanel implements TableModelListener {
         if (!chckbxLeistungenAuswahl.isSelected()) {  
     		if (tabelleAuswahlRichtig()){
     			athlet.resetLeistungAuswahlForSlopeFaktor();
-        		athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[0]);
-               	athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[1]);
+        		try {
+					athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[0]);
+	               	athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[1]);
+				} catch (Exception e) {
+					// TODO gleiche Leistung ausgewählt oder schon alle Leistungen für Berechnung des Slope-Faktors gesetzt
+					e.printStackTrace();
+				}
     			werteBerechnen();        		
         	}
         }
@@ -567,8 +572,13 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		Leistung leistungLangeStrecke = getLeistungInZeile(längereStrecke);
 
 		athlet.resetLeistungAuswahlForSlopeFaktor();
-		athlet.setLeistungToAuswahlForSlopeFaktor(leistungKurzeStrecke);
-		athlet.setLeistungToAuswahlForSlopeFaktor(leistungLangeStrecke);		
+		try {
+			athlet.setLeistungToAuswahlForSlopeFaktor(leistungLangeStrecke);		
+			athlet.setLeistungToAuswahlForSlopeFaktor(leistungKurzeStrecke);
+		} catch (Exception e) {
+			// TODO gleiche Leistung ausgewählt oder schon alle Leistungen für Berechnung des Slope-Faktors gesetzt
+			e.printStackTrace();
+		}
 	}
 	
 	/**
