@@ -6,6 +6,9 @@ package model;
  */
 public abstract class Strecken {
 	
+	// Aktuell werden entweder Standardstrecken oder die Schwellenleistung (id = -1) verwaltet
+	// Falls beliebige Streckenlängen relevant werden würde sich für die Klasse Strecken eine polymorphe Struktur anbieten
+	
 	private static int[] streckenlaengen = {
 			400,
 			800,

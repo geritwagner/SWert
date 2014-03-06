@@ -3,10 +3,15 @@ package model;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+/**
+ * Tests für die Strecken
+ * @author Gerit Wagner
+ */
 public class StreckenTest {
 
 	@Test
 	public void coverage() {
+		// test constructor for coverage
 		@SuppressWarnings("unused")
 		Strecken b = new Strecken(){};
 	}
@@ -54,7 +59,6 @@ public class StreckenTest {
 		assertEquals(10, Strecken.getStreckenIdByString("25km"));
 		assertEquals(11, Strecken.getStreckenIdByString("Marathon"));
 		
-		assertEquals(-1, Strecken.getStreckenIdByString("Schwelle"));
-		
+		assertEquals(-1, Strecken.getStreckenIdByString("Schwelle"));	
 	}
 }
