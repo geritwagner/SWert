@@ -1,16 +1,23 @@
 package model;
 
+import helper.LeistungHelper;
+
+import java.util.prefs.Preferences;
+
 import main.Main;
-import controller.LeistungController;
 
 /**
  * Model-Klasse für das "Leistung"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class Leistung implements LeistungInterface{
+	
+	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
+	
+	// TODO: ggf. später: id_strecke kapseln, beliebige Streckenlängen lösen
 
 	private long id_leistung;
-//	kein Setter für id_strecke, da auch Zeit, Geschwindigeit etc. geändert werden müssten (Gefahr der Inkonsistenz!)
+	//	kein Setter für id_strecke, da auch Zeit, Geschwindigeit etc. geändert werden müssten (Gefahr der Inkonsistenz!)
 	private int id_strecke;
 	private long id_athlet;
 	private double zeit;
@@ -21,17 +28,29 @@ public class Leistung implements LeistungInterface{
 	
 	private static final int ID_SCHWELLENLEISTUNG = -1;
 	
-	private LeistungController leistungController = Main.mainFrame.leistungController;
+	private LeistungHelper leistungHelper = Main.mainFrame.leistungHelper;
 	
 	public Leistung(int id_strecke, long id_athlet, double zeit, String bezeichnung, String datum) {
+		this.id_leistung = getNextLeistungId();
 		this.id_strecke = id_strecke;
 		this.id_athlet = id_athlet;
 		this.zeit = zeit;
-		String zeitString = leistungController.parseSecInZeitstring(zeit);
-		this.geschwindigkeit = leistungController.berechneGeschwindigkeit(getStrecke(), zeitString);
+		String zeitString = leistungHelper.parseSecInZeitstring(zeit);
+		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), zeitString);
 		this.bezeichnung = bezeichnung;
 		this.datum = datum;	
 		this.selectedForCalculatingSlopeFaktor = false;
+	}
+
+	private long getNextLeistungId() {
+		long idAthlet = 0;
+		idAthlet = pref.getLong("LeistungId", 1);
+		writeLeistungId(idAthlet);
+		return idAthlet;
+	}
+	
+	private void writeLeistungId(long id) {
+		pref.put("LeistungId", String.valueOf(id+1));
 	}
 	
 	public long getId() {
@@ -50,7 +69,7 @@ public class Leistung implements LeistungInterface{
 		int streckenID = this.getId_strecke();
 		double geschwindigkeit = this.getGeschwindigkeit();
 		if(streckenID == ID_SCHWELLENLEISTUNG) {
-			return leistungController.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
+			return leistungHelper.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
 		} else {
 			return Strecken.getStreckenlaengeById(streckenID);
 		}
@@ -89,34 +108,40 @@ public class Leistung implements LeistungInterface{
 		}
 	}
 
-
+	public void updateLeistung(int id_strecke, double zeit, String bezeichnung, String datum) {
+		this.id_strecke = id_strecke;
+		this.zeit = zeit;
+		String zeitString = leistungHelper.parseSecInZeitstring(zeit);
+		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), zeitString);
+		this.bezeichnung = bezeichnung;
+		this.datum = datum;	
+	}
 	
 	public double getGeschwindigkeit() {
 		return geschwindigkeit;
 	}
 
 	public String getZeitString() {
-		return leistungController.parseSecInZeitstring(zeit);
+		return leistungHelper.parseSecInZeitstring(zeit);
 	}
 	
 	public double getZeit(){
 		return this.zeit;
 	}
-	
 
 	
 	public void setZeitFromString(String inputZeitString) {
-		this.zeit = leistungController.parseZeitInSec(inputZeitString);
-		this.geschwindigkeit = leistungController.berechneGeschwindigkeit(getStrecke(), inputZeitString);		
+		this.zeit = leistungHelper.parseZeitInSec(inputZeitString);
+		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), inputZeitString);		
 	}
 
 	public void setZeitAndGeschwindigkeit(double inputZeit) {
 		this.zeit = inputZeit;
-		this.geschwindigkeit = leistungController.berechneGeschwindigkeit(getStrecke(), getZeitString());		
+		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), getZeitString());		
 	}
 
 	public void setGeschwindigkeitAndGeschwindigkeit(double inputGeschwindigkeit) {
 		this.geschwindigkeit = inputGeschwindigkeit;
-		this.zeit = leistungController.berechneZeit(getStrecke(), inputGeschwindigkeit);
+		this.zeit = leistungHelper.berechneZeit(getStrecke(), inputGeschwindigkeit);
 	}
 }

@@ -2,6 +2,7 @@ package view;
 
 import helper.DezimalDocument;
 import helper.IntegerDocument;
+import helper.LeistungHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -38,7 +39,6 @@ import javax.swing.text.MaskFormatter;
 import main.Main;
 import model.Leistung;
 import controller.Einheitenumrechner;
-import controller.LeistungController;
 
 /**
  * Dialog zum Anlegen einer neuen Leistung durch
@@ -53,7 +53,7 @@ public class SchwellenDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize(); 
 	
-	private final LeistungController lController = Main.mainFrame.leistungController;
+	private final LeistungHelper lController = Main.mainFrame.leistungHelper;
 	private MainFrame mainFrame = Main.mainFrame;
 	
 	private JRadioButton rdbtnStrecke;

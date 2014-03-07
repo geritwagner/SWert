@@ -17,16 +17,15 @@ public class LeistungTest {
 	
 	@Test
 	public void testConstructorAndDataMethods(){
-		
 		testLeistung = new Leistung(1, 12, 146.5, "Test-Leistung", "01-01-2014");
 		assertEquals(testLeistung.getId_strecke(), 1);
 		assertEquals(testLeistung.getId_athlet(), 12);
 		assertEquals(146.5, testLeistung.getZeit(), 0.1);
-		System.out.println("speed: " + testLeistung.getGeschwindigkeit());
-		//		assertEquals(183.125, testLeistung.getGeschwindigkeit(),0.1);
 		assertEquals(testLeistung.getBezeichnung(), "Test-Leistung");
 		assertEquals(testLeistung.getDatum(), "01-01-2014");
 		assertEquals(testLeistung.getStrecke(), 800);
+		@SuppressWarnings("unused")
+		long i = testLeistung.getId();
 
 		System.out.println(testLeistung.getZeitString());
 		testLeistung.setIsUsedForSlopeFaktor(true);
@@ -38,13 +37,13 @@ public class LeistungTest {
 		// TODO: -1 wird bei der Schwelle verwendet, dafür ist aber getStrecke nicht ausgelegt... müsste noch genau überprüft werden
 		testLeistung = new Leistung(-1, 12, 146.5, "Test-Leistung", "01-01-2014");
 		
-		System.out.println(testLeistung.getStrecke());
-
-		// TODO: wird die leistung_id überhaupt verwendet?!??!
-//		assertEquals(1, testLeistung.getId());
+		testLeistung.updateLeistung(2, 150, "updated", "02-02-2015");
+		assertEquals(1000, testLeistung.getStrecke());
+		assertEquals(150, testLeistung.getZeit(), 0.1);
+		assertEquals("updated", testLeistung.getBezeichnung());
+		assertEquals("02-02-2015", testLeistung.getDatum());
 	}
 
-	// TODO: Test anpassen und ausbauen!
 	@Test
 	public void testGeschwindigkeitUndZeit(){
 		//testen, ob bei Geschwindigkeit setzen die richtige Zeit gesetzt wird & vice versa

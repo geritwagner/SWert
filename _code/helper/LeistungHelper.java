@@ -1,13 +1,15 @@
-package controller;
+package helper;
 
 import java.text.*;
 import java.util.Locale;
+
+import controller.Einheitenumrechner;
 
 /**
  * Controller zum Handlen aller Aktionen, die einzelne Leistungen betreffen
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-public class LeistungController {
+public class LeistungHelper {
 
 	/**
 	 * Berechnen der Geschwindigkeit [s/km] anhand Streckenlänge [m] und formatiertem Zeitstring (Form: 00:00:00:000 --> HH:MinMin:SecSec,MSecMSec)
@@ -87,7 +89,7 @@ public class LeistungController {
 	 * Aufbauen des formatierten Zeitstrings (00:00:00,00) aus
 	 * Integer-Repräsentationen der Stunden, Minuten, Sekunden und Millisekunden
 	 */
-	public String buildZeitString(int stunden, int minuten, int sekunden, int milSekunden) {
+	private String buildZeitString(int stunden, int minuten, int sekunden, int milSekunden) {
 		String zeitString = null;
 		String stundenString = String.valueOf(stunden);
 		if (stundenString.length() == 1) {
@@ -115,7 +117,7 @@ public class LeistungController {
 	 * Aufbauen des formatierten Zeitstrings ("00:00:00,00" ODER "00:00,00") aus
 	 * Integer-Repräsentationen der Stunden, Minuten, Sekunden und Millisekunden
 	 */
-	public String buildMinutenString(int stunden, int minuten, int sekunden, int milSekunden) {
+	private String buildMinutenString(int stunden, int minuten, int sekunden, int milSekunden) {
 		String zeitString = null;	
 		
 		String stundenString = String.valueOf(stunden);
@@ -147,7 +149,7 @@ public class LeistungController {
 	 * Ersetzen des Dezimal-Kommes innerhalb eines String ("12,34") durch
 	 * Punkt und parsen des entstehenden Double-Wertes (12.34)
 	 */
-	public double convertGeschwindigkeitStringToDouble (String geschwindigkeitString) {
+	private double convertGeschwindigkeitStringToDouble (String geschwindigkeitString) {
 		NumberFormat format = NumberFormat.getInstance(Locale.GERMANY);
 		Number number;
 		double geschwindigkeit = 0d;

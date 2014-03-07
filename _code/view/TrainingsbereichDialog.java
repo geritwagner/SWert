@@ -1,5 +1,7 @@
 package view;
 
+import helper.LeistungHelper;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -28,7 +30,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 
 import controller.Einheitenumrechner;
-import controller.LeistungController;
 
 /**
  * Dialog zum Anzeigen einer Tabelle der Trainingsbereiche des Athleten
@@ -40,7 +41,7 @@ public class TrainingsbereichDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize();
-	private LeistungController l = new LeistungController();
+	private LeistungHelper l = new LeistungHelper();
 		
 	private double anaerobeSchwelle;
 	private double anaerobeProfilierteSchwelle;

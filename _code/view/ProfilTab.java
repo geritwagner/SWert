@@ -30,7 +30,7 @@ import javax.swing.table.TableRowSorter;
 import net.miginfocom.swing.MigLayout;
 import controller.Einheitenumrechner;
 import helper.IntegerComparator;
-import controller.LeistungController;
+import helper.LeistungHelper;
 import helper.TabelleLeistungsListener;
 import main.Main;
 import model.Athlet;
@@ -45,7 +45,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private Athlet athlet;
 
 	private MainFrame mainFrame = Main.mainFrame;
-	private LeistungController leistungController = Main.mainFrame.leistungController;
+	private LeistungHelper leistungController = Main.mainFrame.leistungHelper;
 	
 	private JLabel lblAthletName;
 	private JButton btnBestzeiten;
@@ -772,7 +772,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		double anaerobeSchwelle;
 		try {
 			anaerobeSchwelle = athlet.getAnaerobeSchwelle();
-			LeistungController l = new LeistungController();
+			LeistungHelper l = new LeistungHelper();
 			textFieldSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
 			
 			setAnalysenVerfügbar(true);

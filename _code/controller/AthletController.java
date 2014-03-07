@@ -12,6 +12,8 @@ public class AthletController{
 
 //----------------------- VARIABLEN -----------------------
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
+	
+	// TODO: gehört eigentlich in Athlet.java
 
 //----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**

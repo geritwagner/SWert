@@ -1,6 +1,7 @@
 package view;
 
 import helper.DezimalDocument;
+import helper.LeistungHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -48,7 +49,6 @@ import model.Strecken;
 import com.toedter.calendar.JDateChooser;
 
 import controller.Einheitenumrechner;
-import controller.LeistungController;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -65,7 +65,7 @@ public class LeistungDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize();
 	private MainFrame mainFrame = Main.mainFrame;
-	private final LeistungController lController = Main.mainFrame.leistungController;
+	private final LeistungHelper lController = Main.mainFrame.leistungHelper;
 	
 	private JTextField textFieldBezeichnung;
 	private JLabel lblBezeichnungError;

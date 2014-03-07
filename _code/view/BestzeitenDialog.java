@@ -1,6 +1,7 @@
 package view;
 
 import helper.IntegerDocument;
+import helper.LeistungHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -29,7 +30,6 @@ import javax.swing.table.DefaultTableModel;
 import main.Main;
 import model.Athlet;
 import model.Strecken;
-import controller.LeistungController;
 
 /**
  * Dialog zum Anzeigen der möglichen Bestzeiten des Athleten über eine wählbare Strecke
@@ -41,7 +41,7 @@ public class BestzeitenDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel = new JPanel();
 	private Dimension d = this.getToolkit().getScreenSize();
-	private LeistungController lController = Main.mainFrame.leistungController;
+	private LeistungHelper lController = Main.mainFrame.leistungHelper;
 	
 	private JTable trainingsTabelle;
 	private JTextField txtFieldZeit;

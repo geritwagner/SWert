@@ -13,13 +13,12 @@ interface LeistungInterface {
 	public String toString();
 	public boolean equals(Leistung andereLeistung);
 	
-	// TODO: wir sollten eine Methode fürs aktualisieren der Leistung ("Leistung bearbeiten") anbieten: 
-	// Konsistent alle relevanten Attribute abfragen und über die Leistungs-ID identifizieren!
+	// TODO: update-Methode im Controller verwenden!
+	public void updateLeistung(int id_strecke, double zeit, String bezeichnung, String datum);
 
 	public double getGeschwindigkeit();
 	public String getZeitString();
 	public double getZeit();
-	
 	
 	// bei setZeit wird die Geschwindigkeit automatisch berechnet und gesetzt & vice versa
 	public void setZeitFromString(String zeit);

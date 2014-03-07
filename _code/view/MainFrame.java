@@ -1,5 +1,7 @@
 package view;
 
+import helper.LeistungHelper;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -35,7 +37,6 @@ import net.miginfocom.swing.MigLayout;
 import controller.AthletController;
 import controller.CSVController;
 import controller.DiagrammController;
-import controller.LeistungController;
 
 
 public class MainFrame {
@@ -45,7 +46,7 @@ public class MainFrame {
 	public LinkedList<ProfilTab> tabList = new LinkedList<ProfilTab>();
 	public DiagrammController diagrammController;
 	private CSVController csvController;
-	public LeistungController leistungController;
+	public LeistungHelper leistungHelper;
 	
 	private Dimension d = mainFrame.getToolkit().getScreenSize();
 	private AthletController athletcontroller;
@@ -68,7 +69,7 @@ public class MainFrame {
 		athletcontroller 	= new AthletController();
 		csvController 		= new CSVController();
 		diagrammController 	= new DiagrammController();
-		leistungController 	= new LeistungController();
+		leistungHelper 	= new LeistungHelper();
 	}
 	
 	/**
