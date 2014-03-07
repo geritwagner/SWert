@@ -1,6 +1,7 @@
 package model;
 
 import java.util.LinkedList;
+import java.util.prefs.Preferences;
 
 /**
  * Model-Klasse für das "Athlet"-Objekt
@@ -18,10 +19,27 @@ public class Athlet implements AthletInterface{
 	private double anaerobeSchwelle;
 	private LinkedList<Leistung> alleLeistungen = new LinkedList<Leistung>();
 
+	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
+	
+	public Athlet(String name) {
+		this.id = getNextAthletId();
+		this.name = name;
+	}
 	
 	public Athlet(long id, String name) {
 		this.id = id;
 		this.name = name;		
+	}
+	
+	private long getNextAthletId() {
+		long idAthlet = 0;
+		idAthlet = pref.getLong("ahletId", 1);
+		writeAthletId(idAthlet);
+		return idAthlet;
+	}
+	
+	private void writeAthletId(long id) {
+		pref.put("ahletId", String.valueOf(id+1));
 	}
 	
 	public long getId() {
@@ -93,7 +111,6 @@ public class Athlet implements AthletInterface{
 				i++;
 			}
 		}
-		assert i <= ANZAHL_LEISTUNGEN_FÜR_BERECHNUNG_DES_SLOPE_FAKTORS;
 		return LeistungAuswahlForSlopeFaktor;
 	}
 	
@@ -105,23 +122,22 @@ public class Athlet implements AthletInterface{
 
 	
 	public boolean isSetSlopeFaktor(){
-		if ( isValidSlopeFaktor(slopeFaktor) && isValidLeistungAuswahlForSlopeFaktor()){
-				return true;
-		} else {
+		if ( ! isValidLeistungAuswahlForSlopeFaktor()){
+			return false;
+		} 
+		if ( ! isValidSlopeFaktor(slopeFaktor) ){
 			return false;			
 		}
+		return true;			
 	}
 
 	public String getSlopeFaktorStatus(){
 		try{
 			triggerCalculations();
 		} catch (Exception e){
-			// nothing
+			return "notSet";
 		}
-		if (isSetSlopeFaktor()){
-			return "set";
-		}
-		return "notSet";
+		return "set";
 	}
 	
 	private void requireSlopeFaktor() throws Exception{
@@ -132,8 +148,7 @@ public class Athlet implements AthletInterface{
 	}
 	
 	/**
-	 * Schätzen der möglichen Bestzeiten anhand SlopeFaktor und einer ReferenzleistungW
-	 * @throws Exception 
+	 * Schätzen der möglichen Bestzeiten anhand SlopeFaktor und einer Referenzleistung
 	 */
 	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws Exception { 
 		requireSlopeFaktor();
@@ -189,7 +204,6 @@ public class Athlet implements AthletInterface{
 	
 	/**
 	 * Berechnen des Slope-Faktors anhand zweier Leistungen
-	 * @return: slopeFaktor
 	 */
 	private double  slopeFaktorBerechnen(Leistung leistung1, Leistung leistung2) {
 		// tauschen, wenn strecke1 > strecke2
@@ -217,24 +231,18 @@ public class Athlet implements AthletInterface{
 	 */
 	private void setAnaerobeSchwelle () throws Exception {
 		if (!isSetSlopeFaktor()){
-			return;
+			throw new Exception();
 		}
-		
-		int maxIter = 1000;
 		double accuracy = 1;
 		double timeToSearch = 3600.0;
 		double diff;
 		double newGuessKm;
 		double distanceMeter = 10000;
-		int counter;
-		for (counter = 0; counter < maxIter; counter++){
+		do{
 			newGuessKm = timeToSearch / (calculateSpeedSecondsPerKm(distanceMeter));
 			diff = Math.abs(newGuessKm*1000 - distanceMeter);
-			if (diff<accuracy) {
-				break;
-			}
 			distanceMeter = newGuessKm*1000;
-		}
+		} while (diff>accuracy);
 		double speed = timeToSearch / distanceMeter*1000;	
 		this.anaerobeSchwelle = speed;
 	}

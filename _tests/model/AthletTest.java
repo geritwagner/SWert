@@ -14,6 +14,8 @@ import view.MainFrame;
 
 public class AthletTest {
 
+	// ECLEMMA: Bug expectedException - http://www.eclemma.org/faq.html#trouble05
+	
 	Athlet testAthlet;
 	
     @Rule
@@ -29,6 +31,12 @@ public class AthletTest {
 	public void testConstructorAndDataMethods(){
 		testAthlet = new Athlet(12, "Tester");
 		assertEquals(testAthlet.getId(), 12);
+		testAthlet = null;
+		testAthlet = new Athlet ("Tester");
+		long naechsteId = testAthlet.getId() + 1;
+		Athlet neuerAthlet = new Athlet ("neuer");
+		assertEquals(naechsteId, neuerAthlet.getId());
+		
 		assertTrue( testAthlet.getName() == "Tester");
 		assertTrue( 0 == testAthlet.getLeistungen().size());
 		Leistung testLeistung = new Leistung(2, 12, 50.0, "Test Wettkampf", "01-01-2014");
@@ -38,11 +46,15 @@ public class AthletTest {
 		testAthlet.removeLeistung(testLeistung);
 		testAthlet.removeLeistung(testLeistung);
 		assertTrue( 0 == testAthlet.getLeistungen().size());
+		
+		testAthlet = new Athlet ("Athlet ohne ID (wird erzeugt)");
+		assertEquals("Athlet ohne ID (wird erzeugt)", testAthlet.getName());
 	}
 	
 	@Test
 	public void testSlopeFaktorLogik() throws Exception {
 		testAthlet = new Athlet(12, "Tester");
+		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
 		Leistung leistung1 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
 		Leistung leistung2 = new Leistung(7, 12, 61.5300003, "10.00m-Leistung (langsam)", "01-01-2014");
 		testAthlet.addLeistung(leistung1);
@@ -81,7 +93,6 @@ public class AthletTest {
 
 		// Es sollten keine Leistungen über die gleiche Strecke als Slope-Faktor gesetzt werden können
 		
-		// 
 		leistung1 = new Leistung(7, 12, 1832, "10.000m-Leistung (langsam)", "01-01-2014");
 		leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
 		testAthlet = new Athlet(12, "Tester");
@@ -98,35 +109,66 @@ public class AthletTest {
 		testAthlet.addLeistung(leistung1);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
 		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
-
-		
-		// BruteForce Test verschiedene Slope-Faktoren und Distanzen
-//		for (int zeit = 1800; zeit<4000; zeit++){
-//			leistung2.setZeitAndGeschwindigkeit(zeit);
-//			try {
-//				for (int m = 1; m<100000; m++){
-//					double b = testAthlet.calculateSpeedSecondsPerKm(m);					
-//				}
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
 	}
 	
 	@Test
 	public void testCalculations() throws Exception {
 		testAthlet = new Athlet(12, "Tester");
+				
+		boolean exceptionThrown = false;
+		try{
+			// test Exception at requireSlopeFaktor();
+			@SuppressWarnings("unused")
+			LinkedList<Leistung> liste = testAthlet.getMoeglicheBestzeitenListe();
+			fail("no Exception thrown");
+		} catch (Exception e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+		
+		// Auswahl einer 3. Leistung für die Berechnung des Slope-Faktors sollte nicht möglich sein.
+		Leistung leistung1 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung", "01-01-2014");
+		Leistung leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung", "01-01-2014");
+		Leistung leistung3 = new Leistung (6, 12, 1315, "5.000m-Leistung", "11-01-2014");
+		testAthlet.addLeistung(leistung1);
+		testAthlet.addLeistung(leistung2);
+		testAthlet.addLeistung(leistung3);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
+		
+		exceptionThrown = false;
+		try{
+			testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung3);
+			fail("no Exception thrown");
+		} catch (Exception e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
 
-		// TODO: test Exceptions (z.B. bei getMoeglicheBestzeitenListe)
-		// ECLEMMA: Bug expectedException - http://www.eclemma.org/faq.html#trouble05
-//		try{
-//			thrown.expect(Exception.class);
-//			@SuppressWarnings("unused")
-//			LinkedList<Leistung> liste = testAthlet.getMoeglicheBestzeitenListe();
-////			fail("no Exception thrown");
-//		} catch (Exception e){
-//		}
+		testAthlet.removeLeistung(leistung1);
+		testAthlet.removeLeistung(leistung2);
+		testAthlet.removeLeistung(leistung3);
+
+		leistung1 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung", "01-01-2014");
+		leistung2 = new Leistung(7, 12, 2815.3000000000003, "andere 10.000m-Leistung", "01-01-2014");
+		testAthlet.addLeistung(leistung1);
+		testAthlet.addLeistung(leistung2);
+		testAthlet.addLeistung(leistung3);
+		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
+		
+		// es dürfen keine Leistungen über die gleiche Strecke für die Berechnung des Slope-Faktors ausgewählt werden
+		exceptionThrown = false;
+		try{
+			testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
+			fail("no Exception thrown");
+		} catch (Exception e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+		
+		testAthlet.removeLeistung(leistung1);
+		testAthlet.removeLeistung(leistung2);
+		testAthlet.removeLeistung(leistung3);
 
 		Leistung leistung1Langsam = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
 		Leistung leistung2Langsam = new Leistung(7, 12, 2615.3, "10.00m-Leistung (langsam)", "01-01-2014");

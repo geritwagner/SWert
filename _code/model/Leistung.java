@@ -15,7 +15,9 @@ public class Leistung implements LeistungInterface{
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
 	
 	// TODO: ggf. später: id_strecke kapseln, beliebige Streckenlängen lösen
-
+	
+	private static final int ID_SCHWELLENLEISTUNG = -1;
+	
 	private long id_leistung;
 	//	kein Setter für id_strecke, da auch Zeit, Geschwindigeit etc. geändert werden müssten (Gefahr der Inkonsistenz!)
 	private int id_strecke;
@@ -25,8 +27,6 @@ public class Leistung implements LeistungInterface{
 	private String bezeichnung;
 	private String datum;
 	private boolean selectedForCalculatingSlopeFaktor;
-	
-	private static final int ID_SCHWELLENLEISTUNG = -1;
 	
 	private LeistungHelper leistungHelper = Main.mainFrame.leistungHelper;
 	

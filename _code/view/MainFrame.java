@@ -1,43 +1,17 @@
 package view;
 
-import helper.LeistungHelper;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import model.Athlet;
 import net.miginfocom.swing.MigLayout;
-import controller.AthletController;
 import controller.CSVController;
 import controller.DiagrammController;
+import helper.LeistungHelper;
 
+import model.Athlet;
 
 public class MainFrame {
 
@@ -49,7 +23,6 @@ public class MainFrame {
 	public LeistungHelper leistungHelper;
 	
 	private Dimension d = mainFrame.getToolkit().getScreenSize();
-	private AthletController athletcontroller;
 	private JMenuItem mntmAthletenprofilSchlieen;
 	private JMenu mnBearbeiten;
 	private JMenuItem mntmLeistungenBearbeiten;
@@ -66,7 +39,6 @@ public class MainFrame {
 	}
 
 	public void initializeControllers() {
-		athletcontroller 	= new AthletController();
 		csvController 		= new CSVController();
 		diagrammController 	= new DiagrammController();
 		leistungHelper 	= new LeistungHelper();
@@ -408,7 +380,7 @@ public class MainFrame {
 	}
 	
 	public void createTab (String name) {
-			Athlet athlet = athletcontroller.neuerAthlet(name);
+			Athlet athlet = new Athlet(name);
 			ProfilTab newTab = new ProfilTab(athlet);			
 			tabList.add(0, newTab);
 			tabbedPane.insertTab("* "+name, null, newTab, null, 0);
@@ -416,7 +388,7 @@ public class MainFrame {
 	}
 	
 	public ProfilTab createTab (String name,long id) {
-		Athlet athlet = athletcontroller.neuerAthlet(name,id);
+		Athlet athlet = new Athlet(id, name);
 		ProfilTab newTab = new ProfilTab(athlet);			
 		tabList.add(0, newTab);
 		tabbedPane.insertTab(name+" *", null, newTab, null, 0);

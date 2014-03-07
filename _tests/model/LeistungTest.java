@@ -27,7 +27,6 @@ public class LeistungTest {
 		@SuppressWarnings("unused")
 		long i = testLeistung.getId();
 
-		System.out.println(testLeistung.getZeitString());
 		testLeistung.setIsUsedForSlopeFaktor(true);
 		assertTrue(testLeistung.isUsedForSlopeFaktor());
 		
