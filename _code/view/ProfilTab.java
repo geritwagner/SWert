@@ -1,51 +1,23 @@
 package view;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.RowSorter;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
-import net.miginfocom.swing.MigLayout;
-import controller.Einheitenumrechner;
-import helper.IntegerComparator;
-import helper.LeistungHelper;
-import helper.TabelleLeistungsListener;
-import main.Main;
-import model.Athlet;
-import model.Leistung;
-import model.Strecken;
-
-import javax.swing.ImageIcon;
+import java.awt.event.*;
 import java.awt.Font;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.RowSorter.*;
+import javax.swing.event.*;
+import javax.swing.table.*;
+import net.miginfocom.swing.MigLayout;
+
+import helper.*;
+import main.Main;
+import model.*;
 
 public class ProfilTab extends JPanel implements TableModelListener {
 	private static final long serialVersionUID = 1L;
 	private Athlet athlet;
 
 	private MainFrame mainFrame = Main.mainFrame;
-	private LeistungHelper leistungController = Main.mainFrame.leistungHelper;
 	
 	private JLabel lblAthletName;
 	private JButton btnBestzeiten;
@@ -56,6 +28,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	private JCheckBox chckbxLeistungenAuswahl;
 	private boolean leistungenAuswahlCheck = false;
 	
+	//TODO ggf. leistungenTabelle als View-Komponente auslagern?
 	private JTable leistungenTabelle;
 	private boolean verändert = false;
 	private int booleanSpalte;
@@ -71,9 +44,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	
 	//----------------------- für presenter/controller -----------------------
 
-	
-	//----------------------- view logik -----------------------
-
 	public ProfilTab(Athlet athlet) {
 		// TODO: Athlet nicht speichern - nur darstellen!
 		this.athlet = athlet;
@@ -84,10 +54,20 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		setBearbeitenStatus(false);
 	}
 	
+	public Athlet getAthlet(){
+		return athlet;
+	}
+	
+	public String getSpeicherPfad() {
+		return speicherPfad;
+	}
+	
 	public void bestzeitenButtonPressed(){
 		new BestzeitenDialog(athlet);
-		// TODO: comment?
-		// funktionenController.bestzeitenListe(leistungAuswahl[0], slopeFaktor);
+	}
+
+	public void leistungskurveButtonPressed(){
+		mainFrame.diagrammController.DiagrammOeffnen();
 	}
 	
 	public void trainingsBereichButtonPressed(){
@@ -101,12 +81,315 @@ public class ProfilTab extends JPanel implements TableModelListener {
 					, "Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
-	//----------------------- view darstellung -----------------------
+	
+	// ----------------- Actions ------------------------------
+	
+	/**
+	 * Prüft, ob die Auswahl richtig ist und gibt entsprechend eine Meldung zurück oder berechnet die Werte
+	 */
+	public void checkboxLeistungenAuswahlprüfenClicked() {		
+		// TODO: refactor: check or calculate!
+		if (chckbxLeistungenAuswahl.isSelected()) {
+        	if (!automatischeAuswahlZulässig()) {
+				JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
+						, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
+				chckbxLeistungenAuswahl.setSelected(false);
+        	} else {
+        		// TODO: Unterschied?: leistungenAuswahlCheck, chckbxLeistungenAuswahl.isSelected(), automatischeVerarbeitung        		
+        		leistungenAuswahlCheck = true;
+        		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben(); 
+        		leistungenAuswahlCheck = false;
+        		setLeistungAutomatisch();
+        		chckbxLeistungenAuswahl.setSelected(true);
+        		werteBerechnen();
+        	}
+    	}
+	}
 
 	/**
-	 * Layout des Athleten-Profils erstellen
+	 * Wählt die Leistungen über die kürzeste und längste Distanz für die Berechnung des Slope-Faktors aus.
+	 */	
+	private void setLeistungAutomatisch() {		
+		int kürzereStrecke = 0;
+		int längereStrecke = getZeilenAnzahl() - 1;
+
+		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben();		
+		automatischeVerarbeitung = true;
+		leistungenTabelle.setValueAt(true, kürzereStrecke, booleanSpalte);
+		leistungenTabelle.setValueAt(true, längereStrecke, booleanSpalte);
+		automatischeVerarbeitung = false;
+		
+		Leistung leistungKurzeStrecke = getLeistungInZeile(kürzereStrecke);
+		Leistung leistungLangeStrecke = getLeistungInZeile(längereStrecke);
+
+		athlet.resetLeistungAuswahlForSlopeFaktor();
+		try {
+			athlet.setLeistungToAuswahlForSlopeFaktor(leistungLangeStrecke);		
+			athlet.setLeistungToAuswahlForSlopeFaktor(leistungKurzeStrecke);
+		} catch (Exception e) {
+			// TODO gleiche Leistung ausgewählt oder schon alle Leistungen für Berechnung des Slope-Faktors gesetzt
+			e.printStackTrace();
+		}
+	}
+	
+	public void leistungBearbeitenPressed() {
+		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
+		if (leistung.getId_strecke() == -1) {
+			@SuppressWarnings("unused")
+			SchwellenDialog dialog = new SchwellenDialog(leistung);
+		} else {
+			@SuppressWarnings("unused")
+			LeistungDialog dialog = new LeistungDialog(leistung);
+		}
+	}
+
+	public void deleteZeileButtonPressed() {
+		if (JOptionPane.showConfirmDialog(this, "Wollen Sie die Leistung wirklich löschen?", "Leistung löschen", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+			deleteLeistung();
+		}
+	}
+	
+	public void neueLeistungButtonPressed(){
+		setBearbeitenStatus(false);
+		@SuppressWarnings("unused")
+		LeistungDialog dialog = new LeistungDialog();		
+	}
+
+	public void tabSchließen() {
+		setBearbeitenStatus(false);
+        int i = mainFrame.tabbedPane.getSelectedIndex();
+        // TODO: welcher Fall ist i=-1 bzw !=-1 ??? ggf. schon gespeichert???
+        if (i != -1) {
+        	if (gespeichert) {
+        		mainFrame.tabbedPane.remove(i); 
+        		mainFrame.tabList.remove(i);
+        	} else {
+        		int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
+        		if (nutzerauswahlSpeichern == 0) {
+        			mainFrame.speichern();
+        			mainFrame.tabbedPane.remove(i); 
+            		mainFrame.tabList.remove(i);
+        		} else if (nutzerauswahlSpeichern == 1) {
+        			mainFrame.tabbedPane.remove(i); 
+            		mainFrame.tabList.remove(i);
+        		}
+        	}
+        }
+	}
+	
+	// ------------------ Status functions ----------------------------------
+
+	/**
+	 * Boolean umschalten, falls Checkboxen der Tabelle geändert wurden
 	 */
+	private void aktualisiereSpeicherStatus(int spalte) {         
+		if (spalte != booleanSpalte) {
+        	setSpeicherStatus(false);
+        }
+	}
+	
+	public void setSpeicherPfad(String speicherPfad) {
+		this.speicherPfad = speicherPfad;
+	}	
+	
+	public boolean getSpeicherStatus() {
+		return gespeichert;
+	}
+
+	public void setSpeicherStatus (boolean gespeichert) {
+		this.gespeichert = gespeichert;
+		int tabStelle = mainFrame.tabbedPane.getSelectedIndex();
+		if (gespeichert) {
+			mainFrame.tabbedPane.setTitleAt(tabStelle, athlet.getName());
+		} else {
+			mainFrame.tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
+		}
+	}
+
+	public void setBearbeitenStatus(boolean editable){
+		if (editable){
+			btnLeistungBearbeiten.setEnabled(true);
+			btnLeistungLöschen.setEnabled(true);
+	        mainFrame.leistungBearbeitenMenüVerfügbar();
+	        mainFrame.leistungLöschenMenüVerfügbar();
+		} else {
+			leistungenTabelle.getSelectionModel().clearSelection();
+			mainFrame.leistungBearbeitenMenüAusgrauen();
+			mainFrame.leistungLöschenMenüAusgrauen();
+			btnLeistungBearbeiten.setEnabled(false);
+			btnLeistungLöschen.setEnabled(false);
+		}
+	}
+	
+	private void setAnalysenVerfügbar(boolean AnalyseVerfügbar){
+		if(AnalyseVerfügbar){
+			btnBestzeiten.setEnabled(true);
+			btnLeistungskurve.setEnabled(true);
+			btnTrainingsbereich.setEnabled(true);										
+		} else {
+			btnBestzeiten.setEnabled(false);
+			btnLeistungskurve.setEnabled(false);
+			btnTrainingsbereich.setEnabled(false);										
+		}
+	}
+	
+	// ----------------------------- Getter and Setter -----------------------
+	
+	/**
+	 * Methoden um eine neue Zeile in der Tabelle hinzuzufügen oder bestehende zu löschen
+	 */
+	public void addZeile(Leistung leistung) {
+		// TODO: athlet.addLeistung in controller extrahieren!
+		athlet.addLeistung(leistung);	
+		
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		model.addRow(leistung.getObjectDataForTable());
+		
+		leistungsAuswahlBeiZeileHinzufügen();
+	}
+	
+	private Leistung[] getAusgewählteLeistungenForSlopeFaktorFromCheckbox() {
+		int zeilenAnzahl = getZeilenAnzahl();
+		int spalte = booleanSpalte;
+		Leistung[] ausgewählteLeistungen = new Leistung[2];
+		int counter = 0;
+		for (int i = 0; i < zeilenAnzahl; i++) {
+			if (true == getBooleanAt(i, spalte) && counter < 2){
+				ausgewählteLeistungen[counter] = getLeistungInZeile(i);
+				counter++;
+			} 
+		}
+		return ausgewählteLeistungen;
+	}
+	
+	/**
+	 * Löscht eine ausgewählte Zeile, wenn von Schwellen- oder Leistungsdialog gefordert,
+	 * ohne eine automatische Auswahl triggern zu können
+	 */
+	// is called from SchwellenDialog
+	public void deleteZeileAusDialog() {
+		ausDialog = true;
+		deleteLeistung();
+		ausDialog = false;
+	}
+	
+	/**
+	 * Löscht eine ausgewählte Leistung 
+	 */
+	public void deleteLeistung() {
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		int rowToDelete = leistungenTabelle.getSelectedRow();
+		Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
+
+		model.removeRow(leistungenTabelle.convertRowIndexToModel(rowToDelete));	
+		
+		// TODO: umstrukturieren!!
+		// ausDialog: wird dann auf true gesetzt, wenn deleteLeistungDialog() vom LeistungDialog aufgerufen wird
+		if (!ausDialog) {
+
+			//athlet.removeLeistungFromAuswahlForSlopeFaktor(leistungToRemove);
+			athlet.removeLeistung(leistungToRemove);
+			leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen();
+		}
+			
+		setBearbeitenStatus(false);		
+	}
+	
+	/**
+	 * Sobald 2 Checkboxen ausgewählt sind, wird das Auswählen einer dritten wieder rückgängig gemacht
+	 */
+	private void uncheckAutoAuswahl(int spalte) {
+        if (!verändert && spalte == booleanSpalte && !leistungenAuswahlCheck) {
+        	verändert = true;
+        	chckbxLeistungenAuswahl.setSelected(false);
+        	verändert = false;        	
+        } 
+ 	}
+	
+	// ----------------------------- Validators -----------------------
+	
+	/**
+	 * Prüft, ob mehr als 2 Haken in die letzte Spalte gesetzt werden wollen
+	 */	
+	private boolean tabelleAuswahlZulässig() {
+		int zeilenAnzahl = getZeilenAnzahl();
+		int zähler = 0;
+		
+		for (int i = 0; i < zeilenAnzahl; i++) {
+			if (true == getBooleanAt(i, booleanSpalte)){
+				zähler++;
+			}
+			if (zähler >= 3) {
+				return false;
+			}			
+		}
+		return true;	
+	}
+	
+	/**
+	 * Prüft, ob genau 2 Haken in der letzte Spalte gesetzt sind
+	 */	
+	private boolean tabelleAuswahlRichtig() {
+		try{
+			int zeilenAnzahl = getZeilenAnzahl();
+			int zähler = 0;
+			
+			for (int i = 0; i < zeilenAnzahl; i++) {
+				if (true == getBooleanAt(i, booleanSpalte)){
+					zähler++;
+				}
+			}
+			if (zähler == 2) {
+				return true;
+			} else {			
+				return false;	
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+
+	/**
+	 * Prüft, ob eine automatische Auswahl zulässig ist
+	 */
+	private boolean automatischeAuswahlZulässig() {
+		int zeilenAnzahl = getZeilenAnzahl();
+		int streckenIdSpalte = 8;
+		
+		if (!chckbxLeistungenAuswahl.isSelected()) {
+			return false;
+		}
+		
+		if (zeilenAnzahl>1) {
+			for (int i = 0; i < zeilenAnzahl-1; i++) {
+				int zahl1 = getIntAt(i, streckenIdSpalte);				
+				for (int j = i; j < zeilenAnzahl; j++) {
+					int zahl2 = getIntAt(j, streckenIdSpalte);
+					if (zahl1 != zahl2) {
+						return true;
+					}
+					if (zahl1 == -1 && zahl2 == -1) {
+						Leistung zahl1Leistung = getLeistungInZeile(i);
+						Leistung zahl2Leistung = getLeistungInZeile(j);
+						double zahl1Strecke = zahl1Leistung.getStrecke();
+						double zahl2Strecke = zahl2Leistung.getStrecke();
+						if (zahl1Strecke != zahl2Strecke) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	
+	//----------------------- view darstellung -----------------------
+
 	private void initLayout(String Athletenname) {
 		
 		setLayout(new MigLayout("", "[grow]", "[grow][][][grow]"));
@@ -149,7 +432,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		chckbxLeistungenAuswahl.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) { 
-            	checkboxLeistungenAuswahlprüfen();            	
+            	checkboxLeistungenAuswahlprüfenClicked();            	
             }
         });
 		panel.add(chckbxLeistungenAuswahl, "cell 2 2");
@@ -182,7 +465,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnLeistungskurve.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				mainFrame.diagrammController.DiagrammOeffnen();
+				leistungskurveButtonPressed();
 			}
 		});
 		panel.add(btnLeistungskurve, "cell 2 5,alignx left");
@@ -191,9 +474,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		splitPane.setRightComponent(scrollPane);
 	}
 	
-	/**
-	 * Initialisieren der für die Tabelle relevanten Elemente
-	 */
 	private void initJTable() {
 		
 		leistungenTabelle = initLeistungsTabelle(leistungenTabelle);	
@@ -205,10 +485,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnLeistungHinzufügen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				leistungenTabelle.getSelectionModel().clearSelection();
-				setBearbeitenStatus(false);
-				LeistungDialog dialog = new LeistungDialog();		
-				dialog.setVisible(true);
+				neueLeistungButtonPressed();
 			}
 		});
 		
@@ -218,7 +495,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnLeistungBearbeiten.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				leistungBearbeiten();
+				leistungBearbeitenPressed();
 			}
 		});
 		
@@ -228,16 +505,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		btnLeistungLöschen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				deleteZeileAction();
+				deleteZeileButtonPressed();
 			}
 		});
 	}
 		
-	/**
-	 * eigentliche JTable erzeugen
-	 * @param leistungenTabelle
-	 * @return leistungenTabelle
-	 */
 	private JTable initLeistungsTabelle(JTable leistungenTabelle) {
 		//Spalten definieren; die letzten beiden Spalten sind unsichtbar
 		final String[] columnNames = {"Datum",
@@ -250,7 +522,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
                 "für Slope-Faktor ausgewählt",
                 "StreckenId",
                 "s/km"};
-		
 		
 		for (int i = 0; i < columnNames.length; i++) {
 			if (columnNames[i].equalsIgnoreCase("für Slope-Faktor ausgewählt")) {
@@ -315,165 +586,49 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		for (int i = 0; i < columnNames.length; i++) {
 			sorter.setSortable(i, false);
 		}
-		
 		return leistungenTabelle;
 	}
 	
-	public void setBearbeitenStatus(boolean editable){
-		if (editable){
-			btnLeistungBearbeiten.setEnabled(true);
-			btnLeistungLöschen.setEnabled(true);
-	        mainFrame.leistungBearbeitenMenüVerfügbar();
-	        mainFrame.leistungLöschenMenüVerfügbar();
-		} else {
-			mainFrame.leistungBearbeitenMenüAusgrauen();
-			mainFrame.leistungLöschenMenüAusgrauen();
-			btnLeistungBearbeiten.setEnabled(false);
-			btnLeistungLöschen.setEnabled(false);
-		}
-	}
 	
-	public void setAnalysenVerfügbar(boolean AnalyseVerfügbar){
-		if(AnalyseVerfügbar){
-			btnBestzeiten.setEnabled(true);
-			btnLeistungskurve.setEnabled(true);
-			btnTrainingsbereich.setEnabled(true);										
-		} else {
-			btnBestzeiten.setEnabled(false);
-			btnLeistungskurve.setEnabled(false);
-			btnTrainingsbereich.setEnabled(false);										
-		}
-	}
+	
+	
+	
+
 	
 	/**
-	 * Schließt das Profil-Tab
-	 * @return art
-	 */
-	public void tabSchließen() {
-		setBearbeitenStatus(false);
-        int i = mainFrame.tabbedPane.getSelectedIndex();
-        int art = -1;
-        if (i != -1) {
-        	if (gespeichert) {
-        		mainFrame.tabbedPane.remove(i); 
-        		mainFrame.tabList.remove(i);
-        	} else {
-        		art = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
-        		if (art == 0) {
-        			mainFrame.speichern();
-        			mainFrame.tabbedPane.remove(i); 
-            		mainFrame.tabList.remove(i);
-        		} else if (art == 1) {
-        			mainFrame.tabbedPane.remove(i); 
-            		mainFrame.tabList.remove(i);
-        		}
-        	}
-        }
-	}
-	
-	/**
-	 * Visuelle Anzeige im Tab, falls etwas im Profil geändert wurde
-	 */
-	public void setSpeicherStatus (boolean gespeichert) {
-		this.gespeichert = gespeichert;
-		int tabStelle = mainFrame.tabbedPane.getSelectedIndex();
-		if (gespeichert) {
-			mainFrame.tabbedPane.setTitleAt(tabStelle, athlet.getName());
-		} else {
-			mainFrame.tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
-		}
-	}
-	
-	/**
-	 *  Gibt die Auswahl der Leistungen für die Berechnung des Slope-Faktors gem. der Checkboxen zurück.
+	 * Hebt die Auswahl auf
 	 */	
-	public Leistung[] getAusgewählteLeistungenForSlopeFaktorFromCheckbox() {
-		int zeilenAnzahl = leistungenTabelle.getRowCount();
-		int spalte = booleanSpalte;
-		Leistung[] ausgewählteLeistungen = new Leistung[2];
-		int counter = 0;
+	private void tabelleCheckboxenFürSlopeFaktorAuswahlAufheben() {
+		int zeilenAnzahl = getZeilenAnzahl();
 		for (int i = 0; i < zeilenAnzahl; i++) {
-			if (true == getBooleanAt(i, spalte) && counter < 2){
-				ausgewählteLeistungen[counter] = getLeistungInZeile(i);
-				counter++;
-			} 
+			if (true == getBooleanAt(i, booleanSpalte)){
+				leistungenTabelle.setValueAt(false, i, booleanSpalte);
+			}
+		}		
+	}
+	
+	
+	/**
+	 * Prüft, ob automatische Auswahl bei einer neuen Zeile durchgeführt werden soll
+	 */
+	private void leistungsAuswahlBeiZeileHinzufügen() {
+		if (automatischeAuswahlZulässig()) {
+			checkboxLeistungenAuswahlprüfenClicked();
+		}	
+	}
+	
+	/**
+	 * Schaltet eine automatische Auswahl ab, falls diese nicht möglich ist und
+	 * berechnet ansonsten die neuen Werte
+	 */
+	private void leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen() {
+		if (!automatischeAuswahlZulässig()) {
+			chckbxLeistungenAuswahl.setSelected(false);
+		} else {
+			checkboxLeistungenAuswahlprüfenClicked();
 		}
-		return ausgewählteLeistungen;
-	}
-
-	
-	
-	
-	
-	
-	// view bis hier hin überprüft	
-	// TODO: ab hier sortieren:	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * Methodenaufrufe, falls Änderungen in Tabelle vorgenommen werden
-	 */
-	@Override
-	public void tableChanged(TableModelEvent e) {
-        int zeile = e.getFirstRow();
-        int spalte = e.getColumn();
-        TableModel model = (TableModel)e.getSource();          
-       
-		if (automatischeVerarbeitung) {
-        	return;
-        }     
-	       
-		//Verhindern, dass mehr als 2 Leistungen ausgewählt werden
-        if (spalte == booleanSpalte && !automatischeVerarbeitung && !tabelleAuswahlZulässig()) {
-//        if (spalte == booleanSpalte && !tabelleAuswahlZulässig()) {
-        	automatischeVerarbeitung = true;        	
-        	model.setValueAt(false, zeile, spalte);
-        	automatischeVerarbeitung = false;
-        	return;
-        }
-        
-        aktualisiereSpeicherStatus(spalte);
-	    uncheckAutoAuswahl(spalte);
-        berechneWerte(); 
-    }
-	
-	/**
-	 * Boolean umschalten, falls Checkboxen der Tabelle geändert wurden
-	 */
-	private void aktualisiereSpeicherStatus(int spalte) {         
-		if (spalte != booleanSpalte) {
-        	setSpeicherStatus(false);
-        }
 	}
 	
-	/**
-	 * Sobald 2 Checkboxen ausgewählt sind, wird das Auswählen einer dritten wieder rückgängig gemacht
-	 */
-	private void uncheckAutoAuswahl(int spalte) {
-        if (!verändert && spalte == booleanSpalte && !leistungenAuswahlCheck) {
-        	verändert = true;
-        	chckbxLeistungenAuswahl.setSelected(false);
-        	verändert = false;        	
-        } 
- 	}
 	
 	/**
 	 * Erstellt Referenz-Leistungen mit den beiden manuell gewählten Leistungen und berechnet dann die Werte
@@ -495,269 +650,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 	
 	/**
-	 * Startet einen Leistungsdialog mit den ausgefüllten Werten der ausgewählten Leistung
-	 */
-	public void leistungBearbeiten() {
-		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
-		if (leistung.getId_strecke() == -1) {
-			SchwellenDialog dialog = new SchwellenDialog();
-			dialog.setTitle("Schwelle bearbeiten");
-			dialog.initWerte(leistung);
-			dialog.setVisible(true);
-		} else {
-			LeistungDialog dialog = new LeistungDialog();
-			dialog.setTitle("Leistung bearbeiten");
-			dialog.initWerte(leistung);
-			dialog.setVisible(true);					
-		}
-	}
-	
-	/**
-	 * Prüft, ob mehr als 2 Haken in die letzte Spalte gesetzt werden wollen
-	 */	
-	public boolean tabelleAuswahlZulässig() {
-		
-		int zeilenAnzahl = leistungenTabelle.getRowCount();
-		int zähler = 0;
-		
-		for (int i = 0; i < zeilenAnzahl; i++) {
-			if (true == getBooleanAt(i, booleanSpalte)){
-				zähler++;
-			}
-			if (zähler >= 3) {
-				return false;
-			}			
-		}
-		return true;	
-	}
-	
-	/**
-	 * Prüft, ob genau 2 Haken in der letzte Spalte gesetzt sind
-	 */	
-	public boolean tabelleAuswahlRichtig() {
-		try{
-			int zeilenAnzahl = leistungenTabelle.getRowCount();
-			int zähler = 0;
-			
-			for (int i = 0; i < zeilenAnzahl; i++) {
-				if (true == getBooleanAt(i, booleanSpalte)){
-					zähler++;
-				}
-			}
-			if (zähler == 2) {
-				return true;
-			} else {			
-				return false;	
-			}
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	/**
-	 * Wählt die Leistungen über die kürzeste und längste Distanz für die Berechnung des Slope-Faktors aus.
-	 */	
-	public void setLeistungAutomatisch() {		
-		int kürzereStrecke = 0;
-		int längereStrecke = leistungenTabelle.getRowCount()-1;
-
-		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben();		
-		automatischeVerarbeitung = true;
-		leistungenTabelle.setValueAt(true, kürzereStrecke, booleanSpalte);
-		leistungenTabelle.setValueAt(true, längereStrecke, booleanSpalte);
-		automatischeVerarbeitung = false;
-		
-		Leistung leistungKurzeStrecke = getLeistungInZeile(kürzereStrecke);
-		Leistung leistungLangeStrecke = getLeistungInZeile(längereStrecke);
-
-		athlet.resetLeistungAuswahlForSlopeFaktor();
-		try {
-			athlet.setLeistungToAuswahlForSlopeFaktor(leistungLangeStrecke);		
-			athlet.setLeistungToAuswahlForSlopeFaktor(leistungKurzeStrecke);
-		} catch (Exception e) {
-			// TODO gleiche Leistung ausgewählt oder schon alle Leistungen für Berechnung des Slope-Faktors gesetzt
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Hebt die Auswahl auf
-	 */	
-	public void tabelleCheckboxenFürSlopeFaktorAuswahlAufheben() {
-		int zeilenAnzahl = leistungenTabelle.getRowCount();
-		for (int i = 0; i < zeilenAnzahl; i++) {
-			if (true == getBooleanAt(i, booleanSpalte)){
-				leistungenTabelle.setValueAt(false, i, booleanSpalte);
-			}
-		}		
-	}
-	
-	/**
-	 * Prüft, ob die Auswahl richtig ist und gibt entsprechend eine Meldung zurück oder berechnet die Werte
-	 */
-	public void checkboxLeistungenAuswahlprüfen() {		
-		// TODO: refactor: check or calculate!
-		if (chckbxLeistungenAuswahl.isSelected()) {
-        	if (!automatischeAuswahlZulässig()) {
-				JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
-						, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
-				chckbxLeistungenAuswahl.setSelected(false);
-        	} else {
-        		// TODO: Unterschied?: leistungenAuswahlCheck, chckbxLeistungenAuswahl.isSelected(), automatischeVerarbeitung        		
-        		leistungenAuswahlCheck = true;
-        		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben(); 
-        		leistungenAuswahlCheck = false;
-        		setLeistungAutomatisch();
-        		chckbxLeistungenAuswahl.setSelected(true);
-        		werteBerechnen();
-        	}
-    	}
-	}
-	
-	/**
-	 * Prüft, ob eine automatische Auswahl zulässig ist
-	 */
-	private boolean automatischeAuswahlZulässig() {
-		int zeilenAnzahl = leistungenTabelle.getRowCount();
-		int streckenIdSpalte = 8;
-		
-		if (!chckbxLeistungenAuswahl.isSelected()) {
-			return false;
-		}
-		
-		if (zeilenAnzahl>1) {
-			for (int i = 0; i < zeilenAnzahl-1; i++) {
-				int zahl1 = getIntAt(i, streckenIdSpalte);				
-				for (int j = i; j < zeilenAnzahl; j++) {
-					int zahl2 = getIntAt(j, streckenIdSpalte);
-					if (zahl1 != zahl2) {
-						return true;
-					}
-					if (zahl1 == -1 && zahl2 == -1) {
-						Leistung zahl1Leistung = getLeistungInZeile(i);
-						Leistung zahl2Leistung = getLeistungInZeile(j);
-						double zahl1Strecke = zahl1Leistung.getStrecke();
-						double zahl2Strecke = zahl2Leistung.getStrecke();
-						if (zahl1Strecke != zahl2Strecke) {
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * Methoden um eine neue Zeile in der Tabelle hinzuzufügen oder bestehende zu löschen
-	 */
-	public void addZeile(Leistung leistung) {
-		
-		//TODO: Änderung des Models nicht im View!
-		athlet.addLeistung(leistung);
-		
-		DecimalFormat f = new DecimalFormat("#0.00");
-		double geschwindigkeit = leistung.getGeschwindigkeit();
-		double kmH = Einheitenumrechner.toKmH(geschwindigkeit);
-		double mS = Einheitenumrechner.toMS(geschwindigkeit);
-		
-		int streckenID = leistung.getId_strecke();
-		String streckenString;
-		if(streckenID == -1) {
-			int strecke = leistungController.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
-			DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.GERMANY);
-			streckenString = formatter.format(strecke);
-			streckenString = streckenString+"m";
-		} else {
-			streckenString = Strecken.getStreckenlaengeStringById(streckenID);
-		}
-		
-		Object[] daten = {leistung.getDatum(),
-						  streckenString,
-						  leistung.getBezeichnung(),
-						  leistung.getZeitString(),
-						  f.format(kmH),
-						  f.format(mS),
-						  leistungController.parseSecInMinutenstring(geschwindigkeit),
-						  new Boolean(false),
-						  new Integer(leistung.getId_strecke()),
-						  String.valueOf(leistung.getGeschwindigkeit())};	
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		model.addRow(daten);	
-		leistungsAuswahlBeiZeileHinzufügen();
-	}
-	
-	/**
-	 * Prüft, ob automatische Auswahl bei einer neuen Zeile durchgeführt werden soll
-	 */
-	private void leistungsAuswahlBeiZeileHinzufügen() {
-		if (automatischeAuswahlZulässig()) {
-			checkboxLeistungenAuswahlprüfen();
-		}	
-	}
-	
-	/**
-	 * Löscht eine ausgewählte Zeile nach Bestätigung
-	 */
-	public void deleteZeileAction() {
-		if (JOptionPane.showConfirmDialog(this, "Wollen Sie die Leistung wirklich löschen?", "Leistung löschen", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-			deleteLeistung();
-		}
-	}
-	
-	/**
-	 * Löscht eine ausgewählte Zeile, wenn von Schwellen- oder Leistungsdialog gefordert,
-	 * ohne eine automatische Auswahl triggern zu können
-	 */
-	public void deleteZeileAusDialog() {
-		ausDialog = true;
-		deleteLeistung();
-		ausDialog = false;
-	}
-	
-	/**
-	 * Löscht eine ausgewählte Leistung 
-	 */
-	public void deleteLeistung() {
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		int rowToDelete = leistungenTabelle.getSelectedRow();
-		Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
-
-		model.removeRow(leistungenTabelle.convertRowIndexToModel(rowToDelete));	
-		
-		// TODO: umstrukturieren!!
-		// ausDialog: wird dann auf true gesetzt, wenn deleteLeistungDialog() vom LeistungDialog aufgerufen wird
-		if (!ausDialog) {
-
-			//athlet.removeLeistungFromAuswahlForSlopeFaktor(leistungToRemove);
-			athlet.removeLeistung(leistungToRemove);
-			leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen();
-		}
-			
-		setBearbeitenStatus(false);		
-	}
-	
-	/**
-	 * Schaltet eine automatische Auswahl ab, falls diese nicht möglich ist und
-	 * berechnet ansonsten die neuen Werte
-	 */
-	private void leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen() {
-		if (!automatischeAuswahlZulässig()) {
-			chckbxLeistungenAuswahl.setSelected(false);
-		} else {
-			checkboxLeistungenAuswahlprüfen();
-		}
-	}
-
-	
-	//----------------------- METHODEN ZUM BERECHNEN -----------------------
-	
-	/**
 	 * Berechnet die nötigen Werte bzw. gibt entsprechende Fehlermeldungen zurück
 	 */
-	public void werteBerechnen() {
+	private void werteBerechnen() {
 		// TODO: split and simplify? ggf. mit exceptions oder status-codes arbeiten, die im model abgefragt werden...
 		// gleiche Leistungen: sollte vorher schon abgefangen werdne?!??!
 		// if (athlet.getSlopeFaktor() ==- 1) {
@@ -768,7 +663,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			chckbxLeistungenAuswahl.setSelected(false);
 			return;
 		} 
-		
 		double anaerobeSchwelle;
 		try {
 			anaerobeSchwelle = athlet.getAnaerobeSchwelle();
@@ -777,19 +671,39 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			
 			setAnalysenVerfügbar(true);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	//----------------------- GET/SET METHODEN  -----------------------
+		
+	// ---------------------------------- TABLE-METHODS: GET/SET ----------------------------
 	
 	/**
-	 * Gibt ein Leistungsobjekt aus der jeweiligen Zeile zurück
-	 * @param zeile
-	 * @return leistung
+	 * Methodenaufrufe, falls Änderungen in Tabelle vorgenommen werden
 	 */
-	public Leistung getLeistungInZeile(int zeile) {	
+	@Override
+	public void tableChanged(TableModelEvent e) {
+        int zeile = e.getFirstRow();
+        int spalte = e.getColumn();
+        TableModel model = (TableModel)e.getSource();          
+        // TODO: Logik extrahieren!
+		if (automatischeVerarbeitung) {
+        	return;
+        }
+		//Verhindern, dass mehr als 2 Leistungen ausgewählt werden
+        if (spalte == booleanSpalte && !automatischeVerarbeitung && !tabelleAuswahlZulässig()) {
+        // if (spalte == booleanSpalte && !tabelleAuswahlZulässig()) {
+        	automatischeVerarbeitung = true;        	
+        	model.setValueAt(false, zeile, spalte);
+        	automatischeVerarbeitung = false;
+        	return;
+        }
+        aktualisiereSpeicherStatus(spalte);
+	    uncheckAutoAuswahl(spalte);
+        berechneWerte(); 
+    }
+	
+	// TODO: Getter extrahieren!
+	private Leistung getLeistungInZeile(int zeile) {	
 		zeile = leistungenTabelle.convertRowIndexToModel(zeile);
 		String datum = getStringAt(zeile, 0);
 		String streckenlaenge = getStringAt(zeile, 1);
@@ -800,47 +714,27 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		return leistung;
 	}
 	
-	public int getZeilenAnzahl() {
+	private int getZeilenAnzahl() {
 		return leistungenTabelle.getRowCount();
 	}
 	
-	public String getStringAt (int zeile, int spalte) {
+	private String getStringAt (int zeile, int spalte) {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		return (String) model.getValueAt(zeile, spalte);		
 	}
 	
-	public boolean getBooleanAt (int zeile, int spalte) {
+	private boolean getBooleanAt (int zeile, int spalte) {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		return (boolean) model.getValueAt(zeile, spalte);		
 	}
 	
-	public int getIntAt (int zeile, int spalte) {
+	private int getIntAt (int zeile, int spalte) {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		return (int) model.getValueAt(zeile, spalte);		
 	}
 	
-	public double getDoubleAt(int zeile, int spalte){
+	private double getDoubleAt(int zeile, int spalte){
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		return Double.parseDouble((String) model.getValueAt(zeile, spalte));				
 	}
-	
-	public int getBooleanSpalte() {
-		return booleanSpalte;
-	}
-	
-	public boolean getSpeicherStatus() {
-		return gespeichert;
-	}
-	
-	public Athlet getAthlet(){
-		return athlet;
-	}
-		
-	public String getSpeicherPfad() {
-		return speicherPfad;
-	}
-	
-	public void setSpeicherPfad(String speicherPfad) {
-		this.speicherPfad = speicherPfad;
-	}	
 }

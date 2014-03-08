@@ -164,7 +164,6 @@ public class MainFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				LeistungDialog dialog = new LeistungDialog();
-				dialog.setVisible(true);
 			}
 		});
 		
@@ -176,7 +175,7 @@ public class MainFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				ProfilTab tab = tabList.get(getAktivesTab());
-				tab.leistungBearbeiten();
+				tab.leistungBearbeitenPressed();
 			}
 		});
 		
@@ -188,7 +187,7 @@ public class MainFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					tabList.get(getAktivesTab()).deleteZeileAction();
+					tabList.get(getAktivesTab()).deleteZeileButtonPressed();
 				} catch (Exception e) {
 					System.out.println("Bitte ein Tab wählen");
 				}
@@ -332,7 +331,7 @@ public class MainFrame {
 					return;
 				}
 				tab.setSpeicherPfad(pfad);
-				if (!csvController.schreiben(tab.getSpeicherPfad(),tab)) {
+				if (!csvController.schreiben(tab.getSpeicherPfad(),tab.getAthlet())) {
 					fehlermeldungBeiSpeichern();
 				} else {
 					tab.setSpeicherStatus(true);
@@ -343,7 +342,7 @@ public class MainFrame {
 			}
 		} else {
 			try{											
-				if (!csvController.schreiben(tab.getSpeicherPfad(),tab)) {
+				if (!csvController.schreiben(tab.getSpeicherPfad(),tab.getAthlet())) {
 					fehlermeldungBeiSpeichern();
 				} else {
 					tab.setSpeicherStatus(true);
@@ -368,7 +367,7 @@ public class MainFrame {
 				return;
 			}
 			tab.setSpeicherPfad(pfad);
-			if (!csvController.schreiben(tab.getSpeicherPfad(),tab)) {
+			if (!csvController.schreiben(tab.getSpeicherPfad(),tab.getAthlet())) {
 				fehlermeldungBeiSpeichern();
 			} else {
 				tab.setSpeicherStatus(true);				

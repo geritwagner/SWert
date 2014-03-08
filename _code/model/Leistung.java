@@ -2,7 +2,14 @@ package model;
 
 import helper.LeistungHelper;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.prefs.Preferences;
+
+import javax.swing.table.DefaultTableModel;
+
+import controller.Einheitenumrechner;
 
 import main.Main;
 
@@ -143,5 +150,36 @@ public class Leistung implements LeistungInterface{
 	public void setGeschwindigkeitAndGeschwindigkeit(double inputGeschwindigkeit) {
 		this.geschwindigkeit = inputGeschwindigkeit;
 		this.zeit = leistungHelper.berechneZeit(getStrecke(), inputGeschwindigkeit);
+	}
+
+	@Override
+	public Object[] getObjectDataForTable() {
+		DecimalFormat f = new DecimalFormat("#0.00");
+		double geschwindigkeit = this.getGeschwindigkeit();
+		double kmH = Einheitenumrechner.toKmH(geschwindigkeit);
+		double mS = Einheitenumrechner.toMS(geschwindigkeit);
+		
+		int streckenID = this.getId_strecke();
+		String streckenString;
+		if(streckenID == -1) {
+			int strecke = leistungHelper.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
+			DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.GERMANY);
+			streckenString = formatter.format(strecke);
+			streckenString = streckenString+"m";
+		} else {
+			streckenString = Strecken.getStreckenlaengeStringById(streckenID);
+		}
+		
+		Object[] daten = {this.getDatum(),
+						  streckenString,
+						  this.getBezeichnung(),
+						  this.getZeitString(),
+						  f.format(kmH),
+						  f.format(mS),
+						  leistungHelper.parseSecInMinutenstring(geschwindigkeit),
+						  new Boolean(false),
+						  new Integer(this.getId_strecke()),
+						  String.valueOf(this.getGeschwindigkeit())};
+		return daten;
 	}
 }

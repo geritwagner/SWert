@@ -157,7 +157,6 @@ public class LeistungHelper {
 			number = format.parse(geschwindigkeitString);
 			geschwindigkeit = number.doubleValue();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return geschwindigkeit;

@@ -118,9 +118,25 @@ public class LeistungDialog extends JDialog {
 		initProperties();
 		initComponents();
 		clearWarnings();
+		setVisible(true);
 	}
 	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
+	public LeistungDialog(Leistung leistung) {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				textFieldBezeichnung.requestFocus();
+			}
+		});
+		initProperties();
+		initComponents();
+		initWerte(leistung);
+		setTitle("Leistung bearbeiten");
+		clearWarnings();
+		setVisible(true);					
+	}
+
+	//----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**
 	 * Wird aufgerufen, wenn eine Leistung bearbeitet wird. Schreibt die
 	 * Werte der Leistung in die entsprechenden Felder des Dialogs

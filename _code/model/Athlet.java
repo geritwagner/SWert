@@ -186,7 +186,7 @@ public class Athlet implements AthletInterface{
 
 	private void triggerCalculations() throws Exception{
 		setSlopeFactor();
-		setAnaerobeSchwelle();
+		estimateThreshold();
 	}
 	
 	private void setSlopeFactor(){
@@ -202,9 +202,6 @@ public class Athlet implements AthletInterface{
 		}
 	}
 	
-	/**
-	 * Berechnen des Slope-Faktors anhand zweier Leistungen
-	 */
 	private double  slopeFaktorBerechnen(Leistung leistung1, Leistung leistung2) {
 		// tauschen, wenn strecke1 > strecke2
 		if (leistung1.getStrecke() > leistung2.getStrecke()){
@@ -226,10 +223,7 @@ public class Athlet implements AthletInterface{
 		return slopeFaktorBerechnen(LeistungAuswahlForSlopeFaktor[0], LeistungAuswahlForSlopeFaktor[1]);
 	}
 	
-	/**
-	 * Schätzen der anaerobe Schwelle in s/km
-	 */
-	private void setAnaerobeSchwelle () throws Exception {
+	private void estimateThreshold () throws Exception {
 		if (!isSetSlopeFaktor()){
 			throw new Exception();
 		}
@@ -268,7 +262,7 @@ public class Athlet implements AthletInterface{
 	private boolean isValidLeistungAuswahlForSlopeFaktor() {
 		Leistung leistung1 = getLeistungAuswahlForSlopeFaktor()[0];
 		Leistung leistung2 = getLeistungAuswahlForSlopeFaktor()[1];
-		if (leistung1 != null && leistung2 != null && leistung1.getStrecke() != leistung2.getStrecke()){
+		if (leistung1 != null && leistung2 != null){
 			return true;
 		}
 		return false;

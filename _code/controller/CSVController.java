@@ -3,10 +3,12 @@ package controller;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
 import main.Main;
+import model.Athlet;
 import model.Leistung;
 import model.Strecken;
 import view.ProfilTab;
@@ -69,15 +71,14 @@ public class CSVController {
 	 * Methode, die ein übergebenes Profil-Tab unter der Pfadangabe
 	 * als CSV-Datei erstellt
 	 * @param pfad: Pfad an dem die CSV erstellt werden soll
-	 * @param tab: Tab von dem die CSV erstellt werden soll
+	 * @param athlet
 	 * @return: TRUE für erfolgreiches Erstellen der CSV
-	 */
-	public boolean schreiben(String pfad, ProfilTab tab) {
-		try{		
+	 */	public boolean schreiben(String pfad, Athlet athlet) {
+		try{
 		     CSVWriter writer = new CSVWriter(new FileWriter(pfad), ';', '\0');
-		     String[] entries = getAthletenInfo(tab);
+		     String[] entries = getAthletenInfo(athlet);
 		     writer.writeNext(entries);	     
-		     schreibeLeistungen(writer,tab);
+		     schreibeLeistungen(writer,athlet.getLeistungen());
 		     writer.close();
 		     if (isSyntacticallyCorrect(pfad)) {	    	 
 		    	 return true;
@@ -117,31 +118,23 @@ public class CSVController {
     	
 	}
 	
-	/**
-	 * Liest Name und ID des Athlten in dem gegebenen Tab aus 
-	 * @param tab: Tab von dem Name und ID geholt werden soll
-	 * @return: [0] enthält die ID, [1] den Namen 
-	 */
-	private String[] getAthletenInfo(ProfilTab tab) {
+	private String[] getAthletenInfo(Athlet athlet) {
 		String[] athletInfo = new String[4];
-		athletInfo[0] = String.valueOf(tab.getAthlet().getId());
-		athletInfo[1] = tab.getAthlet().getName();
+		athletInfo[0] = String.valueOf(athlet.getId());
+		athletInfo[1] = athlet.getName();
 		return athletInfo;
 	}
 	
-	/**
-	 * Schreiben aller Leistungen eines Athleten in die CSV
-	 * @param writer
-	 * @param tab: Tab von dem die Leistungen geschrieben werden sollen
-	 */
-	// TODO: besser: param: Leistungen<>
-	private void schreibeLeistungen (CSVWriter writer, ProfilTab tab) {
-		for (int i = 0; i < tab.getZeilenAnzahl(); i++) {
+	private void schreibeLeistungen (CSVWriter writer, LinkedList<Leistung> leistungen) {
+		// TODO: auch die getObjectData-Methode verwenden?
+		// TODO: besser lesbare Formate verwenden (1.000m und 12 km/h) - dann müsste aber die reader-Methoden ebenfalls angepasst werden.
+		
+		for (Leistung aktuelleLeistung : leistungen){
 			String[] eingaben = new String[4];
-			eingaben[0] = tab.getStringAt(i, 0);
-			eingaben[1] = tab.getStringAt(i, 1);
-			eingaben[2] = tab.getStringAt(i, 2);
-			eingaben[3] = tab.getStringAt(i, 9);
+			eingaben[0] = aktuelleLeistung.getDatum();
+			eingaben[1] = String.valueOf(aktuelleLeistung.getStrecke());
+			eingaben[2] = aktuelleLeistung.getBezeichnung();
+			eingaben[3] = String.valueOf(aktuelleLeistung.getGeschwindigkeit());
 			writer.writeNext(eingaben);
 		} 
 	}

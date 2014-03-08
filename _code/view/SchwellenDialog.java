@@ -82,6 +82,15 @@ public class SchwellenDialog extends JDialog {
 		clearWarnings();
 	}
 	
+	public SchwellenDialog(Leistung leistung) {
+		initProperties();
+		initAllComponents();
+		setTitle("Schwelle bearbeiten");
+		initWerte(leistung);
+		setVisible(true);
+		clearWarnings();		
+	}
+	
 //----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**
 	 * Füllen des Dialogs mit Werten aus einer bestehenden Leistung
