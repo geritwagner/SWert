@@ -25,5 +25,4 @@ interface LeistungInterface {
 	public void setZeitFromString(String zeit);
 	public void setZeitAndGeschwindigkeit(double zeit);
 	public void setGeschwindigkeitAndGeschwindigkeit(double geschwindigkeit);
-
 }

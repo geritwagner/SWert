@@ -1,7 +1,7 @@
 package model;
 
-import java.util.LinkedList;
-import java.util.prefs.Preferences;
+import java.util.*;
+import java.util.prefs.*;
 
 /**
  * Model-Klasse für das "Athlet"-Objekt
@@ -119,7 +119,6 @@ public class Athlet implements AthletInterface{
 			aktuelleLeistung.setIsUsedForSlopeFaktor(false);
 		}
 	}
-
 	
 	public boolean isSetSlopeFaktor(){
 		if ( ! isValidLeistungAuswahlForSlopeFaktor()){

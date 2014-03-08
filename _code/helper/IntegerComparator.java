@@ -15,4 +15,3 @@ public class IntegerComparator implements Comparator<Object> {
         return this.equals(o2);
     }
 }
-

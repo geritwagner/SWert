@@ -10,11 +10,7 @@ import view.MainFrame;
  */
 public class Main {
 	
-//----------------------- VARIABLEN -----------------------
-	
-	public static MainFrame mainFrame;
-	
-//----------------------- ÖFFENTLICHE METHODEN -------------
+	public static MainFrame mainFrame;	
 	
 	public static void main (String args[]) {
 		EventQueue.invokeLater(new Runnable() {
@@ -31,5 +27,3 @@ public class Main {
 		});		
 	}
 }
-
-

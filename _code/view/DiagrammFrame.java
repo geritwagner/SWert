@@ -1,37 +1,19 @@
 package view;
 
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Rectangle;
-import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.text.NumberFormat;
-import java.util.Random;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import org.jfree.chart.*;
+import org.jfree.chart.axis.*;
+import org.jfree.chart.labels.*;
+import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.xy.*;
+import org.jfree.data.xy.*;
 
 import main.Main;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.LogAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.TickUnitSource;
-import org.jfree.chart.labels.StandardXYItemLabelGenerator;
-import org.jfree.chart.labels.XYItemLabelGenerator;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  * Frame zum Anzeigen der Leistungskurven
@@ -39,7 +21,6 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class DiagrammFrame extends JFrame {
 
-//----------------------- VARIABLEN -----------------------	
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
@@ -54,10 +35,6 @@ public class DiagrammFrame extends JFrame {
 	private Random random = new Random();
 	private Color letzteFarbe = Color.GREEN;
 
-//----------------------- KONSTRUKTOREN -----------------------
-	/**
-	 * Standardkonstruktor
-	 */
 	public DiagrammFrame() {
 		initWindowProperties();
 		
@@ -99,7 +76,6 @@ public class DiagrammFrame extends JFrame {
         pack();
 	}
 
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**
 	 * Hinzufügen einer Serie mit Leistungen zum Plot (Scatterplot)
 	 * @param serie
@@ -122,20 +98,13 @@ public class DiagrammFrame extends JFrame {
 		lineRenderer.setSeriesPaint(datenSammlungBestzeiten.getSeriesCount()-1, letzteFarbe);
 	}	
 	
-//----------------------- PRIVATE METHODEN -----------------------
-
 	private Color getRandomColor(){
 		int r = random.nextInt(256);
 		int g = random.nextInt(256);
 		int b = random.nextInt(256);
 		return new Color(r,g,b);
-		
 	}
 	
-
-	/**
-	 * Initialisieren der Eigenschaften des Diagramm-Frames
-	 */
 	private void initWindowProperties() {
 		setTitle("Leistungkurven");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(DiagrammFrame.class.getResource("/bilder/Diagramm_24x24.png")));
@@ -175,7 +144,6 @@ public class DiagrammFrame extends JFrame {
         elternPlot.setRenderer(1, lineRenderer);
         lineRenderer.setBaseShapesVisible(true);
         lineRenderer.setBaseShapesFilled(true);
-
         formatRenderer(lineRenderer);
 	}
 	
@@ -202,6 +170,4 @@ public class DiagrammFrame extends JFrame {
         renderer.setBaseItemLabelGenerator(generator);
         renderer.setBaseItemLabelsVisible(true);
 	}
-	
-
 }

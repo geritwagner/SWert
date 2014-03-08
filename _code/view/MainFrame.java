@@ -5,12 +5,10 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-
 import net.miginfocom.swing.MigLayout;
-import controller.CSVController;
-import controller.DiagrammController;
-import helper.LeistungHelper;
 
+import controller.*;
+import helper.LeistungHelper;
 import model.Athlet;
 
 public class MainFrame {
@@ -30,9 +28,6 @@ public class MainFrame {
 	
 	private int selectedIndex;
 
-	/**
-	 * Create the application.
-	 */
 	public MainFrame() {
 		initializeControllers();
 		initializeFrame();
@@ -44,9 +39,6 @@ public class MainFrame {
 		leistungHelper 	= new LeistungHelper();
 	}
 	
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initializeFrame() {		
 		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/bilder/Logo_32x32.png")));
 		mainFrame.addWindowListener(new WindowAdapter() {
@@ -163,6 +155,7 @@ public class MainFrame {
 		mntmLeistungenHinzufgen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				@SuppressWarnings("unused")
 				LeistungDialog dialog = new LeistungDialog();
 			}
 		});
@@ -326,7 +319,7 @@ public class MainFrame {
 		if (tab.getSpeicherPfad()==null){
 			try{
 				DateiPfadSpeichern ds = new DateiPfadSpeichern();
-				String pfad = ds.save(tab.getAthlet().getName());
+				String pfad = ds.getDateiSpeichernInfo(tab.getAthlet().getName());
 				if (pfad == null) {
 					return;
 				}
@@ -362,11 +355,12 @@ public class MainFrame {
 		ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());			
 		try{
 			DateiPfadSpeichern ds = new DateiPfadSpeichern();
-			String pfad = ds.save(tab.getAthlet().getName());
+			String pfad = ds.getDateiSpeichernInfo(tab.getAthlet().getName());
 			if (pfad == null) {
 				return;
 			}
 			tab.setSpeicherPfad(pfad);
+			// TODO: wird der Pfad wirklich sinnvoll belegt??!?
 			if (!csvController.schreiben(tab.getSpeicherPfad(),tab.getAthlet())) {
 				fehlermeldungBeiSpeichern();
 			} else {

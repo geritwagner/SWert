@@ -1,42 +1,17 @@
 package view;
 
-import helper.DezimalDocument;
-import helper.IntegerDocument;
-import helper.LeistungHelper;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.*;
+import java.util.*;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.Locale;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.MaskFormatter;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
 
 import main.Main;
+import helper.*;
 import model.Leistung;
 import controller.Einheitenumrechner;
 
@@ -47,7 +22,6 @@ import controller.Einheitenumrechner;
  */
 public class SchwellenDialog extends JDialog {
 
-//----------------------- VARIABLEN -----------------------
 	private static final long serialVersionUID = 1L;
 	
 	private final JPanel contentPanel = new JPanel();
@@ -72,10 +46,6 @@ public class SchwellenDialog extends JDialog {
 	private JLabel lblMsError;
 	private JLabel lblMinKmError;
 
-//----------------------- KONSTRUKTOREN -----------------------
-	/**
-	 * Konstruktor zum Erzeugen des Dialogs
-	 */
 	public SchwellenDialog() {
 		initProperties();
 		initAllComponents();
@@ -91,11 +61,6 @@ public class SchwellenDialog extends JDialog {
 		clearWarnings();		
 	}
 	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
-	/**
-	 * Füllen des Dialogs mit Werten aus einer bestehenden Leistung
-	 * @param leistung
-	 */
 	public void initWerte(Leistung leistung) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LeistungDialog.class.getResource("/bilder/EditLeistung_24x24.png")));
 		this.geschwindigkeit = leistung.getGeschwindigkeit();
@@ -106,10 +71,6 @@ public class SchwellenDialog extends JDialog {
 		clearWarnings();
 	}
 
-//----------------------- PRIVATE METHODEN -----------------------
-	/**
-	 * Initialisieren der Eigenschaften des Dialog-Fensters
-	 */
 	private void initProperties() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(SchwellenDialog.class.getResource("/bilder/NeueLeistung_16x16.png")));
 		setResizable(false);
@@ -124,17 +85,11 @@ public class SchwellenDialog extends JDialog {
 		setModal(true);
 	}
 	
-	/**
-	 * Initialisieren der Komponenten
-	 */
 	private void initAllComponents() {
 		initComponents();
 		initButtonPane();
 	}
 	
-	/**
-	 * Initialisieren der "unteren Komponenten (Abschnitt: "Spezifische Daten")
-	 */
 	private void initComponents() {
 		
 		JLabel lblDaten = new JLabel("Bitte geben Sie Ihre Werte ein:");
@@ -189,9 +144,6 @@ public class SchwellenDialog extends JDialog {
 		contentPanel.add(separator_2);
 	}
 	
-	/**
-	 * Initialisieren der beiden Buttons "Bestätigen" und "Abbrechen"
-	 */
 	private void initButtonPane() {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -230,9 +182,6 @@ public class SchwellenDialog extends JDialog {
 		buttonPane.add(cancelButton);
 	}
 	
-	/**
-	 * Initialisieren der Funktionalität des strecke-RadioButtons
-	 */
 	private void initRadioButtonStrecke() {
 		rdbtnStrecke = new JRadioButton("Strecke in [m]:");
 		rdbtnStrecke.addActionListener(new ActionListener() {
@@ -260,9 +209,6 @@ public class SchwellenDialog extends JDialog {
 		contentPanel.add(rdbtnStrecke);
 	}
 	
-	/**
-	 * Initialisieren des "Strecke"-Textfelds
-	 */
 	private void initTextFieldStrecke() {
 		textFieldStrecke = new JFormattedTextField();
 		textFieldStrecke.setToolTipText("L\u00E4nge der Strecke in Metern");
@@ -273,7 +219,7 @@ public class SchwellenDialog extends JDialog {
 			@Override
 			public void focusLost(FocusEvent e) {
 				String strecke = textFieldStrecke.getText();
-				if(checkStrecke(strecke)) {
+				if(isValidStrecke(strecke)) {
 					setzeGeschwindigkeiten();
 				}
 			}
@@ -288,9 +234,6 @@ public class SchwellenDialog extends JDialog {
 		textFieldStrecke.setColumns(10);
 	}
 	
-	/**
-	 * Initialisieren der Funtkionalität des kmh-RadioButtons
-	 */
 	private void initRadioButtonKmH() {
 		rdbtnkmH = new JRadioButton("[km/h]:");
 		rdbtnkmH.addActionListener(new ActionListener() {
@@ -317,9 +260,6 @@ public class SchwellenDialog extends JDialog {
 		contentPanel.add(rdbtnkmH);
 	}
 	
-	/**
-	 * Initialisieren des Textfelds zur Eingabe der Geschwindigkeit in Kmh
-	 */
 	private void initTextFieldKmH() {
 		textFieldkmH = new JTextField();
 		textFieldkmH.setToolTipText("Geschwindigkeit in [km/h] mit zwei Nachkommastellen");
@@ -327,11 +267,11 @@ public class SchwellenDialog extends JDialog {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				String geschwindigkeitString = textFieldkmH.getText();
-				if (checkKmh(geschwindigkeitString)) {
+				if (isValidKmh(geschwindigkeitString)) {
 					setzeStrecke(geschwindigkeit);
 					setzeMs(geschwindigkeit);
 					setzeMinKm(geschwindigkeit);
-					checkMinMaxGeschwindigkeit(lblKmhError, geschwindigkeit);
+					isValidMinMaxGeschwindigkeit(lblKmhError, geschwindigkeit);
 				}
 			}
 			@Override
@@ -346,9 +286,6 @@ public class SchwellenDialog extends JDialog {
 		textFieldkmH.setColumns(10);
 	}
 	
-	/**
-	 * Initialisieren der Funktionalität des Ms-RadioButtons
-	 */
 	private void initRadioButtonMs() {
 		rdbtnms = new JRadioButton("[m/s]:");
 		rdbtnms.addActionListener(new ActionListener() {
@@ -372,9 +309,6 @@ public class SchwellenDialog extends JDialog {
 		});
 	}
 	
-	/**
-	 * Initialisieren des Textfelds zur Eingabe der Geschwindigkeit in ms
-	 */
 	private void initTextFieldMs() {
 		textFieldMs = new JTextField();
 		textFieldMs.setToolTipText("Geschwindigkeit in [m/s] mit zwei Nachkommastellen");
@@ -382,11 +316,11 @@ public class SchwellenDialog extends JDialog {
 			@Override
 			public void focusLost(FocusEvent e) {
 				String geschwindigkeitString = textFieldMs.getText();
-				if (checkMs(geschwindigkeitString)) {
+				if (isValidMs(geschwindigkeitString)) {
 					setzeStrecke(geschwindigkeit);
 					setzeKmH(geschwindigkeit);
 					setzeMinKm(geschwindigkeit);
-					checkMinMaxGeschwindigkeit(lblMsError, geschwindigkeit);
+					isValidMinMaxGeschwindigkeit(lblMsError, geschwindigkeit);
 				}
 			}
 			@Override
@@ -401,9 +335,6 @@ public class SchwellenDialog extends JDialog {
 		textFieldMs.setColumns(10);
 	}
 	
-	/**
-	 * Initialisieren der Funktionalität des minkm-RadioButtons
-	 */
 	private void initRadioButtonMinKm() {
 		rdbtnminkm = new JRadioButton("[1.000m Zeit]:");
 		rdbtnminkm.addActionListener(new ActionListener() {
@@ -426,10 +357,6 @@ public class SchwellenDialog extends JDialog {
 		});
 	}
 	
-	
-	/**
-	 * Initialisieren des Textfelds zur Eingabe der Geschwindigkeit in minkm
-	 */
 	private void initTextFieldMinKm() {
 		MaskFormatter minKmMaske;
 		try {
@@ -442,11 +369,11 @@ public class SchwellenDialog extends JDialog {
 				@Override
 				public void focusLost(FocusEvent e) {
 					String geschwindigkeitString = textFieldminKm.getText();
-					if (checkMinKm(geschwindigkeitString)) {
+					if (isValidMinKm(geschwindigkeitString)) {
 						setzeStrecke(geschwindigkeit);
 						setzeKmH(geschwindigkeit);
 						setzeMs(geschwindigkeit);
-						checkMinMaxGeschwindigkeit(lblMinKmError, geschwindigkeit);
+						isValidMinMaxGeschwindigkeit(lblMinKmError, geschwindigkeit);
 					}
 				}
 				@Override
@@ -462,12 +389,8 @@ public class SchwellenDialog extends JDialog {
 		contentPanel.add(textFieldminKm);
 	}
 	
-	/**
-	 * Überprüfen, ob eine Strecke eingegeben wurde, falls RadioButton für Strecke ausgewählt
-	 * @param strecke: String aus dem Textfeld für die "Bezeichnung" --> textFieldBezeichnung
-	 * @return FALSE falls keine Bezeichnung eingegenen wurde | TRUE falls eine Bezeichnung eingegeben wurde
-	 */
-	private boolean checkStrecke(String strecke) {
+	// TODO: isValid-Methoden: redundant?!?!? -> LeistungDialog?
+	private boolean isValidStrecke(String strecke) {
 		if (strecke.equals("")) {
 			lblStreckeError.setText("Bitte geben Sie eine Strecke ein!");
 			return false;
@@ -475,13 +398,7 @@ public class SchwellenDialog extends JDialog {
 		return true;
 	}
 	
-	/**
-	 * Überprüfen, ob eine gültige Geschwindigkeit eingegeben wurde
-	 * (kmh-RadioButton augewählt)
-	 * @param geschwindigkeitString: Der aus dem Textfeld ausgelesen String
-	 * @return TRUE für gültige Geschwindigkeit | FALSE für ungültige Geschwindigkeit
-	 */
-	private boolean checkKmh(String geschwindigkeitString) {
+	private boolean isValidKmh(String geschwindigkeitString) {
 		if (geschwindigkeitString.equals("")) {
 			lblKmhError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
 			return false;
@@ -500,18 +417,12 @@ public class SchwellenDialog extends JDialog {
 			}
 			geschwindigkeit = Einheitenumrechner.kmHToSKm(geschwindigkeit);
 			this.geschwindigkeit = geschwindigkeit;
-			checkMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
+			isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
 			return true;
 		}
 	}
 	
-	/**
-	 * Überprüfen, ob eine gültige Geschwindigkeit eingegeben wurde
-	 * (ms-RadioButton augewählt)
-	 * @param geschwindigkeitString: Der aus dem Textfeld ausgelesen String
-	 * @return TRUE für gültige Geschwindigkeit | FALSE für ungültige Geschwindigkeit
-	 */
-	private boolean checkMs(String geschwindigkeitString) {
+	private boolean isValidMs(String geschwindigkeitString) {
 		if (geschwindigkeitString.equals("")) {
 			lblMsError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
 			return false;
@@ -530,18 +441,12 @@ public class SchwellenDialog extends JDialog {
 			}
 			geschwindigkeit = Einheitenumrechner.MSToSKm(geschwindigkeit);
 			this.geschwindigkeit = geschwindigkeit;
-			checkMinMaxGeschwindigkeit(lblMsError, this.geschwindigkeit);
+			isValidMinMaxGeschwindigkeit(lblMsError, this.geschwindigkeit);
 			return true;
 		}
 	}
 	
-	/**
-	 * Überprüfen, ob eine gültige Geschwindigkeit eingegeben wurde
-	 * (minKm-RadioButton augewählt)
-	 * @param geschwindigkeitString: Der aus dem Textfeld ausgelesen String
-	 * @return TRUE für gültige Geschwindigkeit | FALSE für ungültige Geschwindigkeit
-	 */
-	private boolean checkMinKm(String geschwindigkeitString) {
+	private boolean isValidMinKm(String geschwindigkeitString) {
 		if (geschwindigkeitString.equals("00:00,00")) {
 			lblMinKmError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
 			return false;
@@ -552,11 +457,7 @@ public class SchwellenDialog extends JDialog {
 		}
 	}
 	
-	/**
-	 * Überprüfen, ob eine Geschwindigkeit zwischen 10 und 30 km/h liegt
-	 * @param geschwindigkeit: [s/kmH]
-	 */
-	private void checkMinMaxGeschwindigkeit (JLabel errorLabel, double geschwindigkeit) {
+	private void isValidMinMaxGeschwindigkeit (JLabel errorLabel, double geschwindigkeit) {
 		if(geschwindigkeit == 0 ) {
 			return;
 		}
@@ -611,9 +512,6 @@ public class SchwellenDialog extends JDialog {
 		return f.format(geschwindigkeitFormat);
 	}
 	
-	/**
-	 * Einsetzen der Geschwindigkeit (aus Zeit berechnet) in GeschwindigkeitsTextfeld --> textFieldGeschwindigkeit
-	 */
 	private void setzeGeschwindigkeiten() {
 		textFieldkmH.setText("");
 		textFieldMs.setText("");
@@ -621,14 +519,9 @@ public class SchwellenDialog extends JDialog {
 		textFieldkmH.setText(berechneGeschwindigkeitenAusStrecke(1));
 		textFieldMs.setText(berechneGeschwindigkeitenAusStrecke(2));
 		textFieldminKm.setText(berechneGeschwindigkeitenAusStrecke(3));
-		checkMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
+		isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
 	}
 	
-	/**
-	 * Füllen des Textfelds für die Strecke mit der, aus der Geschwindigkeit berechneten
-	 * Strecke
-	 * @param geschwindigkeit: Zugrundeliegende Geschwindigkeit
-	 */
 	private void setzeStrecke(double geschwindigkeit) {
 		int strecke = lController.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
 		textFieldStrecke.setText(String.valueOf(strecke));
@@ -689,19 +582,19 @@ public class SchwellenDialog extends JDialog {
 		String msString = textFieldMs.getText();
 		String minkmString = textFieldminKm.getText();
 		if (rdbtnStrecke.isSelected()) {
-			if(!checkStrecke(streckenString)) {
+			if(!isValidStrecke(streckenString)) {
 				ok = false;
 			}					
 		} else if (rdbtnkmH.isSelected()) {
-			if(!checkKmh(kmhString)) {
+			if(!isValidKmh(kmhString)) {
 				ok = false;
 			}
 		} else if (rdbtnms.isSelected()) {
-			if(!checkMs(msString)) {
+			if(!isValidMs(msString)) {
 				ok = false;
 			}
 		} else if (rdbtnminkm.isSelected()) {
-			if(!checkMinKm(minkmString)) {
+			if(!isValidMinKm(minkmString)) {
 				ok = false;
 			}
 		}
@@ -715,21 +608,12 @@ public class SchwellenDialog extends JDialog {
 		return ok;
 	}
 	
-	/**
-	 * Löschen aller vorhandenen Warnungen
-	 */
 	private void clearWarnings() {
 		lblStreckeError.setText("");
 		lblMsError.setText("");
 		lblMinKmError.setText("");
 	}
 	
-//----------------------- PRIVATE METHODEN -----------------------
-	/**
-	 * Erweiterung zum DocumentListener
-	 * Echtzeitverarbeitung von Integerwerten 
-	 * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
-	 */
 	private class IntegerDocumentListener implements DocumentListener {
 	    
 	    @Override

@@ -1,19 +1,12 @@
 package controller;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
-
 import javax.swing.JOptionPane;
-
 import main.Main;
-import model.Athlet;
-import model.Leistung;
-import model.Strecken;
+import model.*;
 import view.ProfilTab;
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
+import au.com.bytecode.opencsv.*;
 
 /**
  * Controller für alle Aktionen, die die CSV-Dateien betreffen
@@ -21,28 +14,23 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class CSVController {
 
-//----------------------- Variablen -----------------------
 	private String nameAthlet;
 	private long idAthlet;
 	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**
 	 * Methode die eine CSV-Datei einliest und daraus ein Athleten-Profil erstellt;
 	 * false wird zurückgegeben, falls dabei eine Fehler entsteht
-	 * @param pfad: Pfad der einzulesenden CSV-Datei
 	 * @return: TRUE für erfolgreiches Einlesen der CSV
 	 */
+	// TODO: sollte ein Athleten-Objekt zurückgeben, öffnen von Tabs sollte im Controller realisiert werden!
 	public boolean lesen (String pfad) {	
 		try{			
 		    CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
-		    
 		    if (!isSyntacticallyCorrect(pfad)) {
 		    	reader.close();
 		    	return false;
 		    }
-
 		    kopfzeileAuslesen(reader);
-		    		    
 		    if (Main.mainFrame.checkAthletGeöffnet(nameAthlet,idAthlet)) {
 		    	JOptionPane.showMessageDialog(Main.mainFrame.getContext(),
 		    			"Das ausgewählte Athletenprofil ist bereit geöffnet!",
@@ -51,14 +39,10 @@ public class CSVController {
 		    	reader.close();
 		    	return true;
 		    }
-
 		    ProfilTab tab = Main.mainFrame.createTab(nameAthlet,idAthlet);		    
-		    
 		    restlicheLeistungenImTabOeffnen(reader, tab);
-			
 		    tab.setSpeicherPfad(pfad);
 		    tab.setSpeicherStatus(true);
-		    
 		    reader.close();
 		    return true;
 		}catch (Exception e) {
@@ -70,8 +54,6 @@ public class CSVController {
 	/**
 	 * Methode, die ein übergebenes Profil-Tab unter der Pfadangabe
 	 * als CSV-Datei erstellt
-	 * @param pfad: Pfad an dem die CSV erstellt werden soll
-	 * @param athlet
 	 * @return: TRUE für erfolgreiches Erstellen der CSV
 	 */	public boolean schreiben(String pfad, Athlet athlet) {
 		try{
@@ -90,8 +72,6 @@ public class CSVController {
 			return false;
 		}
 	}
-
-//----------------------- PRIVATE METHODEN -----------------------
 	
 	private void kopfzeileAuslesen(CSVReader reader) throws IOException{
 	    String [] aktuelleZeile;
@@ -115,7 +95,6 @@ public class CSVController {
     	String bezeichnung = leistung[2];
     	double geschwindigkeit = Double.parseDouble(leistung[3]);
     	return new Leistung(streckenId, idAthlet, geschwindigkeit, bezeichnung, datum);
-    	
 	}
 	
 	private String[] getAthletenInfo(Athlet athlet) {
@@ -139,25 +118,17 @@ public class CSVController {
 		} 
 	}
 	
-	/**
-	 * Öffnen und Fehlerüberprüfung einer CSV
-	 * @param pfad: Pfad an dem die CSV, die geprüft werden soll, liegt
-	 * @return TRUE falls CSV erfolgreich verifiziert wurde
-	 */
 	private boolean isSyntacticallyCorrect (String pfad) {
 		try{
 			CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
-					
 			if(!isSyntacticallyCorrectHeading(reader))	{
 				reader.close();
 				return false;
 			}
-			
 			if(!isSyntacticallyCorrectLeistungen(reader))	{
 				reader.close();
 				return false;
 			}
-			
 			reader.close();
 			return true;		
 		}catch(Exception e) {
@@ -183,6 +154,5 @@ public class CSVController {
 	       }
 	    }
 		return true;
-	}
-	
+	}	
 }

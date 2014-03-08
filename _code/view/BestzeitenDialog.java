@@ -1,35 +1,15 @@
 package view;
 
-import helper.IntegerDocument;
-import helper.LeistungHelper;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.table.*;
 
 import main.Main;
-import model.Athlet;
-import model.Strecken;
+import helper.*;
+import model.*;
 
 /**
  * Dialog zum Anzeigen der möglichen Bestzeiten des Athleten über eine wählbare Strecke
@@ -37,7 +17,6 @@ import model.Strecken;
  */
 public class BestzeitenDialog extends JDialog {
 
-//----------------------- VARIABLEN -----------------------	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel = new JPanel();
 	private Dimension d = this.getToolkit().getScreenSize();
@@ -49,12 +28,6 @@ public class BestzeitenDialog extends JDialog {
 	
 	private Athlet athlet;
 
-//----------------------- KONSTRUKTOREN -----------------------
-	/**
-	 * Konstruktor zum Erzeugen des Dialogs
-	 * @param leistungAuswahl: Array mit 2 Leistungsobjekten
-	 * @param slopeFaktor
-	 */
 	public BestzeitenDialog(Athlet inputAthlet) {	
 		this.athlet = inputAthlet;
 		if ("set" == athlet.getSlopeFaktorStatus()){
@@ -65,10 +38,6 @@ public class BestzeitenDialog extends JDialog {
 		}
 	}	
 
-//----------------------- PRIVATE METHODEN -----------------------
-	/**
-	 * Initialisieren der Eigenschaften des Dialog-Fensters
-	 */
 	private void initProperties() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(BestzeitenDialog.class.getResource("/bilder/Pokal_24x24.png")));
 		setResizable(false);
@@ -82,18 +51,12 @@ public class BestzeitenDialog extends JDialog {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
-	/**
-	 * Initialisieren der Komponenten
-	 */
 	private void initComponents() {
 		initComponentsGeneral();		
 		initJTable();
 		initButtonPane();	
 	}
 	
-	/**
-	 * Initialisieren der Komponenten im Fenster
-	 */
 	private void initComponentsGeneral() {
 		JLabel lblBestzeiten = new JLabel("Bestzeiten");
 		lblBestzeiten.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -138,9 +101,6 @@ public class BestzeitenDialog extends JDialog {
 		contentPanel.add(lblM);
 	}
 	
-	/**
-	 * Initialisieren des Buttons "Schließen"
-	 */
 	private void initButtonPane() {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -158,10 +118,6 @@ public class BestzeitenDialog extends JDialog {
 		buttonPane.add(cancelButton);
 	}
 	
-	/**
-	 * Initialisieren der Tabelle zum Anzeigen der möglichen Bestzeiten
-	 * zu den einzelnen fixen Strecken
-	 */
 	private void initJTable() {	
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportBorder(null);
@@ -239,7 +195,6 @@ public class BestzeitenDialog extends JDialog {
 		return data;
 	}
 
-//----------------------- PRIVATE KLASSEN -----------------------
 	/**
 	 * Erweiterung zum DocumentListener
 	 * Echtzeitverarbeitung von Integerwerten 

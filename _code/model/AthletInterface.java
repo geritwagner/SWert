@@ -1,6 +1,6 @@
 package model;
 
-import java.util.LinkedList;
+import java.util.*;
 
 interface AthletInterface {
 
@@ -9,7 +9,6 @@ interface AthletInterface {
 	public LinkedList<Leistung> getLeistungen();
 	public boolean addLeistung(Leistung leistung);
 	public boolean removeLeistung(Leistung leistungToRemove);
-		
 	
 	// Leistungen für Slope-Faktor bearbeiten
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception;
@@ -24,6 +23,5 @@ interface AthletInterface {
 	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws Exception;
 	public double calculateSpeedSecondsPerKm (double entfernung) throws Exception;
 	public double calculateTime (double entfernung) throws Exception;
-	public double getAnaerobeSchwelle() throws Exception;
-	
+	public double getAnaerobeSchwelle() throws Exception;	
 }

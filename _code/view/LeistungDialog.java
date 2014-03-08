@@ -1,55 +1,20 @@
 package view;
 
-import helper.DezimalDocument;
-import helper.LeistungHelper;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.MaskFormatter;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.*;
+import java.text.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.text.*;
+import com.toedter.calendar.JDateChooser;
+import net.miginfocom.swing.MigLayout;
 
 import main.Main;
-import model.Leistung;
-import model.Strecken;
-
-import com.toedter.calendar.JDateChooser;
-
+import helper.*;
+import model.*;
 import controller.Einheitenumrechner;
-import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog zum Anlegen einer neuen Leistung oder
@@ -58,7 +23,6 @@ import net.miginfocom.swing.MigLayout;
  */
 public class LeistungDialog extends JDialog {
 
-//----------------------- VARIABLEN -----------------------
 	private final JDialog self = this;
 	private static final long serialVersionUID = 1L;
 	
@@ -104,10 +68,6 @@ public class LeistungDialog extends JDialog {
 	private JButton btnAnaerobeSchwelleDirekt;
 	private JPanel buttonPanel;
 
-//----------------------- KONSTRUKTOREN -----------------------
-	/**
-	 * Konstruktor zum Erzeugen des Dialogs
-	 */
 	public LeistungDialog() {
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -136,12 +96,6 @@ public class LeistungDialog extends JDialog {
 		setVisible(true);					
 	}
 
-	//----------------------- ÖFFENTLICHE METHODEN -----------------------
-	/**
-	 * Wird aufgerufen, wenn eine Leistung bearbeitet wird. Schreibt die
-	 * Werte der Leistung in die entsprechenden Felder des Dialogs
-	 * @param leistung: Leistung-Objekt, welches bearbeitet werden soll
-	 */
 	public void initWerte(Leistung leistung) {
 		textFieldBezeichnung.setText(leistung.getBezeichnung());
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LeistungDialog.class.getResource("/bilder/EditLeistung_24x24.png")));
@@ -162,10 +116,6 @@ public class LeistungDialog extends JDialog {
 		clearWarnings();
 	}
 
-//----------------------- PRIVATE METHODEN -----------------------
-	/**
-	 * Initialisieren der Eigenschaften des Dialog-Fensters
-	 */
 	private void initProperties() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LeistungDialog.class.getResource("/bilder/NeueLeistung_24x24.png")));
 		setResizable(false);
@@ -180,18 +130,12 @@ public class LeistungDialog extends JDialog {
 		setModal(true);
 	}
 	
-	/**
-	 * Initialisieren der Komponenten
-	 */
 	private void initComponents() {
 		initComponentsGeneral();
 		initComponentsSpecific();
 		initButtonPanel();
 	}
 	
-	/**
-	 * Initialisieren der "oberen" Komponenenten (Abschnitt: "Allgemeine Daten")
-	 */
 	private void initComponentsGeneral() {
 		JLabel lblAllgemeineDaten = new JLabel("Allgemeine Daten");
 		lblAllgemeineDaten.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -229,9 +173,6 @@ public class LeistungDialog extends JDialog {
 		contentPanel.add(lblCalendarError);
 	}
 	
-	/**
-	 * Initialisieren der "unteren Komponenten (Abschnitt: "Spezifische Daten")
-	 */
 	private void initComponentsSpecific() {
 		JLabel lblSpezifischeDaten = new JLabel("Spezifische Daten");
 		lblSpezifischeDaten.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -285,11 +226,7 @@ public class LeistungDialog extends JDialog {
 		contentPanel.add(separator_2);
 	}
 	
-	/**
-	 * Initialisieren der beiden Buttons "Bestätigen" und "Abbrechen"
-	 */
-	private void initButtonPanel() {
-		
+	private void initButtonPanel() {		
 		buttonPanel = new JPanel();
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		buttonPanel.setLayout(new MigLayout("", "[194px][194px][194px][194px]", "[25px]"));
@@ -338,16 +275,13 @@ public class LeistungDialog extends JDialog {
 		});
 	}
 	
-	/**
-	 * Initialisieren des Textfelds zur Eingabe der Bezeichnung
-	 */
 	private void initTextFieldBezeichnung() {
 		textFieldBezeichnung = new JTextField();
 		textFieldBezeichnung.setToolTipText("Bezeichnung der Leistung");
 		textFieldBezeichnung.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
-				checkBezeichnung(textFieldBezeichnung.getText());
+				isValidBezeichnung(textFieldBezeichnung.getText());
 			}
 			
 			@Override
@@ -360,9 +294,6 @@ public class LeistungDialog extends JDialog {
 		textFieldBezeichnung.setColumns(10);
 	}
 	
-	/**
-	 * Initialisieren der ComboBox zur Auswahl einer Streckenlänge
-	 */
 	private void initComboBoxStrecke() {
 		comboBoxStrecke = new JComboBox<String>();
 		comboBoxStrecke.setToolTipText("Absolvierte Strecke");
@@ -370,19 +301,19 @@ public class LeistungDialog extends JDialog {
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
 				if (rdbtnZeit.isSelected()) {
-					if(checkZeit(textFieldZeit.getText())) {
+					if(isValidZeit(textFieldZeit.getText())) {
 						setzeGeschwindigkeiten();
 					}					
 				} else if (rdbtnkmH.isSelected()) {
-					if (checkKmh(textFieldkmH.getText())) {
+					if (isValidKmh(textFieldkmH.getText())) {
 						setzeZeit(geschwindigkeit);
 					}
 				} else if (rdbtnms.isSelected()) {
-					if (checkMs(textFieldMs.getText())) {
+					if (isValidMs(textFieldMs.getText())) {
 						setzeZeit(geschwindigkeit);
 					}
 				} else if (rdbtnminkm.isSelected()) {
-					if(checkMinKm(textFieldminKm.getText())) {
+					if(isValidMinKm(textFieldminKm.getText())) {
 						setzeZeit(geschwindigkeit);
 					}
 				}
@@ -394,9 +325,6 @@ public class LeistungDialog extends JDialog {
 		contentPanel.add(comboBoxStrecke);
 	}
 	
-	/**
-	 * Initialisieren des Kalender zur Datumsauswahl
-	 */
 	private void initCalendar() {
 		calendar = new JDateChooser();
 		calendar.setToolTipText("Datum der Leistung");
@@ -404,7 +332,7 @@ public class LeistungDialog extends JDialog {
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
 				Date datum = calendar.getDate();
-				checkDatum(datum);
+				isValidDatum(datum);
 			}
 		});
 		calendar.setBounds(98, 98, 128, 17);
@@ -414,7 +342,7 @@ public class LeistungDialog extends JDialog {
 			@Override
 			public void focusLost(FocusEvent e) {
 				Date datum = calendar.getDate();
-				checkDatum(datum);
+				isValidDatum(datum);
 			}
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -424,9 +352,6 @@ public class LeistungDialog extends JDialog {
 		contentPanel.add(calendar);
 	}
 	
-	/**
-	 * Initialisieren der Funktionalität des "Zeit"-RadioButtons
-	 */
 	private void initRadioButtonZeit() {
 		rdbtnZeit = new JRadioButton("Zeit:");
 		rdbtnZeit.addActionListener(new ActionListener() {
@@ -454,9 +379,6 @@ public class LeistungDialog extends JDialog {
 		contentPanel.add(rdbtnZeit);
 	}
 	
-	/**
-	 * Initialisieren des Textfelds zur Eingabe der Zeit
-	 */
 	private void initTextFieldZeit() {
 		try {
 			MaskFormatter zeitMaske = new MaskFormatter("##:##:##,##");
@@ -467,7 +389,7 @@ public class LeistungDialog extends JDialog {
 				@Override
 				public void focusLost(FocusEvent e) {
 					String zeit = textFieldZeit.getText();
-					if(checkZeit(zeit)) {
+					if(isValidZeit(zeit)) {
 						setzeGeschwindigkeiten();
 					}
 				}
@@ -486,9 +408,6 @@ public class LeistungDialog extends JDialog {
 		textFieldZeit.setColumns(10);
 	}
 	
-	/**
-	 * Initialisieren der Funktionalität des "km/h"-RadioButtons
-	 */
 	private void initRadioButtonKmH() {
 		rdbtnkmH = new JRadioButton("[km/h]:");
 		rdbtnkmH.addActionListener(new ActionListener() {
@@ -515,9 +434,6 @@ public class LeistungDialog extends JDialog {
 		contentPanel.add(rdbtnkmH);
 	}
 	
-	/**
-	 * Initialisieren des Textfelds zur Eingabe der Geschwindigkeit in kmh
-	 */
 	private void initTextFieldKmH() {
 		textFieldkmH = new JTextField();
 		textFieldkmH.setToolTipText("Geschwindigkeit in [km/h] mit zwei Nachkommastellen");
@@ -525,11 +441,11 @@ public class LeistungDialog extends JDialog {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				String geschwindigkeitString = textFieldkmH.getText();
-				if (checkKmh(geschwindigkeitString)) {
+				if (isValidKmh(geschwindigkeitString)) {
 					setzeZeit(geschwindigkeit);
 					setzeMs(geschwindigkeit);
 					setzeMinKm(geschwindigkeit);
-					checkMinMaxGeschwindigkeit(lblKmhError, geschwindigkeit);
+					isValidMinMaxGeschwindigkeit(lblKmhError, geschwindigkeit);
 				}
 			}
 			@Override
@@ -544,9 +460,6 @@ public class LeistungDialog extends JDialog {
 		textFieldkmH.setColumns(10);
 	}
 	
-	/**
-	 * Initialisieren der Funktionalität des "MS"-RadioButtons
-	 */
 	private void initRadioButtonMs() {
 		rdbtnms = new JRadioButton("[m/s]:");
 		rdbtnms.addActionListener(new ActionListener() {
@@ -570,9 +483,6 @@ public class LeistungDialog extends JDialog {
 		});
 	}
 	
-	/**
-	 * Initialisieren des Textfelds zur Eingabe der Geschwindigkeit in MS
-	 */
 	private void initTextFieldMs() {
 		textFieldMs = new JTextField();
 		textFieldMs.setToolTipText("Geschwindigkeit in [m/s] mit zwei Nachkommastellen");
@@ -580,11 +490,11 @@ public class LeistungDialog extends JDialog {
 			@Override
 			public void focusLost(FocusEvent e) {
 				String geschwindigkeitString = textFieldMs.getText();
-				if (checkMs(geschwindigkeitString)) {
+				if (isValidMs(geschwindigkeitString)) {
 					setzeZeit(geschwindigkeit);
 					setzeKmH(geschwindigkeit);
 					setzeMinKm(geschwindigkeit);
-					checkMinMaxGeschwindigkeit(lblMsError, geschwindigkeit);
+					isValidMinMaxGeschwindigkeit(lblMsError, geschwindigkeit);
 				}
 			}
 			@Override
@@ -599,9 +509,6 @@ public class LeistungDialog extends JDialog {
 		textFieldMs.setColumns(10);
 	}
 	
-	/**
-	 * Initialisieren der Funktionalität des "MinKm"-RadioButtons
-	 */
 	private void initRadioButtonMinKm() {
 		rdbtnminkm = new JRadioButton("[1.000m Zeit]:");
 		rdbtnminkm.addActionListener(new ActionListener() {
@@ -624,9 +531,6 @@ public class LeistungDialog extends JDialog {
 		});
 	}
 	
-	/**
-	 * Initialisieren des Textfelds zur Eingabe der Geschwindigkeit in MinKm
-	 */
 	private void initTextFieldMinKm() {
 		try {
 			MaskFormatter minKmMaske = new MaskFormatter("##:##,##");
@@ -638,11 +542,11 @@ public class LeistungDialog extends JDialog {
 				@Override
 				public void focusLost(FocusEvent e) {
 					String geschwindigkeitString = textFieldminKm.getText();
-					if (checkMinKm(geschwindigkeitString)) {
+					if (isValidMinKm(geschwindigkeitString)) {
 						setzeZeit(geschwindigkeit);
 						setzeKmH(geschwindigkeit);
 						setzeMs(geschwindigkeit);
-						checkMinMaxGeschwindigkeit(lblMinKmError, geschwindigkeit);
+						isValidMinMaxGeschwindigkeit(lblMinKmError, geschwindigkeit);
 					}
 				}
 				@Override
@@ -658,12 +562,7 @@ public class LeistungDialog extends JDialog {
 		contentPanel.add(textFieldminKm);
 	}
 	
-	/**
-	 * Überprüfen, ob eine Bezeichnung eingegeben wurde
-	 * @param bezeichnung: String aus dem Textfeld für die "Bezeichnung" --> textFieldBezeichnung
-	 * @return FALSE falls keine Bezeichnung eingegenen wurde | TRUE falls eine Bezeichnung eingegeben wurde
-	 */
-	private boolean checkBezeichnung(String bezeichnung) {
+	private boolean isValidBezeichnung(String bezeichnung) {
 		if (bezeichnung.equals("")) {
 			lblBezeichnungError.setText("Bitte geben Sie eine Bezeichnung ein.");
 			return false;
@@ -673,12 +572,7 @@ public class LeistungDialog extends JDialog {
 		}
 	}
 	
-	/**
-	 * Überprüfen, ob ein gültiges Datum eingegeben wurde (Gültigkeit des Datums + Datum darf nicht in Zukunft liegen
-	 * @param datum: java.util.Date-Objekt, welches aus dem Kalender (--> calendar) ausgelesen wird
-	 * @return FALSE für ein ungültiges Datum | TRUE für ein gültiges Datum
-	 */
-	private boolean checkDatum (Date datum) {
+	private boolean isValidDatum (Date datum) {
 		if (datum != null) {
 			 Date heute = new Date();
 			 long diff = (heute.getTime()-datum.getTime())/1000/60/60;
@@ -694,12 +588,7 @@ public class LeistungDialog extends JDialog {
 		}
 	}
 	
-	/**
-	 * Überprüfen, ob eine gültige Zeit für die Strecke eingegeben wurde
-	 * @param zeit: String-Darstellung der Zeit für eine Leistung (--> textFieldZeit)
-	 * @return TRUE für gültige Zeit | FALSE für ungültige Zeit
-	 */
-	private boolean checkZeit (String zeit) {
+	private boolean isValidZeit (String zeit) {
 		if (zeit.equals("00:00:00,00")) {
 			lblZeitError.setText("Bitte geben Sie eine Zeit ein.");
 			lblZeitError.setForeground(Color.RED);
@@ -708,13 +597,7 @@ public class LeistungDialog extends JDialog {
 		return true;
 	}
 	
-	/**
-	 * Überprüfen, ob eine gültige Geschwindigkeit eingegeben wurde
-	 * (kmh-RadioButton augewählt)
-	 * @param geschwindigkeitString: Der aus dem Textfeld ausgelesen String
-	 * @return TRUE für gültige Geschwindigkeit | FALSE für ungültige Geschwindigkeit
-	 */
-	private boolean checkKmh(String geschwindigkeitString) {
+	private boolean isValidKmh(String geschwindigkeitString) {
 		if (geschwindigkeitString.equals("")) {
 			lblKmhError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
 			return false;
@@ -733,18 +616,12 @@ public class LeistungDialog extends JDialog {
 			}
 			geschwindigkeit = Einheitenumrechner.kmHToSKm(geschwindigkeit);
 			this.geschwindigkeit = geschwindigkeit;
-			checkMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
+			isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
 			return true;
 		}
 	}
-	
-	/**
-	 * Überprüfen, ob eine gültige Geschwindigkeit eingegeben wurde
-	 * (ms-RadioButton augewählt)
-	 * @param geschwindigkeitString: Der aus dem Textfeld ausgelesen String
-	 * @return TRUE für gültige Geschwindigkeit | FALSE für ungültige Geschwindigkeit
-	 */
-	private boolean checkMs(String geschwindigkeitString) {
+
+	private boolean isValidMs(String geschwindigkeitString) {
 		if (geschwindigkeitString.equals("")) {
 			lblMsError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
 			return false;
@@ -763,18 +640,12 @@ public class LeistungDialog extends JDialog {
 			}
 			geschwindigkeit = Einheitenumrechner.MSToSKm(geschwindigkeit);
 			this.geschwindigkeit = geschwindigkeit;
-			checkMinMaxGeschwindigkeit(lblMsError, this.geschwindigkeit);
+			isValidMinMaxGeschwindigkeit(lblMsError, this.geschwindigkeit);
 			return true;
 		}
 	}
-	
-	/**
-	 * Überprüfen, ob eine gültige Geschwindigkeit eingegeben wurde
-	 * (minKm-RadioButton augewählt)
-	 * @param geschwindigkeitString: Der aus dem Textfeld ausgelesen String
-	 * @return TRUE für gültige Geschwindigkeit | FALSE für ungültige Geschwindigkeit
-	 */
-	private boolean checkMinKm(String geschwindigkeitString) {
+
+	private boolean isValidMinKm(String geschwindigkeitString) {
 		if (geschwindigkeitString.equals("00:00,00")) {
 			lblMinKmError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
 			return false;
@@ -785,11 +656,7 @@ public class LeistungDialog extends JDialog {
 		}
 	}
 	
-	/**
-	 * Überprüfen, ob eine Geschwindigkeit zwischen 10 und 30 km/h liegt
-	 * @param geschwindigkeit: [s/kmH]
-	 */
-	private void checkMinMaxGeschwindigkeit (JLabel errorLabel, double geschwindigkeit) {
+	private void isValidMinMaxGeschwindigkeit (JLabel errorLabel, double geschwindigkeit) {
 		if(geschwindigkeit == 0 ) {
 			return;
 		}
@@ -805,9 +672,6 @@ public class LeistungDialog extends JDialog {
 		}
 	}
 	
-	/**
-	 * Einsetzen der Geschwindigkeit (aus Zeit berechnet) in GeschwindigkeitsTextfeld --> textFieldGeschwindigkeit
-	 */
 	private void setzeGeschwindigkeiten() {
 		textFieldkmH.setText("");
 		textFieldMs.setText("");
@@ -815,7 +679,7 @@ public class LeistungDialog extends JDialog {
 		textFieldkmH.setText(berechneGeschwindigkeitenAusZeit(1));
 		textFieldMs.setText(berechneGeschwindigkeitenAusZeit(2));
 		textFieldminKm.setText(berechneGeschwindigkeitenAusZeit(3));
-		checkMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
+		isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
 	}
 	
 	/**
@@ -900,13 +764,13 @@ public class LeistungDialog extends JDialog {
 	private boolean actionBestaetigen () {
 		boolean ok = true;
 		String bezeichnungString = textFieldBezeichnung.getText();
-		if(!checkBezeichnung(bezeichnungString)) {
+		if(!isValidBezeichnung(bezeichnungString)) {
 			ok = false;
 		}
 		Date datum = calendar.getDate();
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
 		String datumString = df.format(datum);
-		if(!checkDatum(datum)) {
+		if(!isValidDatum(datum)) {
 			ok = false;
 		}
 
@@ -915,28 +779,28 @@ public class LeistungDialog extends JDialog {
 		String msString = textFieldMs.getText();
 		String minkmString = textFieldminKm.getText();
 		if (rdbtnZeit.isSelected()) {
-			if(!checkZeit(zeitString)) {
+			if(!isValidZeit(zeitString)) {
 				ok = false;
 			}
 			setzeKmH(this.geschwindigkeit);
 			setzeMs(this.geschwindigkeit);
 			setzeMinKm(this.geschwindigkeit);
 		} else if (rdbtnkmH.isSelected()) {
-			if(!checkKmh(kmhString)) {
+			if(!isValidKmh(kmhString)) {
 				ok = false;
 			}
 			setzeZeit(this.geschwindigkeit);
 			setzeMs(this.geschwindigkeit);
 			setzeMinKm(this.geschwindigkeit);
 		} else if (rdbtnms.isSelected()) {
-			if(!checkMs(msString)) {
+			if(!isValidMs(msString)) {
 				ok = false;
 			}
 			setzeZeit(this.geschwindigkeit);
 			setzeKmH(this.geschwindigkeit);
 			setzeMinKm(this.geschwindigkeit);
 		} else if (rdbtnminkm.isSelected()) {
-			if(!checkMinKm(minkmString)) {
+			if(!isValidMinKm(minkmString)) {
 				ok = false;
 			}
 			setzeZeit(this.geschwindigkeit);
@@ -953,9 +817,6 @@ public class LeistungDialog extends JDialog {
 		return ok;
 	}
 	
-	/**
-	 * Leeren aller Warnungs-Labels
-	 */
 	private void clearWarnings() {
 		lblBezeichnungError.setText("");
 		lblCalendarError.setText("");

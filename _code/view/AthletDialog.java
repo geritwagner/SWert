@@ -1,23 +1,9 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
 import main.Main;
 
 /**
@@ -25,28 +11,18 @@ import main.Main;
  */
 public class AthletDialog extends JDialog{
 
-//----------------------- VARIABLEN -----------------------	
 	private static final long serialVersionUID = 1L;
 	private final Dimension D = this.getToolkit().getScreenSize();
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textFieldName = new JTextField();
 
-//----------------------- KONSTRUKTOREN -----------------------
-	/**
-	 * Konstruktor zum Erzeugen des Dialog-Fensters
-	 */
 	public AthletDialog() {
 		initProperties();
 		initLayout();
 	}
-	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
-	
-//----------------------- PRIVATE METHODEN -----------------------
-	/**
-	 * Initialisieren der Fenster-Eigenschaften (Position, Name, Container, etc.)
-	 */
+
 	private void initProperties() {
+		// Position, Name, Container, etc.
 		setIconImage(Toolkit.getDefaultToolkit().getImage(AthletDialog.class.getResource("/bilder/NeuerAthlet_24x24.png")));
 		setResizable(false);
 		setTitle("Neues Athletenprofil anlegen");
@@ -59,16 +35,11 @@ public class AthletDialog extends JDialog{
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
-	/**
-	 * Initialisieren des Fenster-Layouts
-	 */
 	private void initLayout() {
 		initInputPane();
 		initButtonPane();
 	}
-	 /**
-	  * Initialisieren der Eingabe
-	  */
+
 	private void initInputPane() {
 		JLabel lblInfo = new JLabel("Bitte w\u00E4hlen Sie einen Namen f\u00FCr das Profil:");
 		lblInfo.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -94,9 +65,6 @@ public class AthletDialog extends JDialog{
 		contentPanel.add(separator_1);
 	}
 	
-	/**
-	 * Initialisieren der beiden Buttons "Bestätigen" und "Abbrechen"
-	 */
 	private void initButtonPane() {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -126,12 +94,9 @@ public class AthletDialog extends JDialog{
 		buttonPane.add(cancelButton);
 	}
 
-	/**
-	 * Validieren der Eingabe in das Namens-Input-Feld
-	 */
 	private void inputValidieren() {
 		String name = textFieldName.getText();
-		if(checkName(name)) {
+		if(isValid(name)) {
 			AthletDialog.this.setVisible(false);
 			AthletDialog.this.dispose();
 			Main.mainFrame.createTab(name);
@@ -144,12 +109,7 @@ public class AthletDialog extends JDialog{
 		}
 	}
 	
-	/**
-	 * Überprüfen, ob mindestens 1 Zeichen als Name eingegeben wurde
-	 * @param name: zu prüfender String
-	 * @return TRUE falls 'name' mindestens 1 Zeichen lang ist | FALSE falls nicht
-	 */
-	private boolean checkName(String name) {
+	private boolean isValid(String name) {
 		if (name.toCharArray().length > 0) {
 			return true;
 		}

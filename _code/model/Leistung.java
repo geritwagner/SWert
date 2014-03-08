@@ -1,16 +1,10 @@
 package model;
 
-import helper.LeistungHelper;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
-import java.util.prefs.Preferences;
-
-import javax.swing.table.DefaultTableModel;
-
+import java.text.*;
+import java.util.*;
+import java.util.prefs.*;
 import controller.Einheitenumrechner;
-
+import helper.LeistungHelper;
 import main.Main;
 
 /**
@@ -135,7 +129,6 @@ public class Leistung implements LeistungInterface{
 	public double getZeit(){
 		return this.zeit;
 	}
-
 	
 	public void setZeitFromString(String inputZeitString) {
 		this.zeit = leistungHelper.parseZeitInSec(inputZeitString);

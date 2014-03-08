@@ -1,12 +1,9 @@
 package view;
 
-import java.io.File;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import java.io.*;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import main.Main;
 
 /**
@@ -15,25 +12,16 @@ import main.Main;
  */
 public class DateiPfadSpeichern {
 	
-//----------------------- VARIABLEN -----------------------	
 	private MainFrame mainFrame = Main.mainFrame;
 	private JFileChooser chooser;
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
 	
-//----------------------- KONSTRUKTOREN -----------------------	
-	/**
-	 * Konstruktor
-	 */
 	public DateiPfadSpeichern() {
 		initFileChooser();
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
         chooser.addChoosableFileFilter(filter);        
 	}
-	
-//----------------------- PRIVATEN METHODEN -----------------------	
-	/**
-	 * Initialisiert den FileChooser, der zusätzlich prüft, ob der eingegebene Pfad bereits vorhanden ist
-	 */
+
 	private void initFileChooser() {
 		chooser = new JFileChooser(){
 			private static final long serialVersionUID = 1L;
@@ -56,11 +44,7 @@ public class DateiPfadSpeichern {
 		};;
 	}
 	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------	
-	/**
-	 * Methode, die den Speicherpfad inklusive der Endung ".csv" als String zurückgibt
-	 */
-	public String save(String name) {		
+	public String getDateiSpeichernInfo(String name) {		
 		String saveString = "Profil '"+name+"' speichern";
 		if (chooser.showDialog(mainFrame.getContext(), saveString) == JFileChooser.APPROVE_OPTION){		
 			String ausgewählterPfad = chooser.getSelectedFile().getAbsolutePath();

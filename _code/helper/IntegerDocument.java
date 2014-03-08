@@ -1,10 +1,7 @@
 package helper;
 
-import java.awt.Toolkit;
-
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
+import java.awt.*;
+import javax.swing.text.*;
 
 /**
  * Erweiterung zum PlainDocument
@@ -13,10 +10,8 @@ import javax.swing.text.PlainDocument;
  */
 public class IntegerDocument extends PlainDocument {
 
-//----------------------- VARIABLEN -----------------------
 	private static final long serialVersionUID = 1L;
 
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
 	@Override
 	public void insertString(int offset, String s, AttributeSet attributeSet)
 			throws BadLocationException {

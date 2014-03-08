@@ -7,10 +7,8 @@ package helper;
  */
 public class DezimalDocument extends javax.swing.text.PlainDocument{
 
-//----------------------- VARIABLEN -----------------------
 	private static final long serialVersionUID = 1L;
 
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
     @Override
 	public void insertString(int offset, String str, javax.swing.text.AttributeSet a)
     throws javax.swing.text.BadLocationException {

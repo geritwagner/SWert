@@ -1,15 +1,9 @@
 package controller;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
+import java.util.*;
 import main.Main;
-import model.Athlet;
-import model.Leistung;
-import model.Strecken;
-
+import model.*;
 import org.jfree.data.xy.XYSeries;
-
 import view.DiagrammFrame;
 import view.ProfilTab;
 
@@ -19,40 +13,29 @@ import view.ProfilTab;
  */
 public class DiagrammController {
 	
-//----------------------- VARIABLEN -----------------------
 	private DiagrammFrame diagramm;
 	private String letzterAthlet;
 
-//----------------------- KONSTRUKTOREN -----------------------
 	public DiagrammController() {
 		diagramm = new DiagrammFrame();
 	}
 
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
-	/**
-	 * Anzeigen des DiagrammFrames
-	 */
 	public void DiagrammOeffnen() {		
 		diagramm.setEnabled(true);
 		openAllAthletes();
 		diagramm.setVisible(true);
 	}
 	
-	/**
-	 * Schließen des DiagrammFrames
-	 */
 	public void DiagrammSchließen() {
 		diagramm.setEnabled(false);
 		diagramm.dispose();
 		diagramm = new DiagrammFrame();
 	}
-	
-//----------------------- PRIVATE METHODEN -----------------------
-	
-	public void openAllAthletes(){
+		
+	private void openAllAthletes(){
+		// Athletenliste auf andere Weise holen!
 		int countAthletes = Main.mainFrame.tabbedPane.getTabCount() - 1;
-		System.out.println(countAthletes);
-		for(int i = 0;i<countAthletes; i++){
+		for(int i = 0; i < countAthletes; i++){
 			ProfilTab tab = (ProfilTab) Main.mainFrame.tabbedPane.getComponentAt(i);
 			addAthletBerechneteLeistungsKurve(tab.getAthlet());	
 			// TODO: statt getLeistungen müssten vermutlich die 2 Punkte, auf deren Grundlage die Schwelle
@@ -65,13 +48,14 @@ public class DiagrammController {
 				// Bestzeiten können nur für Athleten berechnet werden, bei denen der Slope-Faktor bekannt ist.
 			}
 		}
-;	}
+	}
 	
 	/**
 	 * Hinzufügen aller tatsächlich erbrachten Leistungen eines Athleten
 	 * zum Diagramm
 	 * @param athlet
 	 */
+	// TODO: Benennung??? berechneteLeistungen = tatsächlich erbrachte!??!
 	public void addAthletBerechneteLeistungsKurve(Athlet athlet) {
 		LinkedList<Leistung> leistungen = athlet.getLeistungen();
 		Iterator<Leistung> leistungenIterator = leistungen.iterator();
@@ -92,6 +76,7 @@ public class DiagrammController {
 	 * für die verschiedenen Streckenlängen zum Diagramm
 	 * @param athlet
 	 */
+	// TODO: Benennung? mögliche = addBestzeiten?
 	public void addBestzeiten (LinkedList<Leistung> bestzeiten) {
 		Iterator<Leistung> leistungenIterator = bestzeiten.iterator();
 		final XYSeries athletenSerie = new XYSeries(letzterAthlet);

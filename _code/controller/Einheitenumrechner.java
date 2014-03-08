@@ -6,7 +6,6 @@ package controller;
  */
 public class Einheitenumrechner {
 	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------
 	/**
 	 * Umrechnung von [s/km] zu [min/km]
 	 * @param sKm

@@ -1,35 +1,15 @@
 package view;
 
-import helper.LeistungHelper;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.table.*;
 
 import controller.Einheitenumrechner;
+import helper.LeistungHelper;
 
 /**
  * Dialog zum Anzeigen einer Tabelle der Trainingsbereiche des Athleten
@@ -37,7 +17,12 @@ import controller.Einheitenumrechner;
  */
 public class TrainingsbereichDialog extends JDialog {
 
-//----------------------- VARIABLEN -----------------------
+	private static final double WINZERER_AUFSCHLAG = 1.03;
+	private static final double WINZERER_RUNDEN_LÄNGE = 3.409;
+	private static final int UNTERE_SCHRANKE_TRAININGSBEREICHE = 60;
+	private static final int OBERE_SCHRANKE_TRAININGSBEREICHE = 110;
+	private static final int SCHRITT_TRAININGSBEREICH = 5;
+	
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize();
@@ -60,10 +45,6 @@ public class TrainingsbereichDialog extends JDialog {
 	
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
-//----------------------- KONSTRUKTOREN -----------------------
-	/**
-	 * Konstruktor zum Erzeugen des Dialogs
-	 */
 	public TrainingsbereichDialog(double anaerobeSchwelle) {
 		this.anaerobeSchwelle = anaerobeSchwelle;
 		this.anaerobeProfilierteSchwelle = anaerobeSchwelle/winzererAufschlag;
@@ -73,10 +54,6 @@ public class TrainingsbereichDialog extends JDialog {
 		setVisible(true);
 	}
 	
-//----------------------- PRIVATE METHODEN -----------------------
-	/**
-	 * Initialisieren der Eigenschaften des Dialog-Fensters
-	 */
 	private void initProperties() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(TrainingsbereichDialog.class.getResource("/bilder/Berechnen_24x24.png")));
 		setResizable(false);
@@ -91,20 +68,13 @@ public class TrainingsbereichDialog extends JDialog {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
-	/**
-	 * Initialisieren der Komponenten
-	 */
 	private void initComponents() {
 		initComponentsGeneral();
 		initComponentsSpecific();
 		initJTable();
 		initButtonPane();
-		
 	}
 	
-	/**
-	 * Initialisieren der "oberen" Komponenenten (Abschnitt: "Allgemeine Daten")
-	 */
 	private void initComponentsGeneral() {
 		JLabel lblAnaerobeSchwelle = new JLabel("Aerob/Anaerobe Schwelle");
 		lblAnaerobeSchwelle.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -115,10 +85,7 @@ public class TrainingsbereichDialog extends JDialog {
 		separator.setBounds(10, 27, 324, 2);
 		contentPanel.add(separator);		
 	}
-	
-	/**
-	 * Initialisieren der "unteren Komponenten (Abschnitt: "Spezifische Daten")
-	 */
+
 	private void initComponentsSpecific() {
 		JLabel lblTrainingsbereiche = new JLabel("Trainingsbereiche");
 		lblTrainingsbereiche.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -206,9 +173,6 @@ public class TrainingsbereichDialog extends JDialog {
 		});
 	}
 	
-	/**
-	 * Initialisieren des Buttons "Schließen"
-	 */
 	private void initButtonPane() {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -226,9 +190,6 @@ public class TrainingsbereichDialog extends JDialog {
 		buttonPane.add(cancelButton);
 	}
 	
-	/**
-	 * Initialisieren der Tabelle zur Anzeige der verschiedenen einfachen Trainingsbereiche
-	 */
 	private void initJTable() {	
 		trainingsTabelle = new JTable();
 		trainingsTabelle.setModel(new DefaultTableModel(
@@ -254,10 +215,6 @@ public class TrainingsbereichDialog extends JDialog {
 		contentPanel.add(separator);		
 	}
 
-	/**
-	 * Initialisieren der Tabelle zum Anzeigen der profilierten Trainingsbereiche
-	 * mit Rundengeschwindigkeiten
-	 */
 	private void initJTableProfiliert() {	
 		trainingsTabelle = new JTable();
 		trainingsTabelle.setModel(new DefaultTableModel(
@@ -292,12 +249,8 @@ public class TrainingsbereichDialog extends JDialog {
 	private Object[][] berechneTrainingsBereiche() {	
 		DecimalFormat f = new DecimalFormat("#0.00");
 		Object[][] data = new Object [11][4];
-		int untereSchranke = 60;
-		int obereSchranke = 110;
-		int schritt = 5;	
 		int zähler = 0;
-		
-		for (int i = untereSchranke; i <= obereSchranke; i = i + schritt) {
+		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
 			double gewichtung = (200-i)/100D;
 			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle;			
 			data[zähler][0] = String.valueOf(i) + "%";
@@ -306,7 +259,6 @@ public class TrainingsbereichDialog extends JDialog {
 			data[zähler][3] = f.format(Einheitenumrechner.toMS(trainingsGeschwindigkeitSKm));
 			zähler++;
 		}
-		
 		return data;	
 	}
 	
@@ -318,17 +270,11 @@ public class TrainingsbereichDialog extends JDialog {
 	private Object[][] berechneTrainingsBereicheProfiliert() {	
 		DecimalFormat f = new DecimalFormat("#0.00");
 		Object[][] data = new Object [11][5];
-		int untereSchranke = 60;
-		int obereSchranke = 110;
-		int schritt = 5;	
 		int zähler = 0;
-		double winzererAufschlag = 1.03;
-		double winzererRundenlänge = 3.409;
-		
-		for (int i = untereSchranke; i <= obereSchranke; i = i + schritt) {
+		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
 			double gewichtung = (200-i)/100D;
-			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle* winzererAufschlag;	
-			winzererRundengeschindigkeit = trainingsGeschwindigkeitSKm*winzererRundenlänge;
+			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle* WINZERER_AUFSCHLAG;	
+			winzererRundengeschindigkeit = trainingsGeschwindigkeitSKm*WINZERER_RUNDEN_LÄNGE;
 			int rundenAnzahl = slider.getValue();
 			data[zähler][0] = String.valueOf(i) + "%";
 			data[zähler][1] = l.parseSecInMinutenstring(trainingsGeschwindigkeitSKm);	
@@ -345,13 +291,8 @@ public class TrainingsbereichDialog extends JDialog {
 	 * @param rundenAnzahl: aktuell im Slider eingestellte Rundenzahl
 	 */
 	private void updateRundenzeit (int rundenAnzahl) {	
-		int untereSchranke = 60;
-		int obereSchranke = 110;
-		int schritt = 5;	
 		int zähler = 0;
-
-		
-		for (int i = untereSchranke; i <= obereSchranke; i = i + schritt) {
+		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
 			double gewichtung = (200-i)/100D;
 			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle* winzererAufschlag;
 			winzererRundengeschindigkeit = trainingsGeschwindigkeitSKm*winzererRundenlänge;

@@ -1,8 +1,7 @@
 package view;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.*;
+import javax.swing.filechooser.*;
 
 import main.Main;
 
@@ -12,20 +11,14 @@ import main.Main;
  */
 public class DateiPfadOeffnen {
 
-//----------------------- VARIABLEN -----------------------	
 	private JFileChooser chooser = new JFileChooser();
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
 	
-//----------------------- KONSTRUKTOREN -----------------------
-	/**
-	 * Standard-Konstruktor
-	 */
 	public DateiPfadOeffnen() {
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
         chooser.addChoosableFileFilter(filter); 
 	}
 	
-//----------------------- ÖFFENTLICHE METHODEN -----------------------	
 	/**
 	 * Methode die den Pfad einer zu öffnenden Datei als String zurückgibt
 	 */
