@@ -93,8 +93,8 @@ public class CSVController {
     	String strecke = leistung[1];
     	int streckenId = Strecken.getStreckenIdByString(strecke);
     	String bezeichnung = leistung[2];
-    	double geschwindigkeit = Double.parseDouble(leistung[3]);
-    	return new Leistung(streckenId, idAthlet, geschwindigkeit, bezeichnung, datum);
+    	double zeit = Double.parseDouble(leistung[3]);
+    	return new Leistung(streckenId, idAthlet, zeit, bezeichnung, datum);
 	}
 	
 	private String[] getAthletenInfo(Athlet athlet) {
@@ -113,7 +113,7 @@ public class CSVController {
 			eingaben[0] = aktuelleLeistung.getDatum();
 			eingaben[1] = String.valueOf(aktuelleLeistung.getStrecke());
 			eingaben[2] = aktuelleLeistung.getBezeichnung();
-			eingaben[3] = String.valueOf(aktuelleLeistung.getGeschwindigkeit());
+			eingaben[3] = String.valueOf(aktuelleLeistung.getZeit());
 			writer.writeNext(eingaben);
 		} 
 	}

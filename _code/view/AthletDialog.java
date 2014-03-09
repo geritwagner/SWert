@@ -19,6 +19,7 @@ public class AthletDialog extends JDialog{
 	public AthletDialog() {
 		initProperties();
 		initLayout();
+		setVisible(true);
 	}
 
 	private void initProperties() {

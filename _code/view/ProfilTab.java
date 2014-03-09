@@ -14,7 +14,10 @@ import main.Main;
 import model.*;
 
 public class ProfilTab extends JPanel implements TableModelListener {
+	
 	private static final long serialVersionUID = 1L;
+	private static final int BOOLEAN_SPALTE = 7;
+
 	private Athlet athlet;
 
 	private MainFrame mainFrame = Main.mainFrame;
@@ -31,9 +34,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	//TODO ggf. leistungenTabelle als View-Komponente auslagern?
 	private JTable leistungenTabelle;
 	private boolean verändert = false;
-	private int booleanSpalte;
 	public TableRowSorter<TableModel> sorter;
-	private String speicherPfad;	
+	private String speicherPfad;
 	private JButton btnLeistungBearbeiten;
 	private JButton btnLeistungLöschen;
 	
@@ -84,6 +86,26 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	
 	// ----------------- Actions ------------------------------
 	
+	public void triggerTableChanged(int zeile, int spalte, Object data){
+    	// TODO: logik und setter extrahieren (getLeistung -> setAuswahlforSlopeFaktor -> setTablechanges):
+
+		if (automatischeVerarbeitung) {
+        	return;
+        }
+		//Verhindern, dass mehr als 2 Leistungen ausgewählt werden
+        if (spalte == BOOLEAN_SPALTE && !tabelleAuswahlZulässig()) {
+        // if (spalte == booleanSpalte && !tabelleAuswahlZulässig()) {
+        	automatischeVerarbeitung = true;
+        	DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+        	model.setValueAt(false, zeile, spalte);
+        	automatischeVerarbeitung = false;
+        	return;
+        }
+        aktualisiereSpeicherStatus(spalte);
+	    uncheckAutoAuswahl(spalte);
+        berechneWerte(); 
+	}
+	
 	/**
 	 * Prüft, ob die Auswahl richtig ist und gibt entsprechend eine Meldung zurück oder berechnet die Werte
 	 */
@@ -114,10 +136,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		int längereStrecke = getZeilenAnzahl() - 1;
 
 		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben();		
-		automatischeVerarbeitung = true;
-		leistungenTabelle.setValueAt(true, kürzereStrecke, booleanSpalte);
-		leistungenTabelle.setValueAt(true, längereStrecke, booleanSpalte);
-		automatischeVerarbeitung = false;
 		
 		Leistung leistungKurzeStrecke = getLeistungInZeile(kürzereStrecke);
 		Leistung leistungLangeStrecke = getLeistungInZeile(längereStrecke);
@@ -126,6 +144,10 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		try {
 			athlet.setLeistungToAuswahlForSlopeFaktor(leistungLangeStrecke);		
 			athlet.setLeistungToAuswahlForSlopeFaktor(leistungKurzeStrecke);
+			automatischeVerarbeitung = true;
+			leistungenTabelle.setValueAt(true, kürzereStrecke, BOOLEAN_SPALTE);
+			leistungenTabelle.setValueAt(true, längereStrecke, BOOLEAN_SPALTE);
+			automatischeVerarbeitung = false;
 		} catch (Exception e) {
 			// TODO gleiche Leistung ausgewählt oder schon alle Leistungen für Berechnung des Slope-Faktors gesetzt
 			e.printStackTrace();
@@ -183,7 +205,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Boolean umschalten, falls Checkboxen der Tabelle geändert wurden
 	 */
 	private void aktualisiereSpeicherStatus(int spalte) {         
-		if (spalte != booleanSpalte) {
+		if (spalte != BOOLEAN_SPALTE) {
         	setSpeicherStatus(false);
         }
 	}
@@ -240,17 +262,18 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 */
 	public void addZeile(Leistung leistung) {
 		// TODO: athlet.addLeistung in controller extrahieren!
-		athlet.addLeistung(leistung);	
+		athlet.addLeistung(leistung);
 		
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		model.addRow(leistung.getObjectDataForTable());
 		
-		leistungsAuswahlBeiZeileHinzufügen();
+		// TODO: ggf. wieder einkommentieren:
+//		leistungsAuswahlBeiZeileHinzufügen();
 	}
 	
 	private Leistung[] getAusgewählteLeistungenForSlopeFaktorFromCheckbox() {
 		int zeilenAnzahl = getZeilenAnzahl();
-		int spalte = booleanSpalte;
+		int spalte = BOOLEAN_SPALTE;
 		Leistung[] ausgewählteLeistungen = new Leistung[2];
 		int counter = 0;
 		for (int i = 0; i < zeilenAnzahl; i++) {
@@ -299,7 +322,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * Sobald 2 Checkboxen ausgewählt sind, wird das Auswählen einer dritten wieder rückgängig gemacht
 	 */
 	private void uncheckAutoAuswahl(int spalte) {
-        if (!verändert && spalte == booleanSpalte && !leistungenAuswahlCheck) {
+        if (!verändert && spalte == BOOLEAN_SPALTE && !leistungenAuswahlCheck) {
         	verändert = true;
         	chckbxLeistungenAuswahl.setSelected(false);
         	verändert = false;        	
@@ -316,7 +339,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		int zähler = 0;
 		
 		for (int i = 0; i < zeilenAnzahl; i++) {
-			if (true == getBooleanAt(i, booleanSpalte)){
+			if (true == getBooleanAt(i, BOOLEAN_SPALTE)){
 				zähler++;
 			}
 			if (zähler >= 3) {
@@ -335,7 +358,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			int zähler = 0;
 			
 			for (int i = 0; i < zeilenAnzahl; i++) {
-				if (true == getBooleanAt(i, booleanSpalte)){
+				if (true == getBooleanAt(i, BOOLEAN_SPALTE)){
 					zähler++;
 				}
 			}
@@ -386,8 +409,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		}
 	}
 	
-	
-	
 	//----------------------- view darstellung -----------------------
 
 	private void initLayout(String Athletenname) {
@@ -428,7 +449,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		textFieldSchwelle.setColumns(10);
 		
 		chckbxLeistungenAuswahl = new JCheckBox("Leistungen automatisch w\u00E4hlen");
-		chckbxLeistungenAuswahl.setSelected(true);
+		// TODO: entsprechend der Logik ggf. wieder standardmäßig auf true setzen...
+		chckbxLeistungenAuswahl.setSelected(false);
 		chckbxLeistungenAuswahl.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) { 
@@ -509,9 +531,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			}
 		});
 	}
-		
+	
+	// hier wird null übergeben, den parameter könnte man folglich löschen, er stellt jedoch die Aufruf-Reihenfolge der Methoden sicher...
 	private JTable initLeistungsTabelle(JTable leistungenTabelle) {
-		//Spalten definieren; die letzten beiden Spalten sind unsichtbar
+		// Spalten definieren; die letzten beiden Spalten sind unsichtbar
+		// BOOLEAN_SPALTE wird auf 7 gesetzt - müsste angepasst werden, wenn sich solumnNames ändert.
 		final String[] columnNames = {"Datum",
 				"Streckenlänge",
                 "Bezeichnung",
@@ -523,11 +547,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
                 "StreckenId",
                 "s/km"};
 		
-		for (int i = 0; i < columnNames.length; i++) {
-			if (columnNames[i].equalsIgnoreCase("für Slope-Faktor ausgewählt")) {
-				booleanSpalte = i;				
-			}
-		}
 		//Anfangswerte definieren
 		Object[][] data = null;
 		
@@ -536,7 +555,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 						
 			@Override
 			public Class<?> getColumnClass(int columnIndex) { 
-				if (columnIndex == booleanSpalte) { 
+				if (columnIndex == BOOLEAN_SPALTE) { 
 					return Boolean.class; 
 				} 
 				if (columnIndex == 8) { 
@@ -552,7 +571,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			//nur mit der letzten Spalte (Kästchen) soll Interaktion stattfinden 
 			@Override
 			public boolean isCellEditable(int zeile, int spalte) {
-              	if (spalte == booleanSpalte) {
+              	if (spalte == BOOLEAN_SPALTE) {
             		return true;
             	} else {
             		return false;
@@ -589,24 +608,18 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		return leistungenTabelle;
 	}
 	
-	
-	
-	
-	
-
-	
+	// ------------------------ to consolidate --------------------------
 	/**
 	 * Hebt die Auswahl auf
 	 */	
 	private void tabelleCheckboxenFürSlopeFaktorAuswahlAufheben() {
 		int zeilenAnzahl = getZeilenAnzahl();
 		for (int i = 0; i < zeilenAnzahl; i++) {
-			if (true == getBooleanAt(i, booleanSpalte)){
-				leistungenTabelle.setValueAt(false, i, booleanSpalte);
+			if (true == getBooleanAt(i, BOOLEAN_SPALTE)){
+				leistungenTabelle.setValueAt(false, i, BOOLEAN_SPALTE);
 			}
 		}		
 	}
-	
 	
 	/**
 	 * Prüft, ob automatische Auswahl bei einer neuen Zeile durchgeführt werden soll
@@ -628,7 +641,6 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			checkboxLeistungenAuswahlprüfenClicked();
 		}
 	}
-	
 	
 	/**
 	 * Erstellt Referenz-Leistungen mit den beiden manuell gewählten Leistungen und berechnet dann die Werte
@@ -677,40 +689,29 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		
 	// ---------------------------------- TABLE-METHODS: GET/SET ----------------------------
 	
-	/**
-	 * Methodenaufrufe, falls Änderungen in Tabelle vorgenommen werden
-	 */
 	@Override
 	public void tableChanged(TableModelEvent e) {
         int zeile = e.getFirstRow();
         int spalte = e.getColumn();
-        TableModel model = (TableModel)e.getSource();          
-        // TODO: Logik extrahieren!
-		if (automatischeVerarbeitung) {
+        // beim Laden eines neuen Profils: trigerTableChanged nicht aufrufen
+        if (spalte<0 || zeile<0){
         	return;
         }
-		//Verhindern, dass mehr als 2 Leistungen ausgewählt werden
-        if (spalte == booleanSpalte && !automatischeVerarbeitung && !tabelleAuswahlZulässig()) {
-        // if (spalte == booleanSpalte && !tabelleAuswahlZulässig()) {
-        	automatischeVerarbeitung = true;        	
-        	model.setValueAt(false, zeile, spalte);
-        	automatischeVerarbeitung = false;
-        	return;
-        }
-        aktualisiereSpeicherStatus(spalte);
-	    uncheckAutoAuswahl(spalte);
-        berechneWerte(); 
+		TableModel model = (TableModel)e.getSource();
+		Object data = model.getValueAt(zeile, spalte);
+        triggerTableChanged(zeile, spalte, data);
     }
 	
 	// TODO: Getter extrahieren!
-	private Leistung getLeistungInZeile(int zeile) {	
+	private Leistung getLeistungInZeile(int zeile) {
 		zeile = leistungenTabelle.convertRowIndexToModel(zeile);
 		String datum = getStringAt(zeile, 0);
 		String streckenlaenge = getStringAt(zeile, 1);
 		int streckenId = Strecken.getStreckenIdByString(streckenlaenge);
 		String bezeichnung = getStringAt(zeile, 2);
-		double geschwindigkeit = getDoubleAt(zeile, 9);
-		Leistung leistung = new Leistung(streckenId, athlet.getId(), geschwindigkeit, bezeichnung, datum);
+		LeistungHelper l = new LeistungHelper();
+		double zeit =   l.parseZeitInSec(getStringAt(zeile, 3));
+		Leistung leistung = new Leistung(streckenId, athlet.getId(), zeit, bezeichnung, datum);
 		return leistung;
 	}
 	

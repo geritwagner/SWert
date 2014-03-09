@@ -36,7 +36,7 @@ public class MainFrame {
 	public void initializeControllers() {
 		csvController 		= new CSVController();
 		diagrammController 	= new DiagrammController();
-		leistungHelper 	= new LeistungHelper();
+		leistungHelper 		= new LeistungHelper();
 	}
 	
 	private void initializeFrame() {		
@@ -65,8 +65,8 @@ public class MainFrame {
 		mntmNeuesProfilAnlegen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				@SuppressWarnings("unused")
 				AthletDialog dialog = new AthletDialog();
-				dialog.setVisible(true);
 			}
 		});
 		mnDatei.add(mntmNeuesProfilAnlegen);
@@ -77,17 +77,7 @@ public class MainFrame {
 		mntmProfilffnen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-					try {						
-						DateiPfadOeffnen dö = new DateiPfadOeffnen();
-						String pfad = dö.open();						
-						if (pfad != null) {							
-							if (!csvController.lesen(pfad)){
-								fehlermeldungBeiLesen();
-							}
-						}	
-					}catch(Exception e) {
-						
-					}
+				dateiOeffnenClicked();
 			}
 		});
 		
@@ -95,12 +85,7 @@ public class MainFrame {
 		mntmAthletenprofilSchlieen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (selectedIndex != -1	) {
-					ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(selectedIndex);
-					tab.tabSchließen();					
-				} else {
-					return;
-				}
+				tabSchließenClicked();
 			}
 		});
 		mntmAthletenprofilSchlieen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
@@ -242,17 +227,7 @@ public class MainFrame {
 		btnAthletenprofilffnen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {						
-					DateiPfadOeffnen dö = new DateiPfadOeffnen();
-					String pfad = dö.open();						
-					if (pfad != null) {							
-						if (!csvController.lesen(pfad)){
-							fehlermeldungBeiLesen();
-						}
-					}	
-				}catch(Exception d) {
-					
-				}
+				dateiOeffnenClicked();
 			}
 		});
 		dummyTab.add(btnAthletenprofilffnen, "cell 1 7,growx,aligny top");
@@ -272,6 +247,7 @@ public class MainFrame {
 			}
 		}
 		if(!gespeichert) {
+			// TODO: ggf. YES_NO_CANCEL_OPTION
 			int art = JOptionPane.showConfirmDialog(mainFrame.getContentPane(),
 													"S-Wert 3.0 wird geschlossen.\nWollen Sie Ihre Änderungen speichern?", 
 													"Achtung!",
@@ -307,6 +283,29 @@ public class MainFrame {
 	private void menueAusgrauen() {
 		mntmAthletenprofilSchlieen.setEnabled(false);
 		mnBearbeiten.setEnabled(false);
+	}
+	
+	private void dateiOeffnenClicked(){
+		try {						
+			DateiPfadOeffnen dö = new DateiPfadOeffnen();
+			String pfad = dö.open();						
+			if (pfad != null) {							
+				if (!csvController.lesen(pfad)){
+					fehlermeldungBeiLesen();
+				}
+			}	
+		}catch(Exception e) {
+			
+		}
+	}
+	
+	private void tabSchließenClicked(){
+		if (selectedIndex != -1	) {
+			ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(selectedIndex);
+			tab.tabSchließen();					
+		} else {
+			return;
+		}
 	}
 	
 	protected void speichern () {
