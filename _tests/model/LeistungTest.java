@@ -2,10 +2,6 @@ package model;
 
 import static org.junit.Assert.*;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
-
 import main.Main;
 import org.junit.*;
 import view.MainFrame;
@@ -31,6 +27,8 @@ public class LeistungTest {
 		assertEquals(testLeistung.getStrecke(), 800);
 		@SuppressWarnings("unused")
 		long i = testLeistung.getId();
+		
+		assertEquals("800m", testLeistung.getStreckenString());
 
 		testLeistung.setIsUsedForSlopeFaktor(true);
 		assertTrue(testLeistung.isUsedForSlopeFaktor());

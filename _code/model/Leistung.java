@@ -175,4 +175,8 @@ public class Leistung implements LeistungInterface{
 						  String.valueOf(this.getGeschwindigkeit())};
 		return daten;
 	}
+
+	public String getStreckenString() {
+		return Strecken.getStreckenlaengeStringById(getId_strecke());
+	}
 }

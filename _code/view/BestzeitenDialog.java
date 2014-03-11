@@ -2,6 +2,8 @@ package view;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.LinkedList;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -160,12 +162,10 @@ public class BestzeitenDialog extends JDialog {
 
     		double bestzeit;
 			try {
-				bestzeit = athlet.calculateSpeedSecondsPerKm(strecke);
+				bestzeit = athlet.calculateTime(strecke);
 				String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
 				txtFieldZeit.setText(bestzeitString);
 			} catch (Exception e) {
-				e.printStackTrace();
-				// Wenn der Slope-Faktor nicht gesetzt ist sollte man den Dialog nicht öffnen können.
 			}
     	}
 	}
@@ -176,21 +176,17 @@ public class BestzeitenDialog extends JDialog {
 	 * @return: Array mit [][0] als Streckenlänge (String) und [][1] als Bestzeit (String: 00:00,00)
 	 */
 	private Object[][] berechneBestzeit() {
-		// TODO: duplikat zu athlet.getMoeglicheBestzeitenListe()?? - wer macht was??
 		int streckenAnzahl = Strecken.getStreckenArrayLength();
 		Object[][] data = new Object [streckenAnzahl][2];
-		for (int i = 0; i < streckenAnzahl; i++) {
-			double streckenLänge = Strecken.getStreckenlaengeById(i);
-			data[i][0] = Strecken.getStreckenlaengeStringById(i);
-			double bestzeit;
-			try {
-				bestzeit = athlet.calculateSpeedSecondsPerKm(streckenLänge);
-				String bestzeitString = lController.parseSecInMinutenstring(bestzeit);
-				data[i][1] = bestzeitString;			
-			} catch (Exception e) {
-				e.printStackTrace();
-				// Wenn der Slope-Faktor nicht gesetzt ist sollte man den Dialog nicht öffnen können.
+		try {
+			LinkedList<Leistung>  bestleistungen = athlet.getMoeglicheBestzeitenListe();
+			Leistung aktuelleLeistung;
+			for (int i = 0; i < streckenAnzahl; i++) {
+				aktuelleLeistung = bestleistungen.get(i);
+				data[i][0] = aktuelleLeistung.getStreckenString();
+				data[i][1] = aktuelleLeistung.getZeitString();			
 			}
+		} catch (Exception e) {
 		}
 		return data;
 	}
@@ -198,7 +194,6 @@ public class BestzeitenDialog extends JDialog {
 	/**
 	 * Erweiterung zum DocumentListener
 	 * Echtzeitverarbeitung von Integerwerten 
-	 * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
 	 */
 	private class IntegerDocumentListener implements DocumentListener {    
 		@Override

@@ -6,6 +6,7 @@ interface LeistungInterface {
 	public int getId_strecke();
 	public long getId_athlet();
 	public int getStrecke();
+	public String getStreckenString();
 	public String getBezeichnung();
 	public String getDatum();
 	public boolean isUsedForSlopeFaktor();
