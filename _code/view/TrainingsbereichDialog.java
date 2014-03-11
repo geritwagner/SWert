@@ -47,7 +47,7 @@ public class TrainingsbereichDialog extends JDialog {
 
 	public TrainingsbereichDialog(double anaerobeSchwelle) {
 		this.anaerobeSchwelle = anaerobeSchwelle;
-		this.anaerobeProfilierteSchwelle = anaerobeSchwelle/winzererAufschlag;
+		this.anaerobeProfilierteSchwelle = anaerobeSchwelle*winzererAufschlag;
 		initProperties();
 		initComponents();
 		setModal(true);
@@ -272,6 +272,7 @@ public class TrainingsbereichDialog extends JDialog {
 		Object[][] data = new Object [11][5];
 		int zähler = 0;
 		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
+			// TODO: was bedeutet die gewichtungs-formel?
 			double gewichtung = (200-i)/100D;
 			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle* WINZERER_AUFSCHLAG;	
 			winzererRundengeschindigkeit = trainingsGeschwindigkeitSKm*WINZERER_RUNDEN_LÄNGE;
