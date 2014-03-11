@@ -3,7 +3,6 @@ package helper;
 import java.text.*;
 import java.util.Locale;
 
-import controller.Einheitenumrechner;
 
 /**
  * Controller zum Handlen aller Aktionen, die einzelne Leistungen betreffen
@@ -189,7 +188,7 @@ public class LeistungHelper {
 	public int berechneSchwellenStreckeAusGeschwindigkeit(double geschwindigkeit) {
 		int strecke = 0;
 		int sec = 3600;
-		geschwindigkeit = Einheitenumrechner.toMS(geschwindigkeit);
+		geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
 		strecke = (int) (Math.round(geschwindigkeit * sec));
 		return strecke;
 	}

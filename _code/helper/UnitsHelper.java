@@ -1,10 +1,10 @@
-package controller;
+package helper;
 
 /**
  * Controller für Umrechnungen der Geschwindigkeitseinheiten
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-public class Einheitenumrechner {
+public class UnitsHelper {
 	
 	/**
 	 * Umrechnung von [s/km] zu [min/km]

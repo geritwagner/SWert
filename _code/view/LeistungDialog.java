@@ -14,7 +14,6 @@ import net.miginfocom.swing.MigLayout;
 import main.Main;
 import helper.*;
 import model.*;
-import controller.Einheitenumrechner;
 
 /**
  * Dialog zum Anlegen einer neuen Leistung oder
@@ -23,7 +22,6 @@ import controller.Einheitenumrechner;
  */
 public class LeistungDialog extends JDialog {
 
-	private final JDialog self = this;
 	private static final long serialVersionUID = 1L;
 	
 	private final JPanel contentPanel = new JPanel();
@@ -46,19 +44,6 @@ public class LeistungDialog extends JDialog {
 	private JTextField textFieldMs;
 	private JRadioButton rdbtnminkm;
 	private JFormattedTextField textFieldminKm;
-
-	String[] strecken = new String[] {"400m",
-									  "800m",
-									  "1.000m",
-									  "1.500m",
-									  "2.000m",
-									  "3.000m",
-									  "5.000m",
-									  "10.000m",
-									  "15km",
-									  "Halbmarathon",
-									  "25km",
-									  "Marathon"};
 	
 	private double geschwindigkeit; //Enthält immer die aktuelle Geschwindigkeit in s/km (ungerundet)
 	private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -69,34 +54,61 @@ public class LeistungDialog extends JDialog {
 	private JPanel buttonPanel;
 
 	public LeistungDialog() {
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent arg0) {
-				textFieldBezeichnung.requestFocus();
-			}
-		});
 		initProperties();
 		initComponents();
+		setFocus();
 		clearWarnings();
 		setVisible(true);
 	}
 	
 	public LeistungDialog(Leistung leistung) {
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent arg0) {
-				textFieldBezeichnung.requestFocus();
-			}
-		});
 		initProperties();
 		initComponents();
 		initWerte(leistung);
 		setTitle("Leistung bearbeiten");
+		setFocus();
 		clearWarnings();
 		setVisible(true);					
 	}
+	
+	private void bestaetigenClicked(){
+		if(actionBestaetigen()) {
+			// TODO: mit update arbeiten, nicht einfach die Zeile löschen (dann laufen Model und View-Daten auseinander!)
+			mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
+			setVisible(false);
+			dispose();					
+		} else {
+			JOptionPane.showMessageDialog(contentPanel,
+					"Leistung wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
+				    "Fehler",
+				    JOptionPane.ERROR_MESSAGE);
+		}
 
-	public void initWerte(Leistung leistung) {
+	}
+	
+	private boolean actionBestaetigen () {
+		if(true == validateInput()) {
+			triggerChanges();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void triggerChanges(){
+		long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthlet().getId();
+		int id_strecke = comboBoxStrecke.getSelectedIndex();
+		String bezeichnungString = textFieldBezeichnung.getText();
+		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+		Date datum = calendar.getDate();
+		String datumString = df.format(datum);
+		// TODO: hier müsste man unterscheiden, ob eine neue Leistung angelegt wird oder ob eine Leistung geändert werden soll.
+		// if (leistung ändern) updateLeistung else new Leistung
+		Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
+		mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
+	}
+	
+	private void initWerte(Leistung leistung) {
 		textFieldBezeichnung.setText(leistung.getBezeichnung());
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LeistungDialog.class.getResource("/bilder/EditLeistung_24x24.png")));
 		comboBoxStrecke.setSelectedIndex(leistung.getId_strecke());
@@ -105,7 +117,6 @@ public class LeistungDialog extends JDialog {
 		try {
 			calendar.setDate(formatter.parse(datum));
 		} catch (ParseException e) {
-			//TODO
 		}
 		textFieldZeit.setText(leistung.getZeitString());
 		this.geschwindigkeit = leistung.getGeschwindigkeit();
@@ -113,7 +124,6 @@ public class LeistungDialog extends JDialog {
 		setzeKmH(geschwindigkeit);
 		setzeMs(geschwindigkeit);
 		setzeMinKm(geschwindigkeit);
-		clearWarnings();
 	}
 
 	private void initProperties() {
@@ -240,37 +250,27 @@ public class LeistungDialog extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(actionBestaetigen()) {
-					// mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
-					LeistungDialog.this.setVisible(false);
-					LeistungDialog.this.dispose();					
-				} else {
-					JOptionPane.showMessageDialog(contentPanel,
-							"Leistung wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
-						    "Fehler",
-						    JOptionPane.ERROR_MESSAGE);
-				}
+					bestaetigenClicked();
 			}
 		});
-		//getRootPane().setDefaultButton(okButton);
 		
 		JButton cancelButton = new JButton("Abbrechen");
 		buttonPanel.add(cancelButton, "cell 3 0,grow");
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				LeistungDialog.this.setVisible(false);
-				LeistungDialog.this.dispose();
+				setVisible(false);
+				dispose();
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
 		btnAnaerobeSchwelleDirekt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				self.setVisible(false);
-				self.dispose();
+				setVisible(false);
+				dispose();
+				@SuppressWarnings("unused")
 				SchwellenDialog dialog = new SchwellenDialog();
-				dialog.setVisible(true);
 			}
 		});
 	}
@@ -283,7 +283,6 @@ public class LeistungDialog extends JDialog {
 			public void focusLost(FocusEvent e) {
 				isValidBezeichnung(textFieldBezeichnung.getText());
 			}
-			
 			@Override
 			public void focusGained(FocusEvent e) {
 				lblBezeichnungError.setText("");
@@ -320,7 +319,8 @@ public class LeistungDialog extends JDialog {
 					
 			}
 		});
-		comboBoxStrecke.setModel(new DefaultComboBoxModel<String>(strecken));
+		String[] StreckenlaengenStrings = Strecken.getStreckenlaengenStringArray();
+		comboBoxStrecke.setModel(new DefaultComboBoxModel<String>(StreckenlaengenStrings));
 		comboBoxStrecke.setBounds(98, 67, 128, 20);
 		contentPanel.add(comboBoxStrecke);
 	}
@@ -393,14 +393,12 @@ public class LeistungDialog extends JDialog {
 						setzeGeschwindigkeiten();
 					}
 				}
-				
 				@Override
 				public void focusGained(FocusEvent e) {
 					lblZeitError.setText("");
 				}
 			});
 		} catch (ParseException e) {
-			//TODO
 		}
 		textFieldZeit.setBounds(125, 148, 101, 20);
 		textFieldZeit.setToolTipText("Ben\u00F6tigte Zeit f\u00FCr die Strecke (hh:minmin:secsec,msecmsec)");
@@ -557,11 +555,21 @@ public class LeistungDialog extends JDialog {
 			textFieldminKm.setEnabled(false);
 			textFieldminKm.setBounds(125, 226, 101, 20);
 		} catch (ParseException e) {
-			//TODO
 		}
 		contentPanel.add(textFieldminKm);
 	}
 	
+	private void setFocus(){
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				textFieldBezeichnung.requestFocus();
+			}
+		});
+	}
+
+// TODO: isValid von setError trennen und in Validator extrahieren!
+
 	private boolean isValidBezeichnung(String bezeichnung) {
 		if (bezeichnung.equals("")) {
 			lblBezeichnungError.setText("Bitte geben Sie eine Bezeichnung ein.");
@@ -611,10 +619,9 @@ public class LeistungDialog extends JDialog {
 				geschwindigkeit = geschwindigkeitNumber.doubleValue();
 			} catch (ParseException e) {
 				lblKmhError.setText("Bitte geben Sie eine gültige Zahl ein!");
-				//TODO
 				return false;
 			}
-			geschwindigkeit = Einheitenumrechner.kmHToSKm(geschwindigkeit);
+			geschwindigkeit = UnitsHelper.kmHToSKm(geschwindigkeit);
 			this.geschwindigkeit = geschwindigkeit;
 			isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
 			return true;
@@ -635,10 +642,9 @@ public class LeistungDialog extends JDialog {
 				geschwindigkeit = geschwindigkeitNumber.doubleValue();
 			} catch (ParseException e) {
 				lblMsError.setText("Bitte geben Sie eine gültige Zahl ein!");
-				//TODO
 				return false;
 			}
-			geschwindigkeit = Einheitenumrechner.MSToSKm(geschwindigkeit);
+			geschwindigkeit = UnitsHelper.MSToSKm(geschwindigkeit);
 			this.geschwindigkeit = geschwindigkeit;
 			isValidMinMaxGeschwindigkeit(lblMsError, this.geschwindigkeit);
 			return true;
@@ -660,7 +666,7 @@ public class LeistungDialog extends JDialog {
 		if(geschwindigkeit == 0 ) {
 			return;
 		}
-		double kmH = Einheitenumrechner.toKmH(geschwindigkeit);
+		double kmH = UnitsHelper.toKmH(geschwindigkeit);
 		if (!(kmH >= 10D)) {
 			errorLabel.setText("Geschwindigkeit liegt unter 10km/h");		
 		} else if(!(kmH <= 30D) && !(kmH >= 100D)) {
@@ -695,11 +701,11 @@ public class LeistungDialog extends JDialog {
 		this.geschwindigkeit = geschwindigkeit;
 		switch (geschwindigkeitArt) {
 			case 1: 
-				geschwindigkeit = Einheitenumrechner.toKmH(geschwindigkeit);
+				geschwindigkeit = UnitsHelper.toKmH(geschwindigkeit);
 				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 				return f.format(geschwindigkeitFormat);
 			case 2:
-				geschwindigkeit = Einheitenumrechner.toMS(geschwindigkeit);
+				geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
 				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 				return f.format(geschwindigkeitFormat);
 			case 3:
@@ -710,35 +716,28 @@ public class LeistungDialog extends JDialog {
 	}
 	
 	/**
-	 * Berechnen der Geschwindigkeit in km/h und Einsetzen in das 
-	 * entsprechende Textfeld
 	 * @param geschwindigkeit: [s/km]
 	 */
 	private void setzeKmH(double geschwindigkeit) {
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeitFormat = 0D;
-		geschwindigkeit = Einheitenumrechner.toKmH(geschwindigkeit);
+		geschwindigkeit = UnitsHelper.toKmH(geschwindigkeit);
 		geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 		textFieldkmH.setText(f.format(geschwindigkeitFormat));
 	}
 	
 	/**
-	 * Berechnen der Geschwindigkeit in m/s und Einsetzen in das 
-	 * entsprechende Textfeld
 	 * @param geschwindigkeit: [s/km]
 	 */
 	private void setzeMs(double geschwindigkeit) {
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeitFormat = 0D;
-		geschwindigkeit = Einheitenumrechner.toMS(geschwindigkeit);
+		geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
 		geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 		textFieldMs.setText(f.format(geschwindigkeitFormat));
 	}
 	
 	/**
-	 * Berechnen der Geschwindigkeit in min/km,
-	 * Formatierung des Ergebnis und Einsetzen in das 
-	 * entsprechende Textfeld
 	 * @param geschwindigkeit: [s/km]
 	 */
 	private void setzeMinKm(double geschwindigkeit) {
@@ -747,7 +746,6 @@ public class LeistungDialog extends JDialog {
 	}
 	
 	/**
-	 * Berechnen der benötigten Zeit aus gegebener Geschwindigkeit und Strecke
 	 * @param geschwindigkeit: [s/km]
 	 */
 	private void setzeZeit(double geschwindigkeit) {
@@ -756,22 +754,15 @@ public class LeistungDialog extends JDialog {
 		textFieldZeit.setValue(lController.parseSecInZeitstring(sec));
 	}
 	
-	/**
-	 * Überprüfen, ob alle Werte gesetzt wurden, instanziieren eines Leistungs-Objekt
-	 * und hinzufügen dieses Objekts in die Leistungstabelle
-	 * @return TRUE, falls alle Eingaben i.o.
-	 */
-	private boolean actionBestaetigen () {
-		boolean ok = true;
+	private boolean validateInput(){
+		boolean validInput = true;
 		String bezeichnungString = textFieldBezeichnung.getText();
 		if(!isValidBezeichnung(bezeichnungString)) {
-			ok = false;
+			validInput = false;
 		}
 		Date datum = calendar.getDate();
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-		String datumString = df.format(datum);
 		if(!isValidDatum(datum)) {
-			ok = false;
+			validInput = false;
 		}
 
 		String zeitString = textFieldZeit.getText();
@@ -780,41 +771,34 @@ public class LeistungDialog extends JDialog {
 		String minkmString = textFieldminKm.getText();
 		if (rdbtnZeit.isSelected()) {
 			if(!isValidZeit(zeitString)) {
-				ok = false;
+				validInput = false;
 			}
 			setzeKmH(this.geschwindigkeit);
 			setzeMs(this.geschwindigkeit);
 			setzeMinKm(this.geschwindigkeit);
 		} else if (rdbtnkmH.isSelected()) {
 			if(!isValidKmh(kmhString)) {
-				ok = false;
+				validInput = false;
 			}
 			setzeZeit(this.geschwindigkeit);
 			setzeMs(this.geschwindigkeit);
 			setzeMinKm(this.geschwindigkeit);
 		} else if (rdbtnms.isSelected()) {
 			if(!isValidMs(msString)) {
-				ok = false;
+				validInput = false;
 			}
 			setzeZeit(this.geschwindigkeit);
 			setzeKmH(this.geschwindigkeit);
 			setzeMinKm(this.geschwindigkeit);
 		} else if (rdbtnminkm.isSelected()) {
 			if(!isValidMinKm(minkmString)) {
-				ok = false;
+				validInput = false;
 			}
 			setzeZeit(this.geschwindigkeit);
 			setzeKmH(this.geschwindigkeit);
 			setzeMs(this.geschwindigkeit);
 		}
-		
-		if(ok) {
-			long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthlet().getId();
-			int id_strecke = comboBoxStrecke.getSelectedIndex();
-			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
-			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);			
-		}
-		return ok;
+		return validInput;
 	}
 	
 	private void clearWarnings() {

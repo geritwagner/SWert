@@ -36,6 +36,10 @@ public abstract class Strecken {
 			"25km",
 			"Marathon"};
 
+	public static String[] getStreckenlaengenStringArray(){
+		return streckenlaengenString;
+	}
+	
 	public static int getStreckenlaengeById(int id) {		
 		return streckenlaengen[id];
 	}

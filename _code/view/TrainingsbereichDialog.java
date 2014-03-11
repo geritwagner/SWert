@@ -8,8 +8,8 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import controller.Einheitenumrechner;
 import helper.LeistungHelper;
+import helper.UnitsHelper;
 
 /**
  * Dialog zum Anzeigen einer Tabelle der Trainingsbereiche des Athleten
@@ -251,12 +251,13 @@ public class TrainingsbereichDialog extends JDialog {
 		Object[][] data = new Object [11][4];
 		int zähler = 0;
 		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
+			// TODO: bedeutung der gewichtung!??!
 			double gewichtung = (200-i)/100D;
 			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle;			
 			data[zähler][0] = String.valueOf(i) + "%";
 			data[zähler][1] = l.parseSecInMinutenstring(trainingsGeschwindigkeitSKm);	
-			data[zähler][2] = f.format(Einheitenumrechner.toKmH(trainingsGeschwindigkeitSKm));
-			data[zähler][3] = f.format(Einheitenumrechner.toMS(trainingsGeschwindigkeitSKm));
+			data[zähler][2] = f.format(UnitsHelper.toKmH(trainingsGeschwindigkeitSKm));
+			data[zähler][3] = f.format(UnitsHelper.toMS(trainingsGeschwindigkeitSKm));
 			zähler++;
 		}
 		return data;	
@@ -279,8 +280,8 @@ public class TrainingsbereichDialog extends JDialog {
 			int rundenAnzahl = slider.getValue();
 			data[zähler][0] = String.valueOf(i) + "%";
 			data[zähler][1] = l.parseSecInMinutenstring(trainingsGeschwindigkeitSKm);	
-			data[zähler][2] = f.format(Einheitenumrechner.toKmH(trainingsGeschwindigkeitSKm));
-			data[zähler][3] = f.format(Einheitenumrechner.toMS(trainingsGeschwindigkeitSKm));
+			data[zähler][2] = f.format(UnitsHelper.toKmH(trainingsGeschwindigkeitSKm));
+			data[zähler][3] = f.format(UnitsHelper.toMS(trainingsGeschwindigkeitSKm));
 			data[zähler][4] = l.parseSecInMinutenstring(winzererRundengeschindigkeit*rundenAnzahl);
 			zähler++;
 		}		
@@ -294,6 +295,7 @@ public class TrainingsbereichDialog extends JDialog {
 	private void updateRundenzeit (int rundenAnzahl) {	
 		int zähler = 0;
 		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
+			// TODO: bedeutung der gewichtung!??!
 			double gewichtung = (200-i)/100D;
 			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle* winzererAufschlag;
 			winzererRundengeschindigkeit = trainingsGeschwindigkeitSKm*winzererRundenlänge;

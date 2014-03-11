@@ -3,8 +3,8 @@ package model;
 import java.text.*;
 import java.util.*;
 import java.util.prefs.*;
-import controller.Einheitenumrechner;
 import helper.LeistungHelper;
+import helper.UnitsHelper;
 import main.Main;
 
 /**
@@ -149,8 +149,8 @@ public class Leistung implements LeistungInterface{
 	public Object[] getObjectDataForTable() {
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeit = this.getGeschwindigkeit();
-		double kmH = Einheitenumrechner.toKmH(geschwindigkeit);
-		double mS = Einheitenumrechner.toMS(geschwindigkeit);
+		double kmH = UnitsHelper.toKmH(geschwindigkeit);
+		double mS = UnitsHelper.toMS(geschwindigkeit);
 		
 		int streckenID = this.getId_strecke();
 		String streckenString;

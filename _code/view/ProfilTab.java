@@ -73,14 +73,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 	
 	public void trainingsBereichButtonPressed(){
-		Double schwelle;
 		try {
-			schwelle = athlet.getAnaerobeSchwelle();
-			new TrainingsbereichDialog(schwelle);
+			new TrainingsbereichDialog(athlet.getAnaerobeSchwelle());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Für die Berechnung der Trainingsbereiche müssen zwei Leistungen für die Berechnung" +
-					"des Slope-Faktors ausgewählt werden."
-					, "Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
+					"des Slope-Faktors ausgewählt werden.", "Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -302,6 +299,13 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	public void deleteLeistung() {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		int rowToDelete = leistungenTabelle.getSelectedRow();
+		
+		// deckt den Fall ab, wenn neue Leistungen hinzugefügt werden (es wird immer die markierte gelöscht und durch die neue
+		// ersetzt - bei neuen Leistungen ist aber standardmäßig keine bzw. Zeile -1 markiert, die aber nicht gelöscht werden kann)
+		// TODO: sollte eleganter umgesetzt werden!
+		if (-1 == rowToDelete) {
+			return;
+		}
 		Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
 
 		model.removeRow(leistungenTabelle.convertRowIndexToModel(rowToDelete));	
@@ -409,6 +413,141 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		}
 	}
 	
+	// ------------------------ to consolidate --------------------------
+	/**
+	 * Hebt die Auswahl auf
+	 */	
+	private void tabelleCheckboxenFürSlopeFaktorAuswahlAufheben() {
+		int zeilenAnzahl = getZeilenAnzahl();
+		for (int i = 0; i < zeilenAnzahl; i++) {
+			if (true == getBooleanAt(i, BOOLEAN_SPALTE)){
+				leistungenTabelle.setValueAt(false, i, BOOLEAN_SPALTE);
+			}
+		}		
+	}
+	
+	/**
+	 * Prüft, ob automatische Auswahl bei einer neuen Zeile durchgeführt werden soll
+	 */
+	private void leistungsAuswahlBeiZeileHinzufügen() {
+		if (automatischeAuswahlZulässig()) {
+			checkboxLeistungenAuswahlprüfenClicked();
+		}	
+	}
+	
+	/**
+	 * Schaltet eine automatische Auswahl ab, falls diese nicht möglich ist und
+	 * berechnet ansonsten die neuen Werte
+	 */
+	private void leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen() {
+		if (!automatischeAuswahlZulässig()) {
+			chckbxLeistungenAuswahl.setSelected(false);
+		} else {
+			checkboxLeistungenAuswahlprüfenClicked();
+		}
+	}
+	
+	/**
+	 * Erstellt Referenz-Leistungen mit den beiden manuell gewählten Leistungen und berechnet dann die Werte
+	 */	
+	private void berechneWerte() {
+        if (!chckbxLeistungenAuswahl.isSelected()) {  
+    		if (tabelleAuswahlRichtig()){
+    			athlet.resetLeistungAuswahlForSlopeFaktor();
+        		try {
+					athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[0]);
+	               	athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[1]);
+				} catch (Exception e) {
+					// TODO gleiche Leistung ausgewählt oder schon alle Leistungen für Berechnung des Slope-Faktors gesetzt
+					e.printStackTrace();
+				}
+    			werteBerechnen();        		
+        	}
+        }
+	}
+	
+	/**
+	 * Berechnet die nötigen Werte bzw. gibt entsprechende Fehlermeldungen zurück
+	 */
+	private void werteBerechnen() {
+		// TODO: split and simplify? ggf. mit exceptions oder status-codes arbeiten, die im model abgefragt werden...
+		// gleiche Leistungen: sollte vorher schon abgefangen werdne?!??!
+		// if (athlet.getSlopeFaktor() ==- 1) {
+		if ("set" != athlet.getSlopeFaktorStatus()) {
+			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
+					, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
+			tabelleCheckboxenFürSlopeFaktorAuswahlAufheben();
+			chckbxLeistungenAuswahl.setSelected(false);
+			return;
+		} 
+		double anaerobeSchwelle;
+		try {
+			anaerobeSchwelle = athlet.getAnaerobeSchwelle();
+			LeistungHelper l = new LeistungHelper();
+			textFieldSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
+			
+			setAnalysenVerfügbar(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+		
+	
+	
+	
+	// ---------------------------------- TABLE-METHODS: GET/SET ----------------------------
+	
+	@Override
+	public void tableChanged(TableModelEvent e) {
+        int zeile = e.getFirstRow();
+        int spalte = e.getColumn();
+        // beim Laden eines neuen Profils: trigerTableChanged nicht aufrufen
+        if (spalte<0 || zeile<0){
+        	return;
+        }
+		TableModel model = (TableModel)e.getSource();
+		Object data = model.getValueAt(zeile, spalte);
+        triggerTableChanged(zeile, spalte, data);
+    }
+	
+	private Leistung getLeistungInZeile(int zeile) {
+		zeile = leistungenTabelle.convertRowIndexToModel(zeile);
+		String datum = getStringAt(zeile, 0);
+		String streckenlaenge = getStringAt(zeile, 1);
+		int streckenId = Strecken.getStreckenIdByString(streckenlaenge);
+		String bezeichnung = getStringAt(zeile, 2);
+		LeistungHelper l = new LeistungHelper();
+		double zeit =   l.parseZeitInSec(getStringAt(zeile, 3));
+		int streckenlänge = Strecken.getStreckenlaengeById(streckenId);
+		double geschwindigkeit = l.berechneGeschwindigkeit(streckenlänge, zeit);
+		Leistung leistung = new Leistung(streckenId, athlet.getId(), bezeichnung, datum, geschwindigkeit);
+		return leistung;
+	}
+	
+	private int getZeilenAnzahl() {
+		return leistungenTabelle.getRowCount();
+	}
+	
+	private String getStringAt (int zeile, int spalte) {
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		return (String) model.getValueAt(zeile, spalte);		
+	}
+	
+	private boolean getBooleanAt (int zeile, int spalte) {
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		return (boolean) model.getValueAt(zeile, spalte);		
+	}
+	
+	private int getIntAt (int zeile, int spalte) {
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		return (int) model.getValueAt(zeile, spalte);		
+	}
+	
+	private double getDoubleAt(int zeile, int spalte){
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		return Double.parseDouble((String) model.getValueAt(zeile, spalte));				
+	}
+
 	//----------------------- view darstellung -----------------------
 
 	private void initLayout(String Athletenname) {
@@ -606,138 +745,5 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			sorter.setSortable(i, false);
 		}
 		return leistungenTabelle;
-	}
-	
-	// ------------------------ to consolidate --------------------------
-	/**
-	 * Hebt die Auswahl auf
-	 */	
-	private void tabelleCheckboxenFürSlopeFaktorAuswahlAufheben() {
-		int zeilenAnzahl = getZeilenAnzahl();
-		for (int i = 0; i < zeilenAnzahl; i++) {
-			if (true == getBooleanAt(i, BOOLEAN_SPALTE)){
-				leistungenTabelle.setValueAt(false, i, BOOLEAN_SPALTE);
-			}
-		}		
-	}
-	
-	/**
-	 * Prüft, ob automatische Auswahl bei einer neuen Zeile durchgeführt werden soll
-	 */
-	private void leistungsAuswahlBeiZeileHinzufügen() {
-		if (automatischeAuswahlZulässig()) {
-			checkboxLeistungenAuswahlprüfenClicked();
-		}	
-	}
-	
-	/**
-	 * Schaltet eine automatische Auswahl ab, falls diese nicht möglich ist und
-	 * berechnet ansonsten die neuen Werte
-	 */
-	private void leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen() {
-		if (!automatischeAuswahlZulässig()) {
-			chckbxLeistungenAuswahl.setSelected(false);
-		} else {
-			checkboxLeistungenAuswahlprüfenClicked();
-		}
-	}
-	
-	/**
-	 * Erstellt Referenz-Leistungen mit den beiden manuell gewählten Leistungen und berechnet dann die Werte
-	 */	
-	private void berechneWerte() {
-        if (!chckbxLeistungenAuswahl.isSelected()) {  
-    		if (tabelleAuswahlRichtig()){
-    			athlet.resetLeistungAuswahlForSlopeFaktor();
-        		try {
-					athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[0]);
-	               	athlet.setLeistungToAuswahlForSlopeFaktor(getAusgewählteLeistungenForSlopeFaktorFromCheckbox()[1]);
-				} catch (Exception e) {
-					// TODO gleiche Leistung ausgewählt oder schon alle Leistungen für Berechnung des Slope-Faktors gesetzt
-					e.printStackTrace();
-				}
-    			werteBerechnen();        		
-        	}
-        }
-	}
-	
-	/**
-	 * Berechnet die nötigen Werte bzw. gibt entsprechende Fehlermeldungen zurück
-	 */
-	private void werteBerechnen() {
-		// TODO: split and simplify? ggf. mit exceptions oder status-codes arbeiten, die im model abgefragt werden...
-		// gleiche Leistungen: sollte vorher schon abgefangen werdne?!??!
-		// if (athlet.getSlopeFaktor() ==- 1) {
-		if ("set" != athlet.getSlopeFaktorStatus()) {
-			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
-					, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
-			tabelleCheckboxenFürSlopeFaktorAuswahlAufheben();
-			chckbxLeistungenAuswahl.setSelected(false);
-			return;
-		} 
-		double anaerobeSchwelle;
-		try {
-			anaerobeSchwelle = athlet.getAnaerobeSchwelle();
-			LeistungHelper l = new LeistungHelper();
-			textFieldSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
-			
-			setAnalysenVerfügbar(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-		
-	// ---------------------------------- TABLE-METHODS: GET/SET ----------------------------
-	
-	@Override
-	public void tableChanged(TableModelEvent e) {
-        int zeile = e.getFirstRow();
-        int spalte = e.getColumn();
-        // beim Laden eines neuen Profils: trigerTableChanged nicht aufrufen
-        if (spalte<0 || zeile<0){
-        	return;
-        }
-		TableModel model = (TableModel)e.getSource();
-		Object data = model.getValueAt(zeile, spalte);
-        triggerTableChanged(zeile, spalte, data);
-    }
-	
-	// TODO: Getter extrahieren!
-	private Leistung getLeistungInZeile(int zeile) {
-		zeile = leistungenTabelle.convertRowIndexToModel(zeile);
-		String datum = getStringAt(zeile, 0);
-		String streckenlaenge = getStringAt(zeile, 1);
-		int streckenId = Strecken.getStreckenIdByString(streckenlaenge);
-		String bezeichnung = getStringAt(zeile, 2);
-		LeistungHelper l = new LeistungHelper();
-		double zeit =   l.parseZeitInSec(getStringAt(zeile, 3));
-		int streckenlänge = Strecken.getStreckenlaengeById(streckenId);
-		double geschwindigkeit = l.berechneGeschwindigkeit(streckenlänge, zeit);
-		Leistung leistung = new Leistung(streckenId, athlet.getId(), bezeichnung, datum, geschwindigkeit);
-		return leistung;
-	}
-	
-	private int getZeilenAnzahl() {
-		return leistungenTabelle.getRowCount();
-	}
-	
-	private String getStringAt (int zeile, int spalte) {
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		return (String) model.getValueAt(zeile, spalte);		
-	}
-	
-	private boolean getBooleanAt (int zeile, int spalte) {
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		return (boolean) model.getValueAt(zeile, spalte);		
-	}
-	
-	private int getIntAt (int zeile, int spalte) {
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		return (int) model.getValueAt(zeile, spalte);		
-	}
-	
-	private double getDoubleAt(int zeile, int spalte){
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		return Double.parseDouble((String) model.getValueAt(zeile, spalte));				
 	}
 }

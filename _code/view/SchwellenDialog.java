@@ -13,7 +13,6 @@ import javax.swing.text.*;
 import main.Main;
 import helper.*;
 import model.Leistung;
-import controller.Einheitenumrechner;
 
 /**
  * Dialog zum Anlegen einer neuen Leistung durch
@@ -68,7 +67,6 @@ public class SchwellenDialog extends JDialog {
 		setzeKmH(geschwindigkeit);
 		setzeMs(geschwindigkeit);
 		setzeMinKm(geschwindigkeit);
-		clearWarnings();
 	}
 
 	private void initProperties() {
@@ -91,7 +89,6 @@ public class SchwellenDialog extends JDialog {
 	}
 	
 	private void initComponents() {
-		
 		JLabel lblDaten = new JLabel("Bitte geben Sie Ihre Werte ein:");
 		lblDaten.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblDaten.setBounds(10, 11, 424, 14);
@@ -155,7 +152,7 @@ public class SchwellenDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(actionBestaetigen()) {
-					// TODO: nächste Zeile löschen?
+					// TODO: nächste Zeile löschen? - analog wie LeistungDialog strukturieren!!!
 					mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
 					SchwellenDialog.this.setVisible(false);
 					SchwellenDialog.this.dispose();					
@@ -415,7 +412,7 @@ public class SchwellenDialog extends JDialog {
 				//TODO
 				return false;
 			}
-			geschwindigkeit = Einheitenumrechner.kmHToSKm(geschwindigkeit);
+			geschwindigkeit = UnitsHelper.kmHToSKm(geschwindigkeit);
 			this.geschwindigkeit = geschwindigkeit;
 			isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
 			return true;
@@ -439,7 +436,7 @@ public class SchwellenDialog extends JDialog {
 				//TODO
 				return false;
 			}
-			geschwindigkeit = Einheitenumrechner.MSToSKm(geschwindigkeit);
+			geschwindigkeit = UnitsHelper.MSToSKm(geschwindigkeit);
 			this.geschwindigkeit = geschwindigkeit;
 			isValidMinMaxGeschwindigkeit(lblMsError, this.geschwindigkeit);
 			return true;
@@ -461,7 +458,7 @@ public class SchwellenDialog extends JDialog {
 		if(geschwindigkeit == 0 ) {
 			return;
 		}
-		double kmH = Einheitenumrechner.toKmH(geschwindigkeit);
+		double kmH = UnitsHelper.toKmH(geschwindigkeit);
 		if (!(kmH >= 10D)) {
 			errorLabel.setText("Geschwindigkeit liegt unter 10km/h");		
 		} else if(!(kmH <= 30D) && !(kmH >= 100D)) {
@@ -498,11 +495,11 @@ public class SchwellenDialog extends JDialog {
 		this.geschwindigkeit = geschwindigkeit;
 		switch (geschwindigkeitArt) {
 			case 1: 
-				geschwindigkeit = Einheitenumrechner.toKmH(geschwindigkeit);
+				geschwindigkeit = UnitsHelper.toKmH(geschwindigkeit);
 				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 				return f.format(geschwindigkeitFormat);
 			case 2:
-				geschwindigkeit = Einheitenumrechner.toMS(geschwindigkeit);
+				geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
 				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 				return f.format(geschwindigkeitFormat);
 			case 3:
@@ -535,7 +532,7 @@ public class SchwellenDialog extends JDialog {
 	private void setzeKmH(double geschwindigkeit) {
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeitFormat = 0D;
-		geschwindigkeit = Einheitenumrechner.toKmH(geschwindigkeit);
+		geschwindigkeit = UnitsHelper.toKmH(geschwindigkeit);
 		geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 		textFieldkmH.setText(f.format(geschwindigkeitFormat));
 	}
@@ -548,7 +545,7 @@ public class SchwellenDialog extends JDialog {
 	private void setzeMs(double geschwindigkeit) {
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeitFormat = 0D;
-		geschwindigkeit = Einheitenumrechner.toMS(geschwindigkeit);
+		geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
 		geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 		textFieldMs.setText(f.format(geschwindigkeitFormat));
 	}

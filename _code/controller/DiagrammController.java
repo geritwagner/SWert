@@ -1,5 +1,7 @@
 package controller;
 
+import helper.UnitsHelper;
+
 import java.util.*;
 import main.Main;
 import model.*;
@@ -65,7 +67,7 @@ public class DiagrammController {
 			Leistung leistung = leistungenIterator.next();
 			double strecke = leistung.getStrecke();
 			double geschwindigkeit = leistung.getGeschwindigkeit();
-			double zeit = Einheitenumrechner.toMinKm(geschwindigkeit);
+			double zeit = UnitsHelper.toMinKm(geschwindigkeit);
 			athletenSerie.add(strecke, zeit);
 		}
 		diagramm.addLeistungsSerie(athletenSerie);
@@ -84,7 +86,7 @@ public class DiagrammController {
 			Leistung leistung = leistungenIterator.next();
 			int strecke = Strecken.getStreckenlaengeById(leistung.getId_strecke());
 			double geschwindigkeit = leistung.getGeschwindigkeit();
-			double zeit = Einheitenumrechner.toMinKm(geschwindigkeit);
+			double zeit = UnitsHelper.toMinKm(geschwindigkeit);
 			athletenSerie.add(strecke, zeit);
 		}
 		diagramm.addBestzeitenSerie(athletenSerie);
