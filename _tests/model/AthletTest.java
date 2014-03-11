@@ -39,10 +39,10 @@ public class AthletTest {
 		
 		assertTrue( testAthlet.getName() == "Tester");
 		assertTrue( 0 == testAthlet.getLeistungen().size());
-		Leistung testLeistung = new Leistung(2, 12, 50.0, "Test Wettkampf", "01-01-2014");
+		Leistung testLeistung = new Leistung(4, 12, "Test Wettkampf", "01-01-2014", 180);
 		testAthlet.addLeistung(testLeistung);
 		assertTrue( testAthlet.getLeistungen().get(0).equals(testLeistung));
-		assertTrue( 50 == testAthlet.getLeistungen().get(0).getGeschwindigkeit());
+		assertTrue( 360 == testAthlet.getLeistungen().get(0).getZeit());
 		testAthlet.removeLeistung(testLeistung);
 		testAthlet.removeLeistung(testLeistung);
 		assertTrue( 0 == testAthlet.getLeistungen().size());
@@ -55,8 +55,10 @@ public class AthletTest {
 	public void testSlopeFaktorLogik() throws Exception {
 		testAthlet = new Athlet(12, "Tester");
 		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
-		Leistung leistung1 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
-		Leistung leistung2 = new Leistung(7, 12, 61.5300003, "10.00m-Leistung (langsam)", "01-01-2014");
+		
+		// testen, ob ein "zu guter" Slope-Faktor erkannt & nicht verwendet wird.
+		Leistung leistung1 = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
+		Leistung leistung2 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 61000);
 		testAthlet.addLeistung(leistung1);
 		testAthlet.addLeistung(leistung2);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
@@ -68,7 +70,7 @@ public class AthletTest {
 		assertFalse(testAthlet.isSetSlopeFaktor());
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		
-		leistung2 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung (langsam)", "01-01-2014");
+		leistung2 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 261.53);
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		testAthlet.addLeistung(leistung2);
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
@@ -77,13 +79,13 @@ public class AthletTest {
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "set");
 		assertTrue(testAthlet.isSetSlopeFaktor());
 		
-		Leistung nichtEnthalteneLeistung = new Leistung(7, 132, 1436.5, "nicht in der Leistungs-Liste enthalten", "01-01-2014");
+		Leistung nichtEnthalteneLeistung = new Leistung(7, 132, "nicht in der Leistungs-Liste enthalten", "01-01-2014", 143.65);
 		testAthlet.removeLeistungFromAuswahlForSlopeFaktor(nichtEnthalteneLeistung);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(nichtEnthalteneLeistung);
 		
 		// Werden die Leistungen getauscht, wenn sie nicht nach aufsteigender Streckenlänge hinzugefügt werden?
-		leistung1 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung (langsam)", "01-01-2014");
-		leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
+		leistung1 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 261.53);
+		leistung2 = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
 		testAthlet = new Athlet(12, "Tester");
 		testAthlet.addLeistung(leistung1);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
@@ -93,8 +95,8 @@ public class AthletTest {
 
 		// Es sollten keine Leistungen über die gleiche Strecke als Slope-Faktor gesetzt werden können
 		
-		leistung1 = new Leistung(7, 12, 1832, "10.000m-Leistung (langsam)", "01-01-2014");
-		leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
+		leistung1 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014",183.2);
+		leistung2 = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
 		testAthlet = new Athlet(12, "Tester");
 		// zu gute Slope-Faktoren sollten nicht akzeptiert werden
 		testAthlet.addLeistung(leistung1);
@@ -105,7 +107,8 @@ public class AthletTest {
 
 		// zu schlechte Slope-Faktoren sollten nicht akzeptiert werden
 		testAthlet.removeLeistung(leistung1);
-		leistung1 = new Leistung(7, 12, 188432, "10.000m-Leistung (langsam)", "01-01-2014");
+//		leistung1 = new Leistung(7, 12, 188432, "10.000m-Leistung (langsam)", "01-01-2014");
+		leistung1 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 18843.2);
 		testAthlet.addLeistung(leistung1);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
 		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
@@ -127,9 +130,12 @@ public class AthletTest {
 		assertTrue(exceptionThrown);
 		
 		// Auswahl einer 3. Leistung für die Berechnung des Slope-Faktors sollte nicht möglich sein.
-		Leistung leistung1 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung", "01-01-2014");
-		Leistung leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung", "01-01-2014");
-		Leistung leistung3 = new Leistung (6, 12, 1315, "5.000m-Leistung", "11-01-2014");
+//		Leistung leistung1 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung", "01-01-2014");
+//		Leistung leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung", "01-01-2014");
+//		Leistung leistung3 = new Leistung (6, 12, 1315, "5.000m-Leistung", "11-01-2014");
+		Leistung leistung1 = new Leistung(7, 12, "10.000m-Leistung", "01-01-2014", 261.53);
+		Leistung leistung2 = new Leistung(1, 12, "800m-Leistung", "01-01-2014", 183.125);
+		Leistung leistung3 = new Leistung (6, 12, "5.000m-Leistung", "11-01-2014", 263);
 		testAthlet.addLeistung(leistung1);
 		testAthlet.addLeistung(leistung2);
 		testAthlet.addLeistung(leistung3);
@@ -149,8 +155,8 @@ public class AthletTest {
 		testAthlet.removeLeistung(leistung2);
 		testAthlet.removeLeistung(leistung3);
 
-		leistung1 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung", "01-01-2014");
-		leistung2 = new Leistung(7, 12, 2815.3000000000003, "andere 10.000m-Leistung", "01-01-2014");
+		leistung1 = new Leistung(7, 12, "10.000m-Leistung", "01-01-2014", 261.53);
+		leistung2 = new Leistung(7, 12, "andere 10.000m-Leistung", "01-01-2014", 281.53);
 		testAthlet.addLeistung(leistung1);
 		testAthlet.addLeistung(leistung2);
 		testAthlet.addLeistung(leistung3);
@@ -170,16 +176,16 @@ public class AthletTest {
 		testAthlet.removeLeistung(leistung2);
 		testAthlet.removeLeistung(leistung3);
 
-		Leistung leistung1Langsam = new Leistung(1, 12, 146.5, "800m-Leistung (langsam)", "01-01-2014");
-		Leistung leistung2Langsam = new Leistung(7, 12, 2615.3, "10.00m-Leistung (langsam)", "01-01-2014");
+		Leistung leistung1Langsam = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
+		Leistung leistung2Langsam = new Leistung(7, 12, "10.00m-Leistung (langsam)", "01-01-2014", 261.53);
 		double schwelleLangsam = 270.4;
 		
-		Leistung leistung1Mittel = new Leistung(1, 12, 132.2, "800m-Leistung (mittel)", "01-01-2014");
-		Leistung leistung2Mittel= new Leistung(7, 12, 2186.4, "10.00m-Leistung (mittel)", "01-01-2014");
+		Leistung leistung1Mittel = new Leistung(1, 12, "800m-Leistung (mittel)", "01-01-2014", 165.25);
+		Leistung leistung2Mittel= new Leistung(7, 12, "10.00m-Leistung (mittel)", "01-01-2014", 218.64);
 		double schwelleMittel = 228.3;
 		
-		Leistung leistung1Schnell = new Leistung(1, 12, 109.6, "800m-Leistung (schnell)", "01-01-2014");
-		Leistung leistung2Schnell= new Leistung(7, 12, 1714.7 , "10.00m-Leistung (schnell)", "01-01-2014");
+		Leistung leistung1Schnell = new Leistung(1, 12, "800m-Leistung (schnell)", "01-01-2014", 137);
+		Leistung leistung2Schnell= new Leistung(7, 12, "10.00m-Leistung (schnell)", "01-01-2014", 171.47);
 		double schwelleSchnell = 180.9;
 		
 		// bestzeiten und calculateSpeed testen:

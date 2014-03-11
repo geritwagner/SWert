@@ -1,7 +1,7 @@
 package model;
 
 interface LeistungInterface {
-
+	
 	public long getId();
 	public int getId_strecke();
 	public long getId_athlet();

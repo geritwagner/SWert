@@ -1,7 +1,11 @@
 package model;
 
+import helper.LeistungHelper;
+
 import java.util.*;
 import java.util.prefs.*;
+
+import main.Main;
 
 /**
  * Model-Klasse für das "Athlet"-Objekt
@@ -19,6 +23,7 @@ public class Athlet implements AthletInterface{
 	private double anaerobeSchwelle;
 	private LinkedList<Leistung> alleLeistungen = new LinkedList<Leistung>();
 
+	private LeistungHelper leistungHelper = Main.mainFrame.leistungHelper;
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
 	
 	public Athlet(String name) {
@@ -154,10 +159,12 @@ public class Athlet implements AthletInterface{
 
 		LinkedList<Leistung> bestzeitenListe = new LinkedList<Leistung>();
 		for (int i = 0; i < Strecken.getStreckenArrayLength(); i++) { 
-			double entfernung = Strecken.getStreckenlaengeById(i); 
+			int entfernung = Strecken.getStreckenlaengeById(i); 
 			double bestzeit = calculateTime(entfernung);
+			String zeitString = leistungHelper.parseSecInZeitstring(bestzeit);
 			// -1: mögliche Bestzeiten werden dem Athleten nicht direkt zugewiesen
-			bestzeitenListe.add(new Leistung (i,-1,bestzeit,null,null)); 
+			double geschwindigkeit = leistungHelper.berechneGeschwindigkeit(entfernung, zeitString);
+			bestzeitenListe.add(new Leistung (i,-1,null,null, geschwindigkeit)); 
 		} 
 		return bestzeitenListe; 
 	}

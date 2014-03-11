@@ -711,7 +711,9 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		String bezeichnung = getStringAt(zeile, 2);
 		LeistungHelper l = new LeistungHelper();
 		double zeit =   l.parseZeitInSec(getStringAt(zeile, 3));
-		Leistung leistung = new Leistung(streckenId, athlet.getId(), zeit, bezeichnung, datum);
+		int streckenlänge = Strecken.getStreckenlaengeById(streckenId);
+		double geschwindigkeit = l.berechneGeschwindigkeit(streckenlänge, zeit);
+		Leistung leistung = new Leistung(streckenId, athlet.getId(), bezeichnung, datum, geschwindigkeit);
 		return leistung;
 	}
 	

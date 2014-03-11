@@ -31,13 +31,13 @@ public class Leistung implements LeistungInterface{
 	
 	private LeistungHelper leistungHelper = Main.mainFrame.leistungHelper;
 	
-	public Leistung(int id_strecke, long id_athlet, double zeit, String bezeichnung, String datum) {
+	public Leistung(int id_strecke, long id_athlet, String bezeichnung, String datum, double geschwindigkeit) {
 		this.id_leistung = getNextLeistungId();
 		this.id_strecke = id_strecke;
 		this.id_athlet = id_athlet;
-		this.zeit = zeit;
-		String zeitString = leistungHelper.parseSecInZeitstring(zeit);
-		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), zeitString);
+		this.zeit = leistungHelper.berechneZeit(getStrecke(), geschwindigkeit);
+		this.geschwindigkeit = geschwindigkeit;
+		//		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), zeitString);
 		this.bezeichnung = bezeichnung;
 		this.datum = datum;	
 		this.selectedForCalculatingSlopeFaktor = false;

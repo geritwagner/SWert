@@ -1,5 +1,7 @@
 package controller;
 
+import helper.LeistungHelper;
+
 import java.io.*;
 import java.util.LinkedList;
 import javax.swing.JOptionPane;
@@ -16,7 +18,7 @@ public class CSVController {
 
 	private String nameAthlet;
 	private long idAthlet;
-	
+
 	/**
 	 * Methode die eine CSV-Datei einliest und daraus ein Athleten-Profil erstellt;
 	 * false wird zurückgegeben, falls dabei eine Fehler entsteht
@@ -92,9 +94,12 @@ public class CSVController {
 		String datum = leistung[0];
     	String strecke = leistung[1];
     	int streckenId = Strecken.getStreckenIdByString(strecke);
+    	int streckenlänge = Strecken.getStreckenlaengeById(streckenId);
     	String bezeichnung = leistung[2];
     	double zeit = Double.parseDouble(leistung[3]);
-    	return new Leistung(streckenId, idAthlet, zeit, bezeichnung, datum);
+    	LeistungHelper leistungHelper = new LeistungHelper();
+    	double geschwindigkeit = leistungHelper.berechneGeschwindigkeit(streckenlänge, zeit);
+    	return new Leistung(streckenId, idAthlet, bezeichnung, datum, geschwindigkeit);
 	}
 	
 	private String[] getAthletenInfo(Athlet athlet) {
