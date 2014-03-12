@@ -19,6 +19,11 @@ public class BestzeitenDialogController {
 		this.view = view;
 	}
 	
+	public void release(){
+		view = null;
+		athlet = null;
+	}
+	
 	public String berechneBestzeit(String streckenString) {
     	if (streckenString!= null) {
     		int strecke = -1;

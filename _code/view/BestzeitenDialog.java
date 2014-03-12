@@ -111,8 +111,7 @@ public class BestzeitenDialog extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				BestzeitenDialog.this.setVisible(false);
-				BestzeitenDialog.this.dispose();
+				release();
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
@@ -140,6 +139,14 @@ public class BestzeitenDialog extends JDialog {
 		trainingsTabelle.getTableHeader().setReorderingAllowed(false);
 		trainingsTabelle.setEnabled(false);
 		scrollPane.setViewportView(trainingsTabelle);
+	}
+	
+	private void release(){
+		// TODO: model.deleteObserver(this);
+		controller.release();
+		controller = null;
+		setVisible(false);
+		dispose();
 	}
 
 	/**
