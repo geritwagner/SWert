@@ -70,6 +70,6 @@ public class DiagrammController {
 			zeit = UnitsHelper.toMinKm(geschwindigkeit);
 			athletenSerie.add(strecke, zeit);
 		}
-		view.addBestzeitenSerie(athletenSerie);
+		view.addBerechneteBestzeitenUndTrendlinie(athletenSerie);
 	}
 }

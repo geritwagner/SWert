@@ -13,8 +13,6 @@ import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.xy.*;
 
-import main.Main;
-
 /**
  * Frame zum Anzeigen der Leistungskurven
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
@@ -88,10 +86,6 @@ public class DiagrammFrame extends JFrame {
 		this.dispose();
 	}
 	
-	/**
-	 * Hinzufügen einer Serie mit Leistungen zum Plot (Scatterplot)
-	 * @param serie
-	 */
 	public void addLeistungsSerie(XYSeries serie) {
 		datenLeistungen.addSeries(serie);
 		datenSammlungLeistungen = datenLeistungen;
@@ -100,11 +94,7 @@ public class DiagrammFrame extends JFrame {
 		letzteFarbe = (Color) dotRenderer.getSeriesPaint(datenSammlungLeistungen.getSeriesCount()-1);
 	}
 	
-	/**
-	 * Hinzufügen einer Serie mit möglichen Bestleistungen zum Plot (Trendlinie)
-	 * @param serie
-	 */
-	public void addBestzeitenSerie(XYSeries serie) {
+	public void addBerechneteBestzeitenUndTrendlinie(XYSeries serie) {
 		datenBestzeiten.addSeries(serie);
 		datenSammlungBestzeiten = datenBestzeiten;
 		lineRenderer.setSeriesPaint(datenSammlungBestzeiten.getSeriesCount()-1, letzteFarbe);
