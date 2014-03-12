@@ -1,13 +1,16 @@
 SWert
 =====
 
-MVC-Architecture
+Architektur (MVC)
 ---------------
 
 Convention:
-'public ViewXY (Model athlet) {
+
+```
+public ViewXY (Model athlet) {
 	if (athlet == null){
-		athlet = new Athlet ();
+			athlet = new Athlet ();
 	}
 	controller = new ControllerXY (athlet, this);
-}'
+}
+```
