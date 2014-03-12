@@ -41,6 +41,23 @@ public class DiagrammFrame extends JFrame {
 		datenSammlungLeistungen = datenLeistungen;
 		datenSammlungBestzeiten = datenBestzeiten;
 		
+		JFreeChart chart = initChart();
+		
+        initDotRenderer();
+        initSplineRenderer();
+        
+        TickUnitSource ticks = NumberAxis.createIntegerTickUnits();
+        NumberAxis range = (NumberAxis) elternPlot.getRangeAxis();
+        range.setStandardTickUnits(ticks);
+        
+        ChartPanel cp = new ChartPanel(chart);
+        contentPane.add(cp);
+        pack();
+    	this.setEnabled(true);
+		this.setVisible(true);
+	}
+
+	private JFreeChart initChart(){
 		LogAxis xAxis = new LogAxis("Streckenlänge");
 	   	xAxis.setBase(10);
 	   	xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -63,19 +80,14 @@ public class DiagrammFrame extends JFrame {
         elternPlot.setRangeGridlinePaint(Color.lightGray);
         elternPlot.setDataset(0, datenSammlungLeistungen);
         elternPlot.setDataset(1, datenSammlungBestzeiten);
-
-        initDotRenderer();
-        initSplineRenderer();
-        
-        TickUnitSource ticks = NumberAxis.createIntegerTickUnits();
-        NumberAxis range = (NumberAxis) elternPlot.getRangeAxis();
-        range.setStandardTickUnits(ticks);
-        
-        ChartPanel cp = new ChartPanel(chart);
-        contentPane.add(cp);
-        pack();
+        return chart;
 	}
-
+	
+	private void closeWindowClicked(){
+		this.setEnabled(false);
+		this.dispose();
+	}
+	
 	/**
 	 * Hinzufügen einer Serie mit Leistungen zum Plot (Scatterplot)
 	 * @param serie
@@ -111,7 +123,7 @@ public class DiagrammFrame extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				Main.mainFrame.diagrammController.DiagrammSchließen();
+				closeWindowClicked();
 			}
 		});
 		setBounds(100, 100, 700, 432);

@@ -35,7 +35,7 @@ public class MainFrame {
 
 	public void initializeControllers() {
 		csvController 		= new CSVController();
-		diagrammController 	= new DiagrammController();
+//		diagrammController 	= new DiagrammController();
 		leistungHelper 		= new LeistungHelper();
 	}
 	

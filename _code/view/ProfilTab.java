@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
+import controller.DiagrammController;
 import net.miginfocom.swing.MigLayout;
 
 import helper.*;
@@ -69,7 +71,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 
 	public void leistungskurveButtonPressed(){
-		mainFrame.diagrammController.DiagrammOeffnen();
+//		mainFrame.diagrammController.DiagrammOeffnen();
+		DiagrammController dc = new DiagrammController();
 	}
 	
 	public void trainingsBereichButtonPressed(){
