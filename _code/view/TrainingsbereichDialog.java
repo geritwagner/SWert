@@ -2,56 +2,56 @@ package view;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.text.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import helper.LeistungHelper;
-import helper.UnitsHelper;
+import controller.TrainingsbereichController;
+import model.*;
+import helper.*;
 
 /**
  * Dialog zum Anzeigen einer Tabelle der Trainingsbereiche des Athleten
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class TrainingsbereichDialog extends JDialog {
-
-	private static final double WINZERER_AUFSCHLAG = 1.03;
-	private static final double WINZERER_RUNDEN_LÄNGE = 3.409;
-	private static final int UNTERE_SCHRANKE_TRAININGSBEREICHE = 60;
-	private static final int OBERE_SCHRANKE_TRAININGSBEREICHE = 110;
-	private static final int SCHRITT_TRAININGSBEREICH = 5;
 	
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize();
-	private LeistungHelper l = new LeistungHelper();
 		
-	private double anaerobeSchwelle;
-	private double anaerobeProfilierteSchwelle;
 	private JTextField txtAnaerobeSchwelle;
 	private JTextField txtAnaerobeProfilierteSchwelle;
-	private JTable trainingsTabelle;
+	public JTable trainingsTabelle;
 	private JSlider slider;
 	private JLabel lblRundenanzahl;
 	private JScrollPane scrollPane;
-	
-	//Entspricht 1 Runde in Sekunden
-	private double winzererRundengeschindigkeit;
-	
-	double winzererAufschlag = 1.03;
-	double winzererRundenlänge = 3.409;
-	
 	private final ButtonGroup buttonGroup = new ButtonGroup();
-
-	public TrainingsbereichDialog(double anaerobeSchwelle) {
-		this.anaerobeSchwelle = anaerobeSchwelle;
-		this.anaerobeProfilierteSchwelle = anaerobeSchwelle*winzererAufschlag;
-		initProperties();
-		initComponents();
-		setModal(true);
-		setVisible(true);
+		
+	TrainingsbereichController controller;
+	Athlet athlet;
+	
+	public TrainingsbereichDialog(Athlet athlet) {
+		try {
+			this.athlet = athlet;
+			controller = new TrainingsbereichController(athlet, this);
+			initProperties();
+			double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
+			double anaerobeProfilierteSchwelle = anaerobeSchwelle*TrainingsbereichController.getWinzererAufschlag();
+			initComponents(anaerobeSchwelle, anaerobeProfilierteSchwelle);
+			setModal(true);
+			setVisible(true);
+		} catch (Exception e) {
+			abbrechen();
+		}
+	}
+	
+	private void abbrechen(){
+		JOptionPane.showMessageDialog(this, "Für die Berechnung der Trainingsbereiche müssen zwei Leistungen für die Berechnung" +
+				"des Slope-Faktors ausgewählt werden.", "Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
+		setVisible(false);
+		dispose();
 	}
 	
 	private void initProperties() {
@@ -68,9 +68,9 @@ public class TrainingsbereichDialog extends JDialog {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
-	private void initComponents() {
+	private void initComponents(double anaerobeSchwelle, double anaerobeProfilierteSchwelle) {
 		initComponentsGeneral();
-		initComponentsSpecific();
+		initComponentsSpecific(anaerobeSchwelle, anaerobeProfilierteSchwelle);
 		initJTable();
 		initButtonPane();
 	}
@@ -86,7 +86,7 @@ public class TrainingsbereichDialog extends JDialog {
 		contentPanel.add(separator);		
 	}
 
-	private void initComponentsSpecific() {
+	private void initComponentsSpecific(double anaerobeSchwelle, double anaerobeProfilierteSchwelle) {
 		JLabel lblTrainingsbereiche = new JLabel("Trainingsbereiche");
 		lblTrainingsbereiche.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblTrainingsbereiche.setBounds(10, 135, 258, 14);
@@ -95,7 +95,9 @@ public class TrainingsbereichDialog extends JDialog {
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setBounds(10, 150, 324, 2);
 		contentPanel.add(separator_1);		
-			
+		
+		LeistungHelper l = new LeistungHelper();
+		
 		txtAnaerobeSchwelle = new JTextField();
 		txtAnaerobeSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
 		txtAnaerobeSchwelle.setEditable(false);
@@ -126,7 +128,8 @@ public class TrainingsbereichDialog extends JDialog {
 			public void stateChanged(ChangeEvent evt) {
 	          JSlider slider = (JSlider) evt.getSource();
 	          if (!slider.getValueIsAdjusting()) {
-	            updateRundenzeit(slider.getValue());	            
+	        	int rundenZahl = slider.getValue();
+	            controller.updateRundenzeit(rundenZahl);	            
 	          }
 	        }
 	      });
@@ -135,7 +138,7 @@ public class TrainingsbereichDialog extends JDialog {
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setViewportBorder(null);
-		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setBounds(10, 163, 324, 206);
 		contentPanel.add(scrollPane);
@@ -167,8 +170,6 @@ public class TrainingsbereichDialog extends JDialog {
 		    @Override
 			public void actionPerformed(ActionEvent e) {
 		      initJTableProfiliert();
-		      slider.setVisible(true);
-		      lblRundenanzahl.setVisible(true);
 		    }
 		});
 	}
@@ -182,8 +183,8 @@ public class TrainingsbereichDialog extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				TrainingsbereichDialog.this.setVisible(false);
-				TrainingsbereichDialog.this.dispose();
+				setVisible(false);
+				dispose();
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
@@ -193,7 +194,7 @@ public class TrainingsbereichDialog extends JDialog {
 	private void initJTable() {	
 		trainingsTabelle = new JTable();
 		trainingsTabelle.setModel(new DefaultTableModel(
-			berechneTrainingsBereiche(),
+			controller.berechneTrainingsBereiche(),
 			new String[] {
 				"Bereich", 
 				"1.000m Zeit",
@@ -217,8 +218,9 @@ public class TrainingsbereichDialog extends JDialog {
 
 	private void initJTableProfiliert() {	
 		trainingsTabelle = new JTable();
+		int rundenZahl = slider.getValue();
 		trainingsTabelle.setModel(new DefaultTableModel(
-			berechneTrainingsBereicheProfiliert(),
+			controller.berechneTrainingsBereicheProfiliert(rundenZahl),
 			new String[] {
 				"Bereich", 
 				"1.000m Zeit",
@@ -239,69 +241,8 @@ public class TrainingsbereichDialog extends JDialog {
 		JSeparator separator = new JSeparator();
 		separator.setBounds(10, 326, 258, 2);
 		contentPanel.add(separator);	
-	}
 
-	/**
-	 * Berechnen der Trainingsbereiche, die direkt an die JTable übergeben werden
-	 * @return: [x][y] --> x enthält die verschiedenen Strecke,
-	 * y die entsprechenden Geschwindigkeiten in kmh, ms, minkm
-	 */
-	private Object[][] berechneTrainingsBereiche() {	
-		DecimalFormat f = new DecimalFormat("#0.00");
-		Object[][] data = new Object [11][4];
-		int zähler = 0;
-		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
-			// TODO: bedeutung der gewichtung!??!
-			double gewichtung = (200-i)/100D;
-			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle;			
-			data[zähler][0] = String.valueOf(i) + "%";
-			data[zähler][1] = l.parseSecInMinutenstring(trainingsGeschwindigkeitSKm);	
-			data[zähler][2] = f.format(UnitsHelper.toKmH(trainingsGeschwindigkeitSKm));
-			data[zähler][3] = f.format(UnitsHelper.toMS(trainingsGeschwindigkeitSKm));
-			zähler++;
-		}
-		return data;	
-	}
-	
-	/**
-	 * Berechnen der Trainingsbereiche, die direkt an die JTable übergeben werden
-	 * @return: [x][y] --> x enthält die verschiedenen Strecke,
-	 * y die entsprechenden Geschwindigkeiten in kmh, ms, minkm, rundengeschwindigkeit
-	 */
-	private Object[][] berechneTrainingsBereicheProfiliert() {	
-		DecimalFormat f = new DecimalFormat("#0.00");
-		Object[][] data = new Object [11][5];
-		int zähler = 0;
-		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
-			// TODO: was bedeutet die gewichtungs-formel?
-			double gewichtung = (200-i)/100D;
-			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle* WINZERER_AUFSCHLAG;	
-			winzererRundengeschindigkeit = trainingsGeschwindigkeitSKm*WINZERER_RUNDEN_LÄNGE;
-			int rundenAnzahl = slider.getValue();
-			data[zähler][0] = String.valueOf(i) + "%";
-			data[zähler][1] = l.parseSecInMinutenstring(trainingsGeschwindigkeitSKm);	
-			data[zähler][2] = f.format(UnitsHelper.toKmH(trainingsGeschwindigkeitSKm));
-			data[zähler][3] = f.format(UnitsHelper.toMS(trainingsGeschwindigkeitSKm));
-			data[zähler][4] = l.parseSecInMinutenstring(winzererRundengeschindigkeit*rundenAnzahl);
-			zähler++;
-		}		
-		return data;	
-	}
-	
-	/**
-	 * Updaten der einzelenen Rundengeschwindigkeit in Abhängigkeit der Rundenanzahl
-	 * @param rundenAnzahl: aktuell im Slider eingestellte Rundenzahl
-	 */
-	private void updateRundenzeit (int rundenAnzahl) {	
-		int zähler = 0;
-		for (int i = UNTERE_SCHRANKE_TRAININGSBEREICHE; i <= OBERE_SCHRANKE_TRAININGSBEREICHE; i = i + SCHRITT_TRAININGSBEREICH) {
-			// TODO: bedeutung der gewichtung!??!
-			double gewichtung = (200-i)/100D;
-			double trainingsGeschwindigkeitSKm = gewichtung * anaerobeSchwelle* winzererAufschlag;
-			winzererRundengeschindigkeit = trainingsGeschwindigkeitSKm*winzererRundenlänge;
-			String MinutenString = l.parseSecInMinutenstring(winzererRundengeschindigkeit*rundenAnzahl);
-			trainingsTabelle.setValueAt(MinutenString, zähler, 4);
-			zähler++;
-		}		
+		slider.setVisible(true);
+	    lblRundenanzahl.setVisible(true);
 	}
 }

@@ -74,12 +74,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 	
 	public void trainingsBereichButtonPressed(){
-		try {
-			new TrainingsbereichDialog(athlet.getAnaerobeSchwelle());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Für die Berechnung der Trainingsbereiche müssen zwei Leistungen für die Berechnung" +
-					"des Slope-Faktors ausgewählt werden.", "Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
-		}
+		new TrainingsbereichDialog(athlet);
 	}
 	
 	// ----------------- Actions ------------------------------

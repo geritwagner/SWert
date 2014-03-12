@@ -6,17 +6,14 @@ import javax.swing.*;
 import javax.swing.border.*;
 import main.Main;
 
-/**
- * Dialog zum Anlegen eines neuen Athletenprofils
- */
-public class AthletDialog extends JDialog{
+public class NeuerAthletDialog extends JDialog{
 
 	private static final long serialVersionUID = 1L;
 	private final Dimension D = this.getToolkit().getScreenSize();
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textFieldName = new JTextField();
 
-	public AthletDialog() {
+	public NeuerAthletDialog() {
 		initProperties();
 		initLayout();
 		setVisible(true);
@@ -24,7 +21,7 @@ public class AthletDialog extends JDialog{
 
 	private void initProperties() {
 		// Position, Name, Container, etc.
-		setIconImage(Toolkit.getDefaultToolkit().getImage(AthletDialog.class.getResource("/bilder/NeuerAthlet_24x24.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(NeuerAthletDialog.class.getResource("/bilder/NeuerAthlet_24x24.png")));
 		setResizable(false);
 		setTitle("Neues Athletenprofil anlegen");
 		setBounds(100, 100, 312, 146);
@@ -87,8 +84,8 @@ public class AthletDialog extends JDialog{
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				AthletDialog.this.setVisible(false);
-				AthletDialog.this.dispose();
+				setVisible(false);
+				dispose();
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
@@ -98,12 +95,13 @@ public class AthletDialog extends JDialog{
 	private void inputValidieren() {
 		String name = textFieldName.getText();
 		if(isValid(name)) {
-			AthletDialog.this.setVisible(false);
-			AthletDialog.this.dispose();
+			setVisible(false);
+			dispose();
+			// TODO: anders umsetzen:
 			Main.mainFrame.createTab(name);
 		}
 		else {
-			JOptionPane.showMessageDialog(AthletDialog.this,
+			JOptionPane.showMessageDialog(NeuerAthletDialog.this,
 					"Bitte geben Sie einen Namen für den Athleten ein.",
 				    "Fehler",
 				    JOptionPane.ERROR_MESSAGE);

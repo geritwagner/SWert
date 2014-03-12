@@ -66,7 +66,7 @@ public class MainFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				@SuppressWarnings("unused")
-				AthletDialog dialog = new AthletDialog();
+				NeuerAthletDialog dialog = new NeuerAthletDialog();
 			}
 		});
 		mnDatei.add(mntmNeuesProfilAnlegen);
@@ -208,7 +208,7 @@ public class MainFrame {
 		btnNeuesAthletenprofilAnlegen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				AthletDialog dialog = new AthletDialog();
+				NeuerAthletDialog dialog = new NeuerAthletDialog();
 				dialog.setVisible(true);
 			}
 		});
