@@ -21,7 +21,7 @@ public class Athlet extends Observable implements AthletInterface {
 	private String name;
 	private double slopeFaktor;
 	private double anaerobeSchwelle;
-	private LinkedList<Leistung> alleLeistungen = new LinkedList<Leistung>();
+	private LinkedList<Leistung> alleLeistungen;
 
 	private LeistungHelper leistungHelper = Main.mainFrame.leistungHelper;
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
@@ -29,13 +29,21 @@ public class Athlet extends Observable implements AthletInterface {
 	public Athlet(String name, LinkedList<Leistung> leistungen) {
 		this.id = getNextAthletId();
 		this.name = name;
-		this.alleLeistungen = leistungen;
+		if (leistungen == null){
+			alleLeistungen = new LinkedList<Leistung>();
+		} else {
+			alleLeistungen = leistungen;			
+		}
 	}
 	
 	public Athlet(long id, String name, LinkedList<Leistung> leistungen) {
 		this.id = id;
 		this.name = name;
-		this.alleLeistungen = leistungen;
+		if (leistungen == null){
+			alleLeistungen = new LinkedList<Leistung>();
+		} else {
+			alleLeistungen = leistungen;			
+		}
 	}
 	
 	private long getNextAthletId() {

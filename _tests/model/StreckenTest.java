@@ -60,5 +60,21 @@ public class StreckenTest {
 		assertEquals(11, Strecken.getStreckenIdByString("Marathon"));
 		
 		assertEquals(-1, Strecken.getStreckenIdByString("Schwelle"));	
+		
+		String[] expectedStrecken = {
+				"400m",
+				"800m",
+				"1.000m",
+				"1.500m",
+				"2.000m",
+				"3.000m",
+				"5.000m",
+				"10.000m",
+				"15km",
+				"Halbmarathon",
+				"25km",
+				"Marathon"};
+		
+		assertEquals(expectedStrecken, Strecken.getStreckenlaengenStringArray());
 	}
 }

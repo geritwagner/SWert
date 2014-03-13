@@ -40,7 +40,7 @@ public class LeistungTest {
 		// TODO: -1 wird bei der Schwelle verwendet, dafür ist aber getStrecke nicht ausgelegt... müsste noch genau überprüft werden
 		testLeistung = new Leistung(-1, 12, "Test-Leistung", "01-01-2014", 183.125);
 		
-		testLeistung.updateLeistung(2, 150, "updated", "02-02-2015");
+		testLeistung.updateLeistung(2, "updated", "02-02-2015", 150);
 		assertEquals(1000, testLeistung.getStrecke());
 		assertEquals(150, testLeistung.getZeit(), 0.1);
 		assertEquals("updated", testLeistung.getBezeichnung());

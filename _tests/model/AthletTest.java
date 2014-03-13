@@ -30,12 +30,12 @@ public class AthletTest {
 	
 	@Test
 	public void testConstructorAndDataMethods(){
-		testAthlet = new Athlet(12, "Tester");
+		testAthlet = new Athlet(12, "Tester", null);
 		assertEquals(testAthlet.getId(), 12);
 		testAthlet = null;
-		testAthlet = new Athlet ("Tester");
+		testAthlet = new Athlet ("Tester", null);
 		long naechsteId = testAthlet.getId() + 1;
-		Athlet neuerAthlet = new Athlet ("neuer");
+		Athlet neuerAthlet = new Athlet ("neuer", null);
 		assertEquals(naechsteId, neuerAthlet.getId());
 		
 		assertTrue( testAthlet.getName() == "Tester");
@@ -48,13 +48,13 @@ public class AthletTest {
 		testAthlet.removeLeistung(testLeistung);
 		assertTrue( 0 == testAthlet.getLeistungen().size());
 		
-		testAthlet = new Athlet ("Athlet ohne ID (wird erzeugt)");
+		testAthlet = new Athlet ("Athlet ohne ID (wird erzeugt)", null);
 		assertEquals("Athlet ohne ID (wird erzeugt)", testAthlet.getName());
 	}
 	
 	@Test
 	public void testSlopeFaktorLogik() throws Exception {
-		testAthlet = new Athlet(12, "Tester");
+		testAthlet = new Athlet(12, "Tester", null);
 		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
 		
 		// testen, ob ein "zu guter" Slope-Faktor erkannt & nicht verwendet wird.
@@ -87,7 +87,7 @@ public class AthletTest {
 		// Werden die Leistungen getauscht, wenn sie nicht nach aufsteigender Streckenlänge hinzugefügt werden?
 		leistung1 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 261.53);
 		leistung2 = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
-		testAthlet = new Athlet(12, "Tester");
+		testAthlet = new Athlet(12, "Tester", null);
 		testAthlet.addLeistung(leistung1);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
 		testAthlet.addLeistung(leistung2);
@@ -98,7 +98,7 @@ public class AthletTest {
 		
 		leistung1 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014",183.2);
 		leistung2 = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
-		testAthlet = new Athlet(12, "Tester");
+		testAthlet = new Athlet(12, "Tester", null);
 		// zu gute Slope-Faktoren sollten nicht akzeptiert werden
 		testAthlet.addLeistung(leistung1);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
@@ -117,7 +117,7 @@ public class AthletTest {
 	
 	@Test
 	public void testCalculations() throws Exception {
-		testAthlet = new Athlet(12, "Tester");
+		testAthlet = new Athlet(12, "Tester", null);
 				
 		boolean exceptionThrown = false;
 		try{
