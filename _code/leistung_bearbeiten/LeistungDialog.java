@@ -1,4 +1,4 @@
-package view;
+package leistung_bearbeiten;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -12,7 +12,8 @@ import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 
 import main.Main;
-import helper.*;
+import main.MainFrame;
+import global_helpers.*;
 import model.*;
 
 /**

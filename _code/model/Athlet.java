@@ -1,6 +1,6 @@
 package model;
 
-import helper.LeistungHelper;
+import global_helpers.LeistungHelper;
 
 import java.util.*;
 import java.util.prefs.*;

@@ -1,13 +1,13 @@
 package datei_operationen;
 
-import helper.LeistungHelper;
+import global_helpers.LeistungHelper;
 
 import java.io.*;
 import java.util.LinkedList;
 import javax.swing.JOptionPane;
 import main.Main;
+import main.ProfilTab;
 import model.*;
-import view.ProfilTab;
 import au.com.bytecode.opencsv.*;
 
 /**
@@ -19,6 +19,8 @@ public class CSVController {
 	private String nameAthlet;
 	private long idAthlet;
 
+	// TODO: auf protected ändern!!
+	
 	/**
 	 * Methode die eine CSV-Datei einliest und daraus ein Athleten-Profil erstellt;
 	 * false wird zurückgegeben, falls dabei eine Fehler entsteht
@@ -57,7 +59,8 @@ public class CSVController {
 	 * Methode, die ein übergebenes Profil-Tab unter der Pfadangabe
 	 * als CSV-Datei erstellt
 	 * @return: TRUE für erfolgreiches Erstellen der CSV
-	 */	public boolean schreiben(String pfad, Athlet athlet) {
+	 */	
+	public boolean schreiben(String pfad, Athlet athlet) {
 		try{
 		     CSVWriter writer = new CSVWriter(new FileWriter(pfad), ';', '\0');
 		     String[] entries = getAthletenInfo(athlet);

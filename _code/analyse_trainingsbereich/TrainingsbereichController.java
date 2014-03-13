@@ -2,7 +2,7 @@ package analyse_trainingsbereich;
 
 import java.text.*;
 
-import helper.*;
+import global_helpers.*;
 import model.*;
 
 public class TrainingsbereichController {
@@ -16,20 +16,20 @@ public class TrainingsbereichController {
 	Athlet athlet;
 	TrainingsbereichDialog view;
 	
-	public TrainingsbereichController(Athlet athlet, TrainingsbereichDialog view){
+	protected TrainingsbereichController(Athlet athlet, TrainingsbereichDialog view){
 		this.athlet = athlet;
 		this.view = view;
 	}
 
-	public void release(){
+	protected void release(){
 		view = null;
 		athlet = null;
 	}
-	public static double getWinzererAufschlag() {
+	protected static double getWinzererAufschlag() {
 		return WINZERER_AUFSCHLAG;
 	}
 
-	public static int getAnzahlBereiche(){
+	protected static int getAnzahlBereiche(){
 		return (OBERE_SCHRANKE_TRAININGSBEREICHE-UNTERE_SCHRANKE_TRAININGSBEREICHE)/SCHRITT_TRAININGSBEREICH + 1;
 	}
 	
@@ -38,7 +38,7 @@ public class TrainingsbereichController {
 	 * @return: [x][y] --> x enthält die verschiedenen Strecke,
 	 * y die entsprechenden Geschwindigkeiten in kmh, ms, minkm
 	 */
-	public Object[][] berechneTrainingsBereiche() {	
+	protected Object[][] berechneTrainingsBereiche() {	
 		LeistungHelper l = new LeistungHelper();
 		DecimalFormat f = new DecimalFormat("#0.00");
 		Object[][] data = new Object [getAnzahlBereiche()][4];
@@ -64,7 +64,7 @@ public class TrainingsbereichController {
 	 * @return: [x][y] --> x enthält die verschiedenen Strecke,
 	 * y die entsprechenden Geschwindigkeiten in kmh, ms, minkm, rundengeschwindigkeit
 	 */
-	public Object[][] berechneTrainingsBereicheProfiliert(int rundenAnzahl) {	
+	protected Object[][] berechneTrainingsBereicheProfiliert(int rundenAnzahl) {	
 		LeistungHelper l = new LeistungHelper();
 		DecimalFormat f = new DecimalFormat("#0.00");
 		Object[][] data = new Object [getAnzahlBereiche()][5];
@@ -92,7 +92,7 @@ public class TrainingsbereichController {
 	 * Updaten der einzelenen Rundengeschwindigkeit in Abhängigkeit der Rundenanzahl
 	 * @param rundenAnzahl: aktuell im Slider eingestellte Rundenzahl
 	 */
-	public void updateRundenzeit (int rundenAnzahl) {	
+	protected void updateRundenzeit (int rundenAnzahl) {	
 		LeistungHelper l = new LeistungHelper();
 		int zähler = 0;
 		double gewichtung, trainingsGeschwindigkeitSKm, winzererRundenZeitSec;

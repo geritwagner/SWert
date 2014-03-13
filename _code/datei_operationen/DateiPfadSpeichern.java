@@ -5,15 +5,17 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import view.MainFrame;
-import view.ProfilTab;
 import main.Main;
+import main.MainFrame;
+import main.ProfilTab;
 
 /**
  * Dialog zum Auswählen des Names und Pfades einer zu speichernden CSV-Datei
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class DateiPfadSpeichern {
+	
+	// TODO: protected verwenden!!
 	
 	private MainFrame mainFrame = Main.mainFrame;
 	private JFileChooser chooser;

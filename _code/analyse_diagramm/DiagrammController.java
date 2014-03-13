@@ -1,12 +1,12 @@
 package analyse_diagramm;
 
-import helper.UnitsHelper;
+import global_helpers.UnitsHelper;
 
 import java.util.*;
 import main.Main;
+import main.ProfilTab;
 import model.*;
 import org.jfree.data.xy.XYSeries;
-import view.ProfilTab;
 
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
@@ -16,12 +16,13 @@ public class DiagrammController {
 	private DiagrammFrame view;
 //	private List<Athlet> alleAthleten - im Konstruktor übergeben?
 
+	// TODO: change to protected!!
 	public DiagrammController() {
 		view = new DiagrammFrame();
 		openAllAthletes();
 	}
 	
-	public void release(){
+	protected void release(){
 		view = null;
 //		athlet = null;
 	}
@@ -44,7 +45,7 @@ public class DiagrammController {
 		}
 	}
 	
-	public void plotLeistungen(Athlet athlet) {
+	protected void plotLeistungen(Athlet athlet) {
 		LinkedList<Leistung> leistungen = athlet.getLeistungen();
 		Iterator<Leistung> leistungenIterator = leistungen.iterator();
 		final XYSeries athletenSerie = new XYSeries(athlet.getName());
@@ -60,7 +61,7 @@ public class DiagrammController {
 		view.addLeistungsSerie(athletenSerie);
 	}
 
-	public void plotBerechneteBestzeiten (Athlet athlet) throws Exception {
+	protected void plotBerechneteBestzeiten (Athlet athlet) throws Exception {
 		LinkedList<Leistung> bestzeiten = athlet.getMoeglicheBestzeitenListe();
 		String athletName = athlet.getName();
 		Iterator<Leistung> leistungenIterator = bestzeiten.iterator();

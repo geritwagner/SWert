@@ -2,7 +2,6 @@ package main;
 
 import java.awt.EventQueue;
 import javax.swing.UIManager;
-import view.MainFrame;
 
 /**
  * Main-Klasse zum Ausführen des Programms

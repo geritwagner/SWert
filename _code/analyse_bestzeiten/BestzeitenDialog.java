@@ -10,7 +10,7 @@ import javax.swing.table.*;
 
 
 
-import helper.*;
+import global_helpers.*;
 import model.*;
 
 /**

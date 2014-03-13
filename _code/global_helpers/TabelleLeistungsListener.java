@@ -1,8 +1,9 @@
-package helper;
+package global_helpers;
 
 import javax.swing.JTable;
 import javax.swing.event.*;
-import view.ProfilTab;
+
+import main.ProfilTab;
 
 public class TabelleLeistungsListener implements ListSelectionListener{
 

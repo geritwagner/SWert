@@ -3,8 +3,9 @@ package model;
 import java.text.*;
 import java.util.*;
 import java.util.prefs.*;
-import helper.LeistungHelper;
-import helper.UnitsHelper;
+
+import global_helpers.LeistungHelper;
+import global_helpers.UnitsHelper;
 import main.Main;
 
 /**

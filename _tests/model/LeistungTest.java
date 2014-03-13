@@ -3,8 +3,9 @@ package model;
 import static org.junit.Assert.*;
 
 import main.Main;
+import main.MainFrame;
+
 import org.junit.*;
-import view.MainFrame;
 
 public class LeistungTest {
 

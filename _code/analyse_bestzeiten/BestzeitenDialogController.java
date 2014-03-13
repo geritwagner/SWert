@@ -1,6 +1,6 @@
 package analyse_bestzeiten;
 
-import helper.LeistungHelper;
+import global_helpers.LeistungHelper;
 
 import java.util.LinkedList;
 
@@ -13,17 +13,17 @@ public class BestzeitenDialogController {
 	Athlet athlet;
 	BestzeitenDialog view;
 	
-	public BestzeitenDialogController(Athlet athlet, BestzeitenDialog view){
+	protected BestzeitenDialogController(Athlet athlet, BestzeitenDialog view){
 		this.athlet = athlet;
 		this.view = view;
 	}
 	
-	public void release(){
+	protected void release(){
 		view = null;
 		athlet = null;
 	}
 	
-	public String berechneBestzeit(String streckenString) {
+	protected String berechneBestzeit(String streckenString) {
     	if (streckenString!= null) {
     		int strecke = -1;
     		try{
@@ -52,7 +52,7 @@ public class BestzeitenDialogController {
 	 * die direkt an die JTable übergeben werden
 	 * @return: Array mit [][0] als Streckenlänge (String) und [][1] als Bestzeit (String: 00:00,00)
 	 */
-	public Object[][] berechneBestzeiten() {
+	protected Object[][] berechneBestzeiten() {
 		int streckenAnzahl = Strecken.getStreckenArrayLength();
 		Object[][] data = new Object [streckenAnzahl][2];
 		try {

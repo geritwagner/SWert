@@ -86,7 +86,7 @@ public class DiagrammFrame extends JFrame {
 		this.dispose();
 	}
 	
-	public void addLeistungsSerie(XYSeries serie) {
+	protected void addLeistungsSerie(XYSeries serie) {
 		datenLeistungen.addSeries(serie);
 		datenSammlungLeistungen = datenLeistungen;
 		Color farbe = getRandomColor();
@@ -94,7 +94,7 @@ public class DiagrammFrame extends JFrame {
 		letzteFarbe = (Color) dotRenderer.getSeriesPaint(datenSammlungLeistungen.getSeriesCount()-1);
 	}
 	
-	public void addBerechneteBestzeitenUndTrendlinie(XYSeries serie) {
+	protected void addBerechneteBestzeitenUndTrendlinie(XYSeries serie) {
 		datenBestzeiten.addSeries(serie);
 		datenSammlungBestzeiten = datenBestzeiten;
 		lineRenderer.setSeriesPaint(datenSammlungBestzeiten.getSeriesCount()-1, letzteFarbe);

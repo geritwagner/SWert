@@ -1,4 +1,4 @@
-package view;
+package main;
 
 import java.awt.event.*;
 import java.awt.Font;
@@ -8,6 +8,7 @@ import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+
 import analyse_bestzeiten.BestzeitenDialog;
 import analyse_diagramm.DiagrammController;
 import analyse_trainingsbereich.TrainingsbereichDialog;
@@ -15,8 +16,9 @@ import analyse_trainingsbereich.TrainingsbereichDialog;
 
 import net.miginfocom.swing.MigLayout;
 
-import helper.*;
-import main.Main;
+import global_helpers.*;
+import leistung_bearbeiten.LeistungDialog;
+import leistung_bearbeiten.SchwellenDialog;
 import model.*;
 
 public class ProfilTab extends JPanel implements TableModelListener {
@@ -74,6 +76,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	}
 
 	public void leistungskurveButtonPressed(){
+		// TODO: call DiagrammFrame!!!
 		new DiagrammController();
 	}
 	

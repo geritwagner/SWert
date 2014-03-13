@@ -1,4 +1,4 @@
-package view;
+package leistung_bearbeiten;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -11,7 +11,8 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import main.Main;
-import helper.*;
+import main.MainFrame;
+import global_helpers.*;
 import model.Leistung;
 
 /**
@@ -59,7 +60,7 @@ public class SchwellenDialog extends JDialog {
 		setVisible(true);
 	}
 	
-	public void initWerte(Leistung leistung) {
+	private void initWerte(Leistung leistung) {
 		this.geschwindigkeit = leistung.getGeschwindigkeit();
 		setzeStrecke(geschwindigkeit);
 		setzeKmH(geschwindigkeit);

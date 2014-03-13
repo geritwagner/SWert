@@ -10,6 +10,8 @@ import main.Main;
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class DateiPfadOeffnen {
+	
+	// TODO: protected verwenden!!
 
 	private JFileChooser chooser = new JFileChooser();
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	

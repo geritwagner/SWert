@@ -1,10 +1,9 @@
-package view;
+package main;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import main.Main;
 
 public class NeuerAthletDialog extends JDialog{
 
