@@ -55,7 +55,7 @@ public class Leistung implements LeistungInterface{
 	}
 	
 	public long getId() {
-		return id_leistung;
+		return this.id_leistung;
 	}
 	
 	public int getId_strecke() {

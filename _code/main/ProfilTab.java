@@ -3,32 +3,23 @@ package main;
 import java.awt.event.*;
 import java.awt.Font;
 import java.util.*;
-
 import javax.swing.*;
 import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-
+import net.miginfocom.swing.MigLayout;
 
 import analyse_bestzeiten.BestzeitenDialog;
 import analyse_diagramm.DiagrammController;
 import analyse_trainingsbereich.TrainingsbereichDialog;
-
-
-import net.miginfocom.swing.MigLayout;
-
-import globale_helper.*;
 import leistung_bearbeiten.LeistungDialog;
+import globale_helper.*;
 import model.*;
 
 public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	
 	private static final long serialVersionUID = 1L;
 	private static final int BOOLEAN_SPALTE = 7;
-
-	private Athlet athlet;
-
-	private MainFrame mainFrame = Main.mainFrame;
 	
 	private JLabel lblAthletName;
 	private JButton btnBestzeiten;
@@ -37,21 +28,19 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private JScrollPane scrollPane;
 	private JTextField textFieldSchwelle;
 	private JCheckBox chckbxLeistungenAuswahl;
-	
-	//TODO ggf. leistungenTabelle als View-Komponente auslagern?
 	private JTable leistungenTabelle;
 	public TableRowSorter<TableModel> sorter;
 	private String speicherPfad;
 	private JButton btnLeistungBearbeiten;
 	private JButton btnLeistungLöschen;
+	private JButton btnTabSchlieen;
 	
 	private boolean gespeichert = false;
 	private boolean automatischeVerarbeitung = false;
 	private boolean ausDialog = false;
-	private JButton btnTabSchlieen;
+	private MainFrame mainFrame = Main.mainFrame;
+	private Athlet athlet;
 	
-	//----------------------- für presenter/controller -----------------------
-
 	public ProfilTab(Athlet athlet) {
 		this.athlet = athlet;
 		this.speicherPfad = null;
@@ -122,9 +111,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	automatischeVerarbeitung = false;
 	}
 	
-	/**
-	 * Prüft, ob die Auswahl richtig ist und gibt entsprechend eine Meldung zurück oder berechnet die Werte
-	 */
 	public void checkboxLeistungenAutomatischWählenClicked() {		
 		// TODO: refactor: athlet.setAutomatisch!
 
@@ -306,12 +292,11 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		
 		// deckt den Fall ab, wenn neue Leistungen hinzugefügt werden (es wird immer die markierte gelöscht und durch die neue
 		// ersetzt - bei neuen Leistungen ist aber standardmäßig keine bzw. Zeile -1 markiert, die aber nicht gelöscht werden kann)
-		// TODO: sollte eleganter umgesetzt werden!
+		// TODO: eleganter umsetzen??
 		if (-1 == rowToDelete) {
 			return;
 		}
 		Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
-
 		model.removeRow(leistungenTabelle.convertRowIndexToModel(rowToDelete));	
 		
 		// TODO: umstrukturieren!!
@@ -414,7 +399,12 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		double zeit =   l.parseZeitInSec(getStringAt(zeile, 3));
 		int streckenlänge = Strecken.getStreckenlaengeById(streckenId);
 		double geschwindigkeit = l.berechneGeschwindigkeit(streckenlänge, zeit);
-		return new Leistung(streckenId, athlet.getId(), bezeichnung, datum, geschwindigkeit);
+		Leistung vergleichsLeisung = new Leistung(streckenId, athlet.getId(), bezeichnung, datum, geschwindigkeit);
+		for (Leistung aktuelleLeistung : athlet.getLeistungen()){
+			if (aktuelleLeistung.equals(vergleichsLeisung))
+				return aktuelleLeistung;
+		}
+		return null;
 	}
 	
 	private int getZeilenAnzahl() {
@@ -559,7 +549,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	
 	// hier wird null übergeben, den parameter könnte man folglich löschen, er stellt jedoch die Aufruf-Reihenfolge der Methoden sicher...
 	private JTable initLeistungsTabelle(JTable leistungenTabelle) {
-		// Spalten definieren; die letzten beiden Spalten sind unsichtbar
+		// die letzten beiden Spalten sind unsichtbar
 		// BOOLEAN_SPALTE wird auf 7 gesetzt - müsste angepasst werden, wenn sich solumnNames ändert.
 		final String[] columnNames = {"Datum",
 				"Streckenlänge",
@@ -572,7 +562,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
                 "StreckenId",
                 "s/km"};
 		
-		//Anfangswerte definieren
 		Object[][] data = null;
 		
 		leistungenTabelle = new JTable(new DefaultTableModel(data,columnNames)) {

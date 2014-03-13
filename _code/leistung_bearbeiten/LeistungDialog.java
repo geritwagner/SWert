@@ -77,7 +77,6 @@ public class LeistungDialog extends JDialog {
 	
 	private void bestaetigenClicked(){
 		if(leistungÄndern()) {
-			// TODO: mit update arbeiten, nicht einfach die Zeile löschen (dann laufen Model und View-Daten auseinander!)
 			setVisible(false);
 			dispose();					
 		} else {
@@ -104,21 +103,13 @@ public class LeistungDialog extends JDialog {
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
 		Date datum = calendar.getDate();
 		String datumString = df.format(datum);
-		// TODO: hier müsste man unterscheiden, ob eine neue Leistung angelegt wird oder ob eine Leistung geändert werden soll.
-		// if (leistung ändern) updateLeistung else new Leistung
 		if (this.leistung == null){
-			// neue Leistung anlegen
 			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
 			// TODO: hier sollte die Änderung des views (über observer) und des models (athlet.set..., bis jetzt in der Methode addZeile enthalten) strikt getrennt werden!
 			athlet.addLeistung(leistung);
-//			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
 		} else {
-			//TODO: observable: auch Leistungen!!
-			leistung.updateLeistung(id_strecke, bezeichnungString, datumString, geschwindigkeit);				
-				
-//			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
-//			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
-//			mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
+			long leistung_id = leistung.getId();
+			athlet.updateLeistung(leistung_id, id_strecke, bezeichnungString, datumString, geschwindigkeit);				
 		}
 	}
 	

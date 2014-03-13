@@ -88,6 +88,14 @@ public class Athlet extends Observable implements AthletInterface {
 		}
 		return null;
 	}
+	
+	public void updateLeistung(long id_leistung, int id_strecke,
+			String bezeichnung, String datum, double geschwindigkeit) {
+		Leistung zuÄnderndeLeistung = getLeistungById(id_leistung);
+		zuÄnderndeLeistung.updateLeistung(id_strecke, bezeichnung, datum, geschwindigkeit);
+		setChanged();
+		notifyObservers(this);
+	}
 
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
 		if(!inAlleLeistungenEnthalten(ausgewaehlteLeistung)){

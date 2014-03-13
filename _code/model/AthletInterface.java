@@ -10,6 +10,7 @@ interface AthletInterface {
 	public boolean addLeistung(Leistung leistung);
 	public boolean removeLeistung(Leistung leistungToRemove);
 	public Leistung getLeistungById(long id);
+	public void updateLeistung(long id_leistung, int id_strecke, String bezeichnung, String datum, double geschwindigkeit);
 	
 	// Leistungen für Slope-Faktor bearbeiten
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception;
