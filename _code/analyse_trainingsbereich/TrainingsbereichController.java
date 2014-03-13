@@ -1,8 +1,7 @@
-package controller;
+package analyse_trainingsbereich;
 
 import java.text.*;
 
-import view.TrainingsbereichDialog;
 import helper.*;
 import model.*;
 

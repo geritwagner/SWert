@@ -1,4 +1,4 @@
-package view;
+package analyse_trainingsbereich;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -7,7 +7,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import controller.TrainingsbereichController;
+
 import model.*;
 import helper.*;
 

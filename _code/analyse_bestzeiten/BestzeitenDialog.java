@@ -1,4 +1,4 @@
-package view;
+package analyse_bestzeiten;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -8,7 +8,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import controller.BestzeitenDialogController;
+
 
 import helper.*;
 import model.*;

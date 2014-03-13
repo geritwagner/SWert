@@ -5,9 +5,13 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import analyse_diagramm.DiagrammController;
 import net.miginfocom.swing.MigLayout;
 
-import controller.*;
+import datei_operationen.CSVController;
+import datei_operationen.DateiPfadOeffnen;
+import datei_operationen.DateiPfadSpeichern;
 import helper.LeistungHelper;
 import model.Athlet;
 

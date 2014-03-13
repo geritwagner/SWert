@@ -8,7 +8,11 @@ import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import controller.DiagrammController;
+import analyse_bestzeiten.BestzeitenDialog;
+import analyse_diagramm.DiagrammController;
+import analyse_trainingsbereich.TrainingsbereichDialog;
+
+
 import net.miginfocom.swing.MigLayout;
 
 import helper.*;

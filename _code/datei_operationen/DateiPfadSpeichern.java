@@ -1,9 +1,12 @@
-package view;
+package datei_operationen;
 
 import java.io.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import view.MainFrame;
+import view.ProfilTab;
 import main.Main;
 
 /**

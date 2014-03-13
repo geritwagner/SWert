@@ -1,4 +1,4 @@
-package view;
+package analyse_diagramm;
 
 import java.awt.*;
 import java.awt.event.*;

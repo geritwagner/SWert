@@ -1,10 +1,9 @@
-package controller;
+package analyse_bestzeiten;
 
 import helper.LeistungHelper;
 
 import java.util.LinkedList;
 
-import view.BestzeitenDialog;
 import model.Athlet;
 import model.Leistung;
 import model.Strecken;

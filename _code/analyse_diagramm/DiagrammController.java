@@ -1,4 +1,4 @@
-package controller;
+package analyse_diagramm;
 
 import helper.UnitsHelper;
 
@@ -6,7 +6,6 @@ import java.util.*;
 import main.Main;
 import model.*;
 import org.jfree.data.xy.XYSeries;
-import view.DiagrammFrame;
 import view.ProfilTab;
 
 /**
