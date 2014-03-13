@@ -16,7 +16,7 @@ import analyse_trainingsbereich.TrainingsbereichDialog;
 
 import net.miginfocom.swing.MigLayout;
 
-import global_helpers.*;
+import globale_helper.*;
 import leistung_bearbeiten.LeistungDialog;
 import leistung_bearbeiten.SchwellenDialog;
 import model.*;

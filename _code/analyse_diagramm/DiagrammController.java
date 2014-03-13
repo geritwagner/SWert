@@ -1,6 +1,6 @@
 package analyse_diagramm;
 
-import global_helpers.UnitsHelper;
+import globale_helper.UnitsHelper;
 
 import java.util.*;
 import main.Main;

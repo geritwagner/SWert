@@ -1,4 +1,4 @@
-package global_helpers;
+package globale_helper;
 
 import javax.swing.JTable;
 import javax.swing.event.*;

@@ -1,6 +1,6 @@
 package datei_operationen;
 
-import global_helpers.LeistungHelper;
+import globale_helper.LeistungHelper;
 
 import java.io.*;
 import java.util.LinkedList;

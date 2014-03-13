@@ -1,6 +1,6 @@
 package analyse_bestzeiten;
 
-import global_helpers.LeistungHelper;
+import globale_helper.LeistungHelper;
 
 import java.util.LinkedList;
 

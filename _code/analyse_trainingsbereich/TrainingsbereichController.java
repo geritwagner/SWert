@@ -2,7 +2,7 @@ package analyse_trainingsbereich;
 
 import java.text.*;
 
-import global_helpers.*;
+import globale_helper.*;
 import model.*;
 
 public class TrainingsbereichController {

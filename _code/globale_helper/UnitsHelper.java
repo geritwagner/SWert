@@ -1,4 +1,4 @@
-package global_helpers;
+package globale_helper;
 
 /**
  * Controller für Umrechnungen der Geschwindigkeitseinheiten

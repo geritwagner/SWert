@@ -13,7 +13,7 @@ import net.miginfocom.swing.MigLayout;
 import datei_operationen.CSVController;
 import datei_operationen.DateiPfadOeffnen;
 import datei_operationen.DateiPfadSpeichern;
-import global_helpers.LeistungHelper;
+import globale_helper.LeistungHelper;
 import leistung_bearbeiten.LeistungDialog;
 import model.Athlet;
 

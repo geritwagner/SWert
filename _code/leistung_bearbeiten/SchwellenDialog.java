@@ -12,7 +12,7 @@ import javax.swing.text.*;
 
 import main.Main;
 import main.MainFrame;
-import global_helpers.*;
+import globale_helper.*;
 import model.Leistung;
 
 /**

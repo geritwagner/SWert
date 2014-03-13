@@ -13,7 +13,7 @@ import net.miginfocom.swing.MigLayout;
 
 import main.Main;
 import main.MainFrame;
-import global_helpers.*;
+import globale_helper.*;
 import model.*;
 
 /**

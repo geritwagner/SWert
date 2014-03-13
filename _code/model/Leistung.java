@@ -4,8 +4,8 @@ import java.text.*;
 import java.util.*;
 import java.util.prefs.*;
 
-import global_helpers.LeistungHelper;
-import global_helpers.UnitsHelper;
+import globale_helper.LeistungHelper;
+import globale_helper.UnitsHelper;
 import main.Main;
 
 /**

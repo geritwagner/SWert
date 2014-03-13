@@ -1,4 +1,4 @@
-package global_helpers;
+package globale_helper;
 
 import java.awt.*;
 import javax.swing.text.*;

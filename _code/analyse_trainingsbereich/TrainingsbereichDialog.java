@@ -9,7 +9,7 @@ import javax.swing.table.*;
 
 
 import model.*;
-import global_helpers.*;
+import globale_helper.*;
 
 /**
  * Dialog zum Anzeigen einer Tabelle der Trainingsbereiche des Athleten
