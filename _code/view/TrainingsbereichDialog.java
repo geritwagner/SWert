@@ -183,8 +183,7 @@ public class TrainingsbereichDialog extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				setVisible(false);
-				dispose();
+				release();
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
@@ -244,5 +243,13 @@ public class TrainingsbereichDialog extends JDialog {
 
 		slider.setVisible(true);
 	    lblRundenanzahl.setVisible(true);
+	}
+	
+	private void release(){
+		// TODO: model.deleteObserver(this);
+		controller.release();
+		controller = null;
+		setVisible(false);
+		dispose();
 	}
 }

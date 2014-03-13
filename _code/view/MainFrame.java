@@ -140,8 +140,9 @@ public class MainFrame {
 		mntmLeistungenHinzufgen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				Athlet athlet = tabList.get(getAktivesTab()).getAthlet();
 				@SuppressWarnings("unused")
-				LeistungDialog dialog = new LeistungDialog();
+				LeistungDialog dialog = new LeistungDialog(athlet , null);
 			}
 		});
 		

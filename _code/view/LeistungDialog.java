@@ -45,7 +45,6 @@ public class LeistungDialog extends JDialog {
 	private JRadioButton rdbtnminkm;
 	private JFormattedTextField textFieldminKm;
 	
-	private double geschwindigkeit; //Enthält immer die aktuelle Geschwindigkeit in s/km (ungerundet)
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JLabel lblKmhError;
 	private JLabel lblMsError;
@@ -53,28 +52,27 @@ public class LeistungDialog extends JDialog {
 	private JButton btnAnaerobeSchwelleDirekt;
 	private JPanel buttonPanel;
 
-	public LeistungDialog() {
-		initProperties();
-		initComponents();
-		setFocus();
-		clearWarnings();
-		setVisible(true);
-	}
+	private double geschwindigkeit; //Enthält immer die aktuelle Geschwindigkeit in s/km (ungerundet)
+
+	private Leistung leistung;
+	private Athlet athlet;
 	
-	public LeistungDialog(Leistung leistung) {
-		initProperties();
+	public LeistungDialog(Athlet athlet, Leistung leistung) {
+		this.athlet = athlet;
+		this.leistung = leistung;
+		boolean leistungbearbeiten = (leistung != null);
+		initProperties(leistungbearbeiten);
 		initComponents();
-		initWerte(leistung);
-		setTitle("Leistung bearbeiten");
+		if (leistungbearbeiten)
+			initWerte(leistung);
 		setFocus();
 		clearWarnings();
 		setVisible(true);					
 	}
 	
 	private void bestaetigenClicked(){
-		if(actionBestaetigen()) {
+		if(leistungÄndern()) {
 			// TODO: mit update arbeiten, nicht einfach die Zeile löschen (dann laufen Model und View-Daten auseinander!)
-			mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
 			setVisible(false);
 			dispose();					
 		} else {
@@ -86,17 +84,17 @@ public class LeistungDialog extends JDialog {
 
 	}
 	
-	private boolean actionBestaetigen () {
+	private boolean leistungÄndern () {
 		if(true == validateInput()) {
-			triggerChanges();
+			änderungenDurchführen();
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	private void triggerChanges(){
-		long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthlet().getId();
+	private void änderungenDurchführen(){
+		long id_athlet = athlet.getId();
 		int id_strecke = comboBoxStrecke.getSelectedIndex();
 		String bezeichnungString = textFieldBezeichnung.getText();
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
@@ -104,10 +102,252 @@ public class LeistungDialog extends JDialog {
 		String datumString = df.format(datum);
 		// TODO: hier müsste man unterscheiden, ob eine neue Leistung angelegt wird oder ob eine Leistung geändert werden soll.
 		// if (leistung ändern) updateLeistung else new Leistung
-		Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
-		mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
+		if (this.leistung == null){
+			// neue Leistung anlegen
+			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
+			// TODO: hier sollte die Änderung des views (über observer) und des models (athlet.set..., bis jetzt in der Methode addZeile enthalten) strikt getrennt werden!
+			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
+		} else {
+			//TODO: in update ändern!! (use observable!!)
+			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
+			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
+			mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
+		}
 	}
 	
+	private boolean isValidBezeichnung(String bezeichnung) {
+		if (bezeichnung.equals("")) {
+			lblBezeichnungError.setText("Bitte geben Sie eine Bezeichnung ein.");
+			return false;
+		} else {
+			lblBezeichnungError.setText("");
+			return true;
+		}
+	}
+	
+	private boolean isValidDatum (Date datum) {
+		if (datum != null) {
+			 Date heute = new Date();
+			 long diff = (heute.getTime()-datum.getTime())/1000/60/60;
+			 if (!(diff < 0)) {
+				 return true;				
+			 } else {
+				 lblCalendarError.setText("Datum darf nicht in der Zukunft liegen.");
+				 return false;
+			 }
+		} else {
+			lblCalendarError.setText("Bitte geben Sie ein gültiges Datum ein.");
+			return false;
+		}
+	}
+	
+	private boolean isValidZeit (String zeit) {
+		if (zeit.equals("00:00:00,00")) {
+			lblZeitError.setText("Bitte geben Sie eine Zeit ein.");
+			lblZeitError.setForeground(Color.RED);
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean isValidKmh(String geschwindigkeitString) {
+		if (geschwindigkeitString.equals("")) {
+			lblKmhError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
+			return false;
+		} else {
+			double geschwindigkeit;
+			Number geschwindigkeitNumber;
+			NumberFormat format = NumberFormat.getInstance(Locale.GERMANY);
+			
+			try {
+				geschwindigkeitNumber = format.parse(geschwindigkeitString);
+				geschwindigkeit = geschwindigkeitNumber.doubleValue();
+			} catch (ParseException e) {
+				lblKmhError.setText("Bitte geben Sie eine gültige Zahl ein!");
+				return false;
+			}
+			geschwindigkeit = UnitsHelper.kmHToSKm(geschwindigkeit);
+			this.geschwindigkeit = geschwindigkeit;
+			isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
+			return true;
+		}
+	}
+
+	private boolean isValidMs(String geschwindigkeitString) {
+		if (geschwindigkeitString.equals("")) {
+			lblMsError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
+			return false;
+		} else {
+			double geschwindigkeit;
+			Number geschwindigkeitNumber;
+			NumberFormat format = NumberFormat.getInstance(Locale.GERMANY);
+			
+			try {
+				geschwindigkeitNumber = format.parse(geschwindigkeitString);
+				geschwindigkeit = geschwindigkeitNumber.doubleValue();
+			} catch (ParseException e) {
+				lblMsError.setText("Bitte geben Sie eine gültige Zahl ein!");
+				return false;
+			}
+			geschwindigkeit = UnitsHelper.MSToSKm(geschwindigkeit);
+			this.geschwindigkeit = geschwindigkeit;
+			isValidMinMaxGeschwindigkeit(lblMsError, this.geschwindigkeit);
+			return true;
+		}
+	}
+
+	private boolean isValidMinKm(String geschwindigkeitString) {
+		if (geschwindigkeitString.equals("00:00,00")) {
+			lblMinKmError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
+			return false;
+		} else {
+			double geschwindigkeit = lController.parseMinStringToSec(geschwindigkeitString);
+			this.geschwindigkeit = geschwindigkeit;
+			return true;			
+		}
+	}
+	
+	private void isValidMinMaxGeschwindigkeit (JLabel errorLabel, double geschwindigkeit) {
+		if(geschwindigkeit == 0 ) {
+			return;
+		}
+		double kmH = UnitsHelper.toKmH(geschwindigkeit);
+		if (!(kmH >= 10D)) {
+			errorLabel.setText("Geschwindigkeit liegt unter 10km/h");		
+		} else if(!(kmH <= 30D) && !(kmH >= 100D)) {
+			errorLabel.setText("Geschwindigkeit liegt über 30km/h");
+		} else if(kmH >= 100D) {
+			errorLabel.setText("Geschwindigkeit liegt über 100 km/h");
+		} else {
+			errorLabel.setText("");			
+		}
+	}
+	
+	private void setzeGeschwindigkeiten() {
+		textFieldkmH.setText("");
+		textFieldMs.setText("");
+		textFieldminKm.setText("");
+		textFieldkmH.setText(berechneGeschwindigkeitenAusZeit(1));
+		textFieldMs.setText(berechneGeschwindigkeitenAusZeit(2));
+		textFieldminKm.setText(berechneGeschwindigkeitenAusZeit(3));
+		isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
+	}
+	
+	/**
+	 * Berechnen der Geschwindigkeit aus der Zeit aus Zeitfeld --> textFieldZeit
+	 * @return Formatierter Geschwindigkeitsstring mit 2 Nachkommastellen in [km/h]
+	 */
+	private String berechneGeschwindigkeitenAusZeit(int geschwindigkeitArt) {
+		DecimalFormat f = new DecimalFormat("#0.00");
+		double geschwindigkeitFormat = 0D;
+		String zeit = textFieldZeit.getText();		
+		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
+		double geschwindigkeit = lController.berechneGeschwindigkeit(strecke, zeit);
+		this.geschwindigkeit = geschwindigkeit;
+		switch (geschwindigkeitArt) {
+			case 1: 
+				geschwindigkeit = UnitsHelper.toKmH(geschwindigkeit);
+				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
+				return f.format(geschwindigkeitFormat);
+			case 2:
+				geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
+				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
+				return f.format(geschwindigkeitFormat);
+			case 3:
+				String minString = lController.parseSecInMinutenstring(this.geschwindigkeit);
+				return minString;
+		}
+		return f.format(geschwindigkeitFormat);
+	}
+	
+	/**
+	 * @param geschwindigkeit: [s/km]
+	 */
+	private void setzeKmH(double geschwindigkeit) {
+		DecimalFormat f = new DecimalFormat("#0.00");
+		double geschwindigkeitFormat = 0D;
+		geschwindigkeit = UnitsHelper.toKmH(geschwindigkeit);
+		geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
+		textFieldkmH.setText(f.format(geschwindigkeitFormat));
+	}
+	
+	/**
+	 * @param geschwindigkeit: [s/km]
+	 */
+	private void setzeMs(double geschwindigkeit) {
+		DecimalFormat f = new DecimalFormat("#0.00");
+		double geschwindigkeitFormat = 0D;
+		geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
+		geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
+		textFieldMs.setText(f.format(geschwindigkeitFormat));
+	}
+	
+	/**
+	 * @param geschwindigkeit: [s/km]
+	 */
+	private void setzeMinKm(double geschwindigkeit) {
+		String minString = lController.parseSecInMinutenstring(geschwindigkeit);
+		textFieldminKm.setText(minString);
+	}
+	
+	/**
+	 * @param geschwindigkeit: [s/km]
+	 */
+	private void setzeZeit(double geschwindigkeit) {
+		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
+		double sec = lController.berechneZeit(strecke, geschwindigkeit);
+		textFieldZeit.setValue(lController.parseSecInZeitstring(sec));
+	}
+	
+	private boolean validateInput(){
+		boolean validInput = true;
+		String bezeichnungString = textFieldBezeichnung.getText();
+		if(!isValidBezeichnung(bezeichnungString)) {
+			validInput = false;
+		}
+		Date datum = calendar.getDate();
+		if(!isValidDatum(datum)) {
+			validInput = false;
+		}
+
+		String zeitString = textFieldZeit.getText();
+		String kmhString = textFieldkmH.getText();
+		String msString = textFieldMs.getText();
+		String minkmString = textFieldminKm.getText();
+		if (rdbtnZeit.isSelected()) {
+			if(!isValidZeit(zeitString)) {
+				validInput = false;
+			}
+			setzeKmH(this.geschwindigkeit);
+			setzeMs(this.geschwindigkeit);
+			setzeMinKm(this.geschwindigkeit);
+		} else if (rdbtnkmH.isSelected()) {
+			if(!isValidKmh(kmhString)) {
+				validInput = false;
+			}
+			setzeZeit(this.geschwindigkeit);
+			setzeMs(this.geschwindigkeit);
+			setzeMinKm(this.geschwindigkeit);
+		} else if (rdbtnms.isSelected()) {
+			if(!isValidMs(msString)) {
+				validInput = false;
+			}
+			setzeZeit(this.geschwindigkeit);
+			setzeKmH(this.geschwindigkeit);
+			setzeMinKm(this.geschwindigkeit);
+		} else if (rdbtnminkm.isSelected()) {
+			if(!isValidMinKm(minkmString)) {
+				validInput = false;
+			}
+			setzeZeit(this.geschwindigkeit);
+			setzeKmH(this.geschwindigkeit);
+			setzeMs(this.geschwindigkeit);
+		}
+		return validInput;
+	}
+	
+	// ---------------------------------- initialize view -------------------------------------
+
 	private void initWerte(Leistung leistung) {
 		textFieldBezeichnung.setText(leistung.getBezeichnung());
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LeistungDialog.class.getResource("/bilder/EditLeistung_24x24.png")));
@@ -126,10 +366,14 @@ public class LeistungDialog extends JDialog {
 		setzeMinKm(geschwindigkeit);
 	}
 
-	private void initProperties() {
+	private void initProperties(boolean leistungBearbeiten) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LeistungDialog.class.getResource("/bilder/NeueLeistung_24x24.png")));
 		setResizable(false);
-		setTitle("Neue Leistung anlegen");
+		if (leistungBearbeiten){
+			setTitle("Leistung bearbeiten");
+		} else {
+			setTitle("Neue Leistung anlegen");			
+		}
 		setBounds(100, 100, 589, 330);
 		setLocation((int) ((d.getWidth() - this.getWidth()) / 2), (int) ((d.getHeight() - this.getHeight()) / 2));
 		getContentPane().setLayout(new BorderLayout());
@@ -270,7 +514,7 @@ public class LeistungDialog extends JDialog {
 				setVisible(false);
 				dispose();
 				@SuppressWarnings("unused")
-				SchwellenDialog dialog = new SchwellenDialog();
+				SchwellenDialog dialog = new SchwellenDialog(null);
 			}
 		});
 	}
@@ -566,239 +810,6 @@ public class LeistungDialog extends JDialog {
 				textFieldBezeichnung.requestFocus();
 			}
 		});
-	}
-
-// TODO: isValid von setError trennen und in Validator extrahieren!
-
-	private boolean isValidBezeichnung(String bezeichnung) {
-		if (bezeichnung.equals("")) {
-			lblBezeichnungError.setText("Bitte geben Sie eine Bezeichnung ein.");
-			return false;
-		} else {
-			lblBezeichnungError.setText("");
-			return true;
-		}
-	}
-	
-	private boolean isValidDatum (Date datum) {
-		if (datum != null) {
-			 Date heute = new Date();
-			 long diff = (heute.getTime()-datum.getTime())/1000/60/60;
-			 if (!(diff < 0)) {
-				 return true;				
-			 } else {
-				 lblCalendarError.setText("Datum darf nicht in der Zukunft liegen.");
-				 return false;
-			 }
-		} else {
-			lblCalendarError.setText("Bitte geben Sie ein gültiges Datum ein.");
-			return false;
-		}
-	}
-	
-	private boolean isValidZeit (String zeit) {
-		if (zeit.equals("00:00:00,00")) {
-			lblZeitError.setText("Bitte geben Sie eine Zeit ein.");
-			lblZeitError.setForeground(Color.RED);
-			return false;
-		}
-		return true;
-	}
-	
-	private boolean isValidKmh(String geschwindigkeitString) {
-		if (geschwindigkeitString.equals("")) {
-			lblKmhError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
-			return false;
-		} else {
-			double geschwindigkeit;
-			Number geschwindigkeitNumber;
-			NumberFormat format = NumberFormat.getInstance(Locale.GERMANY);
-			
-			try {
-				geschwindigkeitNumber = format.parse(geschwindigkeitString);
-				geschwindigkeit = geschwindigkeitNumber.doubleValue();
-			} catch (ParseException e) {
-				lblKmhError.setText("Bitte geben Sie eine gültige Zahl ein!");
-				return false;
-			}
-			geschwindigkeit = UnitsHelper.kmHToSKm(geschwindigkeit);
-			this.geschwindigkeit = geschwindigkeit;
-			isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
-			return true;
-		}
-	}
-
-	private boolean isValidMs(String geschwindigkeitString) {
-		if (geschwindigkeitString.equals("")) {
-			lblMsError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
-			return false;
-		} else {
-			double geschwindigkeit;
-			Number geschwindigkeitNumber;
-			NumberFormat format = NumberFormat.getInstance(Locale.GERMANY);
-			
-			try {
-				geschwindigkeitNumber = format.parse(geschwindigkeitString);
-				geschwindigkeit = geschwindigkeitNumber.doubleValue();
-			} catch (ParseException e) {
-				lblMsError.setText("Bitte geben Sie eine gültige Zahl ein!");
-				return false;
-			}
-			geschwindigkeit = UnitsHelper.MSToSKm(geschwindigkeit);
-			this.geschwindigkeit = geschwindigkeit;
-			isValidMinMaxGeschwindigkeit(lblMsError, this.geschwindigkeit);
-			return true;
-		}
-	}
-
-	private boolean isValidMinKm(String geschwindigkeitString) {
-		if (geschwindigkeitString.equals("00:00,00")) {
-			lblMinKmError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
-			return false;
-		} else {
-			double geschwindigkeit = lController.parseMinStringToSec(geschwindigkeitString);
-			this.geschwindigkeit = geschwindigkeit;
-			return true;			
-		}
-	}
-	
-	private void isValidMinMaxGeschwindigkeit (JLabel errorLabel, double geschwindigkeit) {
-		if(geschwindigkeit == 0 ) {
-			return;
-		}
-		double kmH = UnitsHelper.toKmH(geschwindigkeit);
-		if (!(kmH >= 10D)) {
-			errorLabel.setText("Geschwindigkeit liegt unter 10km/h");		
-		} else if(!(kmH <= 30D) && !(kmH >= 100D)) {
-			errorLabel.setText("Geschwindigkeit liegt über 30km/h");
-		} else if(kmH >= 100D) {
-			errorLabel.setText("Geschwindigkeit liegt über 100 km/h");
-		} else {
-			errorLabel.setText("");			
-		}
-	}
-	
-	private void setzeGeschwindigkeiten() {
-		textFieldkmH.setText("");
-		textFieldMs.setText("");
-		textFieldminKm.setText("");
-		textFieldkmH.setText(berechneGeschwindigkeitenAusZeit(1));
-		textFieldMs.setText(berechneGeschwindigkeitenAusZeit(2));
-		textFieldminKm.setText(berechneGeschwindigkeitenAusZeit(3));
-		isValidMinMaxGeschwindigkeit(lblKmhError, this.geschwindigkeit);
-	}
-	
-	/**
-	 * Berechnen der Geschwindigkeit aus der Zeit aus Zeitfeld --> textFieldZeit
-	 * @return Formatierter Geschwindigkeitsstring mit 2 Nachkommastellen in [km/h]
-	 */
-	private String berechneGeschwindigkeitenAusZeit(int geschwindigkeitArt) {
-		DecimalFormat f = new DecimalFormat("#0.00");
-		double geschwindigkeitFormat = 0D;
-		String zeit = textFieldZeit.getText();		
-		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
-		double geschwindigkeit = lController.berechneGeschwindigkeit(strecke, zeit);
-		this.geschwindigkeit = geschwindigkeit;
-		switch (geschwindigkeitArt) {
-			case 1: 
-				geschwindigkeit = UnitsHelper.toKmH(geschwindigkeit);
-				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
-				return f.format(geschwindigkeitFormat);
-			case 2:
-				geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
-				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
-				return f.format(geschwindigkeitFormat);
-			case 3:
-				String minString = lController.parseSecInMinutenstring(this.geschwindigkeit);
-				return minString;
-		}
-		return f.format(geschwindigkeitFormat);
-	}
-	
-	/**
-	 * @param geschwindigkeit: [s/km]
-	 */
-	private void setzeKmH(double geschwindigkeit) {
-		DecimalFormat f = new DecimalFormat("#0.00");
-		double geschwindigkeitFormat = 0D;
-		geschwindigkeit = UnitsHelper.toKmH(geschwindigkeit);
-		geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
-		textFieldkmH.setText(f.format(geschwindigkeitFormat));
-	}
-	
-	/**
-	 * @param geschwindigkeit: [s/km]
-	 */
-	private void setzeMs(double geschwindigkeit) {
-		DecimalFormat f = new DecimalFormat("#0.00");
-		double geschwindigkeitFormat = 0D;
-		geschwindigkeit = UnitsHelper.toMS(geschwindigkeit);
-		geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
-		textFieldMs.setText(f.format(geschwindigkeitFormat));
-	}
-	
-	/**
-	 * @param geschwindigkeit: [s/km]
-	 */
-	private void setzeMinKm(double geschwindigkeit) {
-		String minString = lController.parseSecInMinutenstring(geschwindigkeit);
-		textFieldminKm.setText(minString);
-	}
-	
-	/**
-	 * @param geschwindigkeit: [s/km]
-	 */
-	private void setzeZeit(double geschwindigkeit) {
-		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
-		double sec = lController.berechneZeit(strecke, geschwindigkeit);
-		textFieldZeit.setValue(lController.parseSecInZeitstring(sec));
-	}
-	
-	private boolean validateInput(){
-		boolean validInput = true;
-		String bezeichnungString = textFieldBezeichnung.getText();
-		if(!isValidBezeichnung(bezeichnungString)) {
-			validInput = false;
-		}
-		Date datum = calendar.getDate();
-		if(!isValidDatum(datum)) {
-			validInput = false;
-		}
-
-		String zeitString = textFieldZeit.getText();
-		String kmhString = textFieldkmH.getText();
-		String msString = textFieldMs.getText();
-		String minkmString = textFieldminKm.getText();
-		if (rdbtnZeit.isSelected()) {
-			if(!isValidZeit(zeitString)) {
-				validInput = false;
-			}
-			setzeKmH(this.geschwindigkeit);
-			setzeMs(this.geschwindigkeit);
-			setzeMinKm(this.geschwindigkeit);
-		} else if (rdbtnkmH.isSelected()) {
-			if(!isValidKmh(kmhString)) {
-				validInput = false;
-			}
-			setzeZeit(this.geschwindigkeit);
-			setzeMs(this.geschwindigkeit);
-			setzeMinKm(this.geschwindigkeit);
-		} else if (rdbtnms.isSelected()) {
-			if(!isValidMs(msString)) {
-				validInput = false;
-			}
-			setzeZeit(this.geschwindigkeit);
-			setzeKmH(this.geschwindigkeit);
-			setzeMinKm(this.geschwindigkeit);
-		} else if (rdbtnminkm.isSelected()) {
-			if(!isValidMinKm(minkmString)) {
-				validInput = false;
-			}
-			setzeZeit(this.geschwindigkeit);
-			setzeKmH(this.geschwindigkeit);
-			setzeMs(this.geschwindigkeit);
-		}
-		return validInput;
 	}
 	
 	private void clearWarnings() {

@@ -22,6 +22,10 @@ public class TrainingsbereichController {
 		this.view = view;
 	}
 
+	public void release(){
+		view = null;
+		athlet = null;
+	}
 	public static double getWinzererAufschlag() {
 		return WINZERER_AUFSCHLAG;
 	}

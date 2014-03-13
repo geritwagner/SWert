@@ -39,29 +39,27 @@ public class SchwellenDialog extends JDialog {
 	private JRadioButton rdbtnminkm;
 	private JFormattedTextField textFieldminKm;
 	
-	private double geschwindigkeit; //Enthält immer die aktuelle, berechnete Geschwindigkeits
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JLabel lblKmhError;
 	private JLabel lblMsError;
 	private JLabel lblMinKmError;
 
-	public SchwellenDialog() {
-		initProperties();
-		initAllComponents();
-		clearWarnings();
-	}
-	
+	private double geschwindigkeit; //Enthält immer die aktuelle, berechnete Geschwindigkeits
+
+
 	public SchwellenDialog(Leistung leistung) {
-		initProperties();
+		boolean neueLeistung = (leistung == null);
+		initProperties(neueLeistung);
 		initAllComponents();
-		setTitle("Schwelle bearbeiten");
-		initWerte(leistung);
-		setVisible(true);
+		if (leistung != null){
+			setTitle("Schwelle bearbeiten");
+			initWerte(leistung);			
+		}
 		clearWarnings();		
+		setVisible(true);
 	}
 	
 	public void initWerte(Leistung leistung) {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(LeistungDialog.class.getResource("/bilder/EditLeistung_24x24.png")));
 		this.geschwindigkeit = leistung.getGeschwindigkeit();
 		setzeStrecke(geschwindigkeit);
 		setzeKmH(geschwindigkeit);
@@ -69,8 +67,12 @@ public class SchwellenDialog extends JDialog {
 		setzeMinKm(geschwindigkeit);
 	}
 
-	private void initProperties() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(SchwellenDialog.class.getResource("/bilder/NeueLeistung_16x16.png")));
+	private void initProperties(boolean neueLeistung) {
+		if (neueLeistung){
+			setIconImage(Toolkit.getDefaultToolkit().getImage(SchwellenDialog.class.getResource("/bilder/NeueLeistung_16x16.png")));			
+		} else {
+			setIconImage(Toolkit.getDefaultToolkit().getImage(LeistungDialog.class.getResource("/bilder/EditLeistung_24x24.png")));			
+		}
 		setResizable(false);
 		setTitle("Aerob/Anaerobe Schwelle eingeben");
 		setBounds(100, 100, 454, 219);
@@ -151,7 +153,7 @@ public class SchwellenDialog extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(actionBestaetigen()) {
+				if(validateInput()) {
 					// TODO: nächste Zeile löschen? - analog wie LeistungDialog strukturieren!!!
 					mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
 					SchwellenDialog.this.setVisible(false);
@@ -381,12 +383,10 @@ public class SchwellenDialog extends JDialog {
 			textFieldminKm.setEnabled(false);
 			textFieldminKm.setBounds(111, 130, 101, 20);
 		} catch (ParseException e) {
-			//TODO
 		}
 		contentPanel.add(textFieldminKm);
 	}
 	
-	// TODO: isValid-Methoden: redundant?!?!? -> LeistungDialog?
 	private boolean isValidStrecke(String strecke) {
 		if (strecke.equals("")) {
 			lblStreckeError.setText("Bitte geben Sie eine Strecke ein!");
@@ -409,7 +409,6 @@ public class SchwellenDialog extends JDialog {
 				geschwindigkeit = geschwindigkeitNumber.doubleValue();
 			} catch (ParseException e) {
 				lblKmhError.setText("Bitte geben Sie eine gültige Zahl ein!");
-				//TODO
 				return false;
 			}
 			geschwindigkeit = UnitsHelper.kmHToSKm(geschwindigkeit);
@@ -433,7 +432,6 @@ public class SchwellenDialog extends JDialog {
 				geschwindigkeit = geschwindigkeitNumber.doubleValue();
 			} catch (ParseException e) {
 				lblMsError.setText("Bitte geben Sie eine gültige Zahl ein!");
-				//TODO
 				return false;
 			}
 			geschwindigkeit = UnitsHelper.MSToSKm(geschwindigkeit);
@@ -561,13 +559,22 @@ public class SchwellenDialog extends JDialog {
 		textFieldminKm.setText(minString);
 	}
 	
+	// TODO: Struktur auf LeistungDialog anpassen
+//	private boolean actionBestaetigen () {
+//		if(true == validateInput()) {
+//			triggerChanges();
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 	/**
 	 * Überprüfen, ob alle Werte gesetzt wurden, instanziieren eines Leistungs-Objekt
 	 * und hinzufügen dieses Objekts in die Leistungstabelle
 	 * @return TRUE, falls alle Eingaben i.o.
 	 */
-	private boolean actionBestaetigen () {
-		boolean ok = true;
+	private boolean validateInput () {
+		boolean validInput = true;
 		String bezeichnungString = "Direkt eingegebene Schwelle";
 	
 		Date datum = new Date();
@@ -580,29 +587,29 @@ public class SchwellenDialog extends JDialog {
 		String minkmString = textFieldminKm.getText();
 		if (rdbtnStrecke.isSelected()) {
 			if(!isValidStrecke(streckenString)) {
-				ok = false;
+				validInput = false;
 			}					
 		} else if (rdbtnkmH.isSelected()) {
 			if(!isValidKmh(kmhString)) {
-				ok = false;
+				validInput = false;
 			}
 		} else if (rdbtnms.isSelected()) {
 			if(!isValidMs(msString)) {
-				ok = false;
+				validInput = false;
 			}
 		} else if (rdbtnminkm.isSelected()) {
 			if(!isValidMinKm(minkmString)) {
-				ok = false;
+				validInput = false;
 			}
 		}
 		
-		if(ok) {
+		if(validInput) {
 			long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthlet().getId();
 			int id_strecke = -1;
 			Leistung leistung = new Leistung(id_strecke,id_athlet,bezeichnungString,datumString,geschwindigkeit);
 			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);			
 		}
-		return ok;
+		return validInput;
 	}
 	
 	private void clearWarnings() {

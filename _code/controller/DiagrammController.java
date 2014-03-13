@@ -15,10 +15,16 @@ import view.ProfilTab;
 public class DiagrammController {
 	
 	private DiagrammFrame view;
+//	private List<Athlet> alleAthleten - im Konstruktor übergeben?
 
 	public DiagrammController() {
 		view = new DiagrammFrame();
 		openAllAthletes();
+	}
+	
+	public void release(){
+		view = null;
+//		athlet = null;
 	}
 
 	private void openAllAthletes(){

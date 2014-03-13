@@ -151,7 +151,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		if (leistung.getId_strecke() == -1) {
 			new SchwellenDialog(leistung);
 		} else {
-			new LeistungDialog(leistung);
+			new LeistungDialog(athlet, leistung);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	
 	public void neueLeistungButtonPressed(){
 		setBearbeitenStatus(false);
-		new LeistungDialog();		
+		new LeistungDialog(athlet, null);		
 	}
 
 	public void tabSchlieﬂen() {
