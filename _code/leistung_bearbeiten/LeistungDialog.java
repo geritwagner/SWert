@@ -110,12 +110,15 @@ public class LeistungDialog extends JDialog {
 			// neue Leistung anlegen
 			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
 			// TODO: hier sollte die Änderung des views (über observer) und des models (athlet.set..., bis jetzt in der Methode addZeile enthalten) strikt getrennt werden!
-			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
+			athlet.addLeistung(leistung);
+//			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
 		} else {
-			//TODO: in update ändern!! (use observable!!)
-			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
-			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
-			mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
+			//TODO: observable: auch Leistungen!!
+			leistung.updateLeistung(id_strecke, bezeichnungString, datumString, geschwindigkeit);				
+				
+//			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
+//			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);	
+//			mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
 		}
 	}
 	

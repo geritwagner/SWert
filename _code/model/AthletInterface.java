@@ -9,6 +9,7 @@ interface AthletInterface {
 	public LinkedList<Leistung> getLeistungen();
 	public boolean addLeistung(Leistung leistung);
 	public boolean removeLeistung(Leistung leistungToRemove);
+	public Leistung getLeistungById(long id);
 	
 	// Leistungen für Slope-Faktor bearbeiten
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception;

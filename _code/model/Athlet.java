@@ -73,28 +73,40 @@ public class Athlet extends Observable implements AthletInterface {
 			Leistung aktuelleLeistung = alleLeistungen.get(i);
 			if(aktuelleLeistung.equals(leistungToRemove)){
 				alleLeistungen.remove(i);
+				setChanged();
+				notifyObservers(this);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception{
+	public Leistung getLeistungById(long id) {
+		for (Leistung aktuelleLeistung: alleLeistungen){
+			if (aktuelleLeistung.getId() == id)
+				return aktuelleLeistung;
+		}
+		return null;
+	}
+
+	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
 		if(!inAlleLeistungenEnthalten(ausgewaehlteLeistung)){
 			return;
 		}
 		// bis jetzt wurde keine oder eine Leistung ausgewählt, d.h. es muss noch eine Leistung ausgewählt werden
 		if (getLeistungAuswahlForSlopeFaktor()[1] != null){
-			throw new Exception();
+			throw new ThreeLeistungenForSlopeFaktorException();
 		}
 		// Keine gleichen Strecken akzeptieren!
 		if (getLeistungAuswahlForSlopeFaktor()[0] != null && 
 				getLeistungAuswahlForSlopeFaktor()[0].getStrecke() == ausgewaehlteLeistung.getStrecke()){
-			throw new Exception();
+			throw new GleicheStreckeException();
 		}		
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(true);
+				setChanged();
+				notifyObservers(this);
 			}
 		}
 	}
@@ -106,6 +118,8 @@ public class Athlet extends Observable implements AthletInterface {
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(false);
+				setChanged();
+				notifyObservers(this);
 			}
 		}
 	}
@@ -126,6 +140,8 @@ public class Athlet extends Observable implements AthletInterface {
 	public void resetLeistungAuswahlForSlopeFaktor(){
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			aktuelleLeistung.setIsUsedForSlopeFaktor(false);
+			setChanged();
+			notifyObservers(this);
 		}
 	}
 	
@@ -277,4 +293,5 @@ public class Athlet extends Observable implements AthletInterface {
 		}
 		return false;
 	}
+
 }

@@ -38,7 +38,6 @@ public class Leistung implements LeistungInterface{
 		this.id_athlet = id_athlet;
 		this.zeit = leistungHelper.berechneZeit(getStrecke(), geschwindigkeit);
 		this.geschwindigkeit = geschwindigkeit;
-		//		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), zeitString);
 		this.bezeichnung = bezeichnung;
 		this.datum = datum;	
 		this.selectedForCalculatingSlopeFaktor = false;
@@ -89,7 +88,7 @@ public class Leistung implements LeistungInterface{
 		return selectedForCalculatingSlopeFaktor;
 	}
 
-	public void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor) {
+	protected void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor) {
 		this.selectedForCalculatingSlopeFaktor = berechnungSlopeFaktor;
 	}
 
@@ -110,9 +109,10 @@ public class Leistung implements LeistungInterface{
 		}
 	}
 
-	public void updateLeistung(int id_strecke, double zeit, String bezeichnung, String datum) {
+	public void updateLeistung(int id_strecke, String bezeichnung, String datum, double geschwindigkeit) {
 		this.id_strecke = id_strecke;
-		this.zeit = zeit;
+		this.zeit = leistungHelper.berechneZeit(getStrecke(), geschwindigkeit);
+		this.geschwindigkeit = geschwindigkeit;
 		String zeitString = leistungHelper.parseSecInZeitstring(zeit);
 		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), zeitString);
 		this.bezeichnung = bezeichnung;
@@ -171,7 +171,7 @@ public class Leistung implements LeistungInterface{
 						  f.format(kmH),
 						  f.format(mS),
 						  leistungHelper.parseSecInMinutenstring(geschwindigkeit),
-						  new Boolean(false),
+						  this.isUsedForSlopeFaktor(),
 						  new Integer(this.getId_strecke()),
 						  String.valueOf(this.getGeschwindigkeit())};
 		return daten;

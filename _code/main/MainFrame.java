@@ -16,6 +16,7 @@ import datei_operationen.DateiPfadSpeichern;
 import globale_helper.LeistungHelper;
 import leistung_bearbeiten.LeistungDialog;
 import model.Athlet;
+import model.Leistung;
 
 public class MainFrame {
 
@@ -378,16 +379,18 @@ public class MainFrame {
 		}
 	}
 	
-	public void createTab (String name) {
-			Athlet athlet = new Athlet(name, null);
+	public void createTab (String name, LinkedList<Leistung> leistungen) {
+		// TODO: hier sollte kein Athlet angelegt werden!!!
+			Athlet athlet = new Athlet(name, leistungen);
 			ProfilTab newTab = new ProfilTab(athlet);			
 			tabList.add(0, newTab);
 			tabbedPane.insertTab("* "+name, null, newTab, null, 0);
 			tabbedPane.setSelectedIndex(0);	
 	}
 	
-	public ProfilTab createTab (String name,long id) {
-		Athlet athlet = new Athlet(id, name, null);
+	public ProfilTab createTab (String name,long id, LinkedList<Leistung> leistungen) {
+		// TODO: hier sollte kein Athlet angelegt werden!!!
+		Athlet athlet = new Athlet(id, name, leistungen);
 		ProfilTab newTab = new ProfilTab(athlet);			
 		tabList.add(0, newTab);
 		tabbedPane.insertTab(name+" *", null, newTab, null, 0);

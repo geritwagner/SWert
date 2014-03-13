@@ -43,8 +43,7 @@ public class CSVController {
 		    	reader.close();
 		    	return true;
 		    }
-		    ProfilTab tab = Main.mainFrame.createTab(nameAthlet,idAthlet);		    
-		    restlicheLeistungenImTabOeffnen(reader, tab);
+		    ProfilTab tab = Main.mainFrame.createTab(nameAthlet, idAthlet, getLeistungen(reader));
 		    tab.setSpeicherPfad(pfad);
 		    tab.setSpeicherStatus(true);
 		    reader.close();
@@ -85,12 +84,15 @@ public class CSVController {
 	    idAthlet = Long.parseLong(aktuelleZeile[0]);
 	}
 	
-	private void restlicheLeistungenImTabOeffnen(CSVReader reader, ProfilTab tab) throws IOException{
+	private LinkedList<Leistung> getLeistungen(CSVReader reader) throws IOException{
 		String [] aktuelleZeile;
+		LinkedList<Leistung> leistungen = new LinkedList<>();
 		while ((aktuelleZeile = reader.readNext()) != null) {
-			Leistung naechsteLeistung = leistungAuslesen(aktuelleZeile);
-	    	tab.addZeile(naechsteLeistung);
+			leistungen.add (leistungAuslesen(aktuelleZeile));
+			// TODO: remove!
+//	    	tab.addZeile(naechsteLeistung);
 	    }
+		return leistungen;
 	}
 	
 	private Leistung leistungAuslesen (String[] leistung){

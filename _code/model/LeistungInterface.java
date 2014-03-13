@@ -10,12 +10,13 @@ interface LeistungInterface {
 	public String getBezeichnung();
 	public String getDatum();
 	public boolean isUsedForSlopeFaktor();
-	public void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor);
+	// wird über den Athleten gesetzt!
+//	void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor);
 	public String toString();
 	public boolean equals(Leistung andereLeistung);
 	
 	// TODO: update-Methode im Controller verwenden!
-	public void updateLeistung(int id_strecke, double zeit, String bezeichnung, String datum);
+	public void updateLeistung(int id_strecke, String bezeichnung, String datum, double geschwindigkeit);
 
 	public double getGeschwindigkeit();
 	public String getZeitString();
