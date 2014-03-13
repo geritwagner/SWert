@@ -395,10 +395,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		String streckenlaenge = getStringAt(zeile, 1);
 		int streckenId = Strecken.getStreckenIdByString(streckenlaenge);
 		String bezeichnung = getStringAt(zeile, 2);
-		LeistungHelper l = new LeistungHelper();
-		double zeit =   l.parseZeitInSec(getStringAt(zeile, 3));
-		int streckenlänge = Strecken.getStreckenlaengeById(streckenId);
-		double geschwindigkeit = l.berechneGeschwindigkeit(streckenlänge, zeit);
+		double geschwindigkeit =  getDoubleAt(zeile, 9);
 		Leistung vergleichsLeisung = new Leistung(streckenId, athlet.getId(), bezeichnung, datum, geschwindigkeit);
 		for (Leistung aktuelleLeistung : athlet.getLeistungen()){
 			if (aktuelleLeistung.equals(vergleichsLeisung))
@@ -411,6 +408,11 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		return leistungenTabelle.getRowCount();
 	}
 	
+	private double getDoubleAt(int zeile, int spalte){
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		return Double.parseDouble((String) model.getValueAt(zeile, spalte));	
+	}
+
 	private String getStringAt (int zeile, int spalte) {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		return (String) model.getValueAt(zeile, spalte);		

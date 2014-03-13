@@ -11,8 +11,6 @@ import javax.swing.text.*;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 
-import main.Main;
-import main.MainFrame;
 import globale_helper.*;
 import model.*;
 
@@ -27,8 +25,6 @@ public class LeistungDialog extends JDialog {
 	
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize();
-	private MainFrame mainFrame = Main.mainFrame;
-	private final LeistungHelper lController = Main.mainFrame.leistungHelper;
 	
 	private JTextField textFieldBezeichnung;
 	private JLabel lblBezeichnungError;
@@ -58,12 +54,17 @@ public class LeistungDialog extends JDialog {
 	private Leistung leistung;
 	private Athlet athlet;
 	
+	LeistungDialogController controller;
+	
+	to do: funtionalität in den Controller ausgliedern
+
 	public LeistungDialog(Athlet athlet, Leistung leistung) {
 		if (leistung != null && leistung.getId_strecke() == -1) {
-			new SchwellenDialog(leistung);
+			new SchwellenDialog(athlet, leistung);
 		} else {
 		this.athlet = athlet;
 		this.leistung = leistung;
+		controller = new LeistungDialogController(athlet, leistung, this);
 		boolean leistungbearbeiten = (leistung != null);
 		initProperties(leistungbearbeiten);
 		initComponents();
@@ -77,8 +78,7 @@ public class LeistungDialog extends JDialog {
 	
 	private void bestaetigenClicked(){
 		if(leistungÄndern()) {
-			setVisible(false);
-			dispose();					
+			release();				
 		} else {
 			JOptionPane.showMessageDialog(contentPanel,
 					"Leistung wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
@@ -199,7 +199,8 @@ public class LeistungDialog extends JDialog {
 			lblMinKmError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
 			return false;
 		} else {
-			double geschwindigkeit = lController.parseMinStringToSec(geschwindigkeitString);
+			LeistungHelper lHelper = new LeistungHelper();
+			double geschwindigkeit = lHelper.parseMinStringToSec(geschwindigkeitString);
 			this.geschwindigkeit = geschwindigkeit;
 			return true;			
 		}
@@ -236,11 +237,12 @@ public class LeistungDialog extends JDialog {
 	 * @return Formatierter Geschwindigkeitsstring mit 2 Nachkommastellen in [km/h]
 	 */
 	private String berechneGeschwindigkeitenAusZeit(int geschwindigkeitArt) {
+		LeistungHelper lHelper = new LeistungHelper();
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeitFormat = 0D;
 		String zeit = textFieldZeit.getText();		
 		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
-		double geschwindigkeit = lController.berechneGeschwindigkeit(strecke, zeit);
+		double geschwindigkeit = lHelper.berechneGeschwindigkeit(strecke, zeit);
 		this.geschwindigkeit = geschwindigkeit;
 		switch (geschwindigkeitArt) {
 			case 1: 
@@ -252,7 +254,7 @@ public class LeistungDialog extends JDialog {
 				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 				return f.format(geschwindigkeitFormat);
 			case 3:
-				String minString = lController.parseSecInMinutenstring(this.geschwindigkeit);
+				String minString = lHelper.parseSecInMinutenstring(this.geschwindigkeit);
 				return minString;
 		}
 		return f.format(geschwindigkeitFormat);
@@ -284,7 +286,8 @@ public class LeistungDialog extends JDialog {
 	 * @param geschwindigkeit: [s/km]
 	 */
 	private void setzeMinKm(double geschwindigkeit) {
-		String minString = lController.parseSecInMinutenstring(geschwindigkeit);
+		LeistungHelper lHelper = new LeistungHelper();
+		String minString = lHelper.parseSecInMinutenstring(geschwindigkeit);
 		textFieldminKm.setText(minString);
 	}
 	
@@ -292,9 +295,10 @@ public class LeistungDialog extends JDialog {
 	 * @param geschwindigkeit: [s/km]
 	 */
 	private void setzeZeit(double geschwindigkeit) {
+		LeistungHelper lHelper = new LeistungHelper();
 		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
-		double sec = lController.berechneZeit(strecke, geschwindigkeit);
-		textFieldZeit.setValue(lController.parseSecInZeitstring(sec));
+		double sec = lHelper.berechneZeit(strecke, geschwindigkeit);
+		textFieldZeit.setValue(lHelper.parseSecInZeitstring(sec));
 	}
 	
 	private boolean validateInput(){
@@ -485,6 +489,14 @@ public class LeistungDialog extends JDialog {
 		btnAnaerobeSchwelleDirekt = new JButton("Aerob/Anaerobe Schwelle direkt eingeben");
 		buttonPanel.add(btnAnaerobeSchwelleDirekt, "cell 0 0,grow");
 		btnAnaerobeSchwelleDirekt.setToolTipText("Direktes Eingeben einer Strecke oder Geschwindigkeit als Aerob/Anaerobe Schwelle");
+		btnAnaerobeSchwelleDirekt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				release();
+				@SuppressWarnings("unused")
+				SchwellenDialog dialog = new SchwellenDialog(athlet, null);
+			}
+		});
 		
 		JButton okButton = new JButton("Best\u00E4tigen");
 		buttonPanel.add(okButton, "cell 2 0,grow");
@@ -501,20 +513,10 @@ public class LeistungDialog extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				setVisible(false);
-				dispose();
+				release();
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
-		btnAnaerobeSchwelleDirekt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				setVisible(false);
-				dispose();
-				@SuppressWarnings("unused")
-				SchwellenDialog dialog = new SchwellenDialog(null);
-			}
-		});
 	}
 	
 	private void initTextFieldBezeichnung() {
@@ -817,5 +819,13 @@ public class LeistungDialog extends JDialog {
 		lblKmhError.setText("");
 		lblMsError.setText("");
 		lblMinKmError.setText("");
+	}
+	
+	private void release(){
+		// TODO: model.deleteObserver(this);
+		controller.release();
+		controller = null;
+		setVisible(false);
+		dispose();
 	}
 }

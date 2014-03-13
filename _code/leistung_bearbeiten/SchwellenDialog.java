@@ -4,16 +4,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
 import java.util.*;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import main.Main;
-import main.MainFrame;
 import globale_helper.*;
-import model.Leistung;
+import model.*;
 
 /**
  * Dialog zum Anlegen einer neuen Leistung durch
@@ -27,8 +24,6 @@ public class SchwellenDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize(); 
 	
-	private final LeistungHelper lController = Main.mainFrame.leistungHelper;
-	private MainFrame mainFrame = Main.mainFrame;
 	
 	private JRadioButton rdbtnStrecke;
 	private JFormattedTextField textFieldStrecke;
@@ -47,8 +42,17 @@ public class SchwellenDialog extends JDialog {
 
 	private double geschwindigkeit; //Enthält immer die aktuelle, berechnete Geschwindigkeits
 
+	private Leistung leistung;
+	private Athlet athlet;
 
-	public SchwellenDialog(Leistung leistung) {
+	SchwellenDialogController controller;
+	
+	to do: funtionalität in den Controller ausgliedern
+	
+	public SchwellenDialog(Athlet athlet, Leistung leistung) {
+		this.leistung = leistung;
+		this.athlet = athlet;
+		controller = new SchwellenDialogController(athlet, leistung, this);
 		boolean neueLeistung = (leistung == null);
 		initProperties(neueLeistung);
 		initAllComponents();
@@ -154,17 +158,7 @@ public class SchwellenDialog extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(validateInput()) {
-					// TODO: nächste Zeile löschen? - analog wie LeistungDialog strukturieren!!!
-					mainFrame.tabList.get(mainFrame.getAktivesTab()).deleteZeileAusDialog();
-					SchwellenDialog.this.setVisible(false);
-					SchwellenDialog.this.dispose();					
-				} else {
-					JOptionPane.showMessageDialog(contentPanel,
-							"Schwelle wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
-						    "Fehler",
-						    JOptionPane.ERROR_MESSAGE);
-				}
+				bestaetigenClicked();
 			}
 		});
 		buttonPane.add(okButton);
@@ -174,8 +168,7 @@ public class SchwellenDialog extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				SchwellenDialog.this.setVisible(false);
-				SchwellenDialog.this.dispose();
+				release();
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
@@ -447,7 +440,8 @@ public class SchwellenDialog extends JDialog {
 			lblMinKmError.setText("Bitte geben Sie eine Geschwindigkeit ein!");
 			return false;
 		} else {
-			double geschwindigkeit = lController.parseMinStringToSec(geschwindigkeitString);
+			LeistungHelper lHelper = new LeistungHelper();
+			double geschwindigkeit = lHelper.parseMinStringToSec(geschwindigkeitString);
 			this.geschwindigkeit = geschwindigkeit;
 			return true;			
 		}
@@ -474,6 +468,7 @@ public class SchwellenDialog extends JDialog {
 	 * @return Formatierter Geschwindigkeitsstring mit 2 Nachkommastellen in [km/h]
 	 */
 	private String berechneGeschwindigkeitenAusStrecke(int geschwindigkeitArt) {
+		LeistungHelper lHelper = new LeistungHelper();
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeitFormat = 0D;
 		String zeit = "01:00:00,00";
@@ -490,7 +485,7 @@ public class SchwellenDialog extends JDialog {
     			return "";
     		}
     	}
-		double geschwindigkeit = lController.berechneGeschwindigkeit(strecke, zeit);
+		double geschwindigkeit = lHelper.berechneGeschwindigkeit(strecke, zeit);
 		this.geschwindigkeit = geschwindigkeit;
 		switch (geschwindigkeitArt) {
 			case 1: 
@@ -502,7 +497,7 @@ public class SchwellenDialog extends JDialog {
 				geschwindigkeitFormat = (Math.round(geschwindigkeit*100D))/100D;
 				return f.format(geschwindigkeitFormat);
 			case 3:
-				String minString = lController.parseSecInMinutenstring(this.geschwindigkeit);
+				String minString = lHelper.parseSecInMinutenstring(this.geschwindigkeit);
 				return minString;
 		}
 		return f.format(geschwindigkeitFormat);
@@ -519,7 +514,8 @@ public class SchwellenDialog extends JDialog {
 	}
 	
 	private void setzeStrecke(double geschwindigkeit) {
-		int strecke = lController.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
+		LeistungHelper lHelper = new LeistungHelper();
+		int strecke = lHelper.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
 		textFieldStrecke.setText(String.valueOf(strecke));
 	}
 	
@@ -556,19 +552,11 @@ public class SchwellenDialog extends JDialog {
 	 * @param geschwindigkeit: [s/km]
 	 */
 	private void setzeMinKm(double geschwindigkeit) {
-		String minString = lController.parseSecInMinutenstring(geschwindigkeit);
+		LeistungHelper lHelper = new LeistungHelper();
+		String minString = lHelper.parseSecInMinutenstring(geschwindigkeit);
 		textFieldminKm.setText(minString);
 	}
 	
-	// TODO: Struktur auf LeistungDialog anpassen
-//	private boolean actionBestaetigen () {
-//		if(true == validateInput()) {
-//			triggerChanges();
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
 	/**
 	 * Überprüfen, ob alle Werte gesetzt wurden, instanziieren eines Leistungs-Objekt
 	 * und hinzufügen dieses Objekts in die Leistungstabelle
@@ -576,11 +564,6 @@ public class SchwellenDialog extends JDialog {
 	 */
 	private boolean validateInput () {
 		boolean validInput = true;
-		String bezeichnungString = "Direkt eingegebene Schwelle";
-	
-		Date datum = new Date();
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-		String datumString = df.format(datum);
 		
 		String streckenString = textFieldStrecke.getText();
 		String kmhString = textFieldkmH.getText();
@@ -603,20 +586,59 @@ public class SchwellenDialog extends JDialog {
 				validInput = false;
 			}
 		}
-		
-		if(validInput) {
-			long id_athlet = mainFrame.tabList.get(mainFrame.getAktivesTab()).getAthlet().getId();
-			int id_strecke = -1;
-			Leistung leistung = new Leistung(id_strecke,id_athlet,bezeichnungString,datumString,geschwindigkeit);
-			mainFrame.tabList.get(mainFrame.getAktivesTab()).addZeile(leistung);			
-		}
 		return validInput;
+	}
+	
+	private void bestaetigenClicked(){
+		if(leistungÄndern()) {
+			release();					
+		} else {
+			JOptionPane.showMessageDialog(contentPanel,
+					"Leistung wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
+				    "Fehler",
+				    JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private boolean leistungÄndern(){
+		if(true == validateInput()) {
+			änderungenDurchführen();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private void änderungenDurchführen(){
+		long id_athlet = athlet.getId();
+		int id_strecke = -1;
+		// TODO::
+		String bezeichnungString = "Direkt eingegebene Schwelle";
+		Date datum = new Date();
+		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+		String datumString = df.format(datum);
+		if (this.leistung == null){
+			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
+			// TODO: hier sollte die Änderung des views (über observer) und des models (athlet.set..., bis jetzt in der Methode addZeile enthalten) strikt getrennt werden!
+			athlet.addLeistung(leistung);
+		} else {
+			long leistung_id = leistung.getId();
+			athlet.updateLeistung(leistung_id, id_strecke, bezeichnungString, datumString, geschwindigkeit);				
+		}
 	}
 	
 	private void clearWarnings() {
 		lblStreckeError.setText("");
 		lblMsError.setText("");
 		lblMinKmError.setText("");
+	}
+	
+	private void release(){
+		// TODO: model.deleteObserver(this);
+		controller.release();
+		controller = null;
+		setVisible(false);
+		dispose();
 	}
 	
 	private class IntegerDocumentListener implements DocumentListener {
