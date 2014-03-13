@@ -2,7 +2,9 @@ package model;
 
 public class GleicheStreckeException extends Exception {
 	
-    //Parameterless Constructor
+	private static final long serialVersionUID = 1L;
+
+	//Parameterless Constructor
     public GleicheStreckeException() {}
 
     //Constructor that accepts a message

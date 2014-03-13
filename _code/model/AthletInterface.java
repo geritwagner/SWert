@@ -17,7 +17,8 @@ interface AthletInterface {
 	public void removeLeistungFromAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung);
 	public Leistung[] getLeistungAuswahlForSlopeFaktor();
 	public void resetLeistungAuswahlForSlopeFaktor();
-
+	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException;
+	
 	public boolean isSetSlopeFaktor();
 	public String getSlopeFaktorStatus();
 

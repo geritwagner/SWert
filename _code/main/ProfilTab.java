@@ -47,15 +47,11 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		initLayout(athlet.getName());
 		setAnalysenVerfügbar(false);
 		initJTable();
-		athletenDatenLaden();
+		setAlleLeistungen();
 		athlet.addObserver(this);
 		setBearbeitenStatus(false);
 	}
-	
-	private void athletenDatenLaden(){
-		setAlleLeistungen();
-	}
-	
+		
 	public Athlet getAthlet(){
 		return athlet;
 	}
@@ -97,6 +93,8 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	    	} else {
 	    		athlet.removeLeistungFromAuswahlForSlopeFaktor(leistung);
 	    	}
+	    	// TODO: eleganter?
+	    	chckbxLeistungenAuswahl.setSelected(false);
     	} catch (ThreeLeistungenForSlopeFaktorException e){
         	DefaultTableModel tableModel = (DefaultTableModel) leistungenTabelle.getModel();
         	tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
@@ -112,67 +110,20 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}
 	
 	public void checkboxLeistungenAutomatischWählenClicked() {		
-		// TODO: refactor: athlet.setAutomatisch!
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		if (chckbxLeistungenAuswahl.isSelected()) {
-        	if (!isAutomatischeAuswahlZulässig()) {
-				JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte werden zwei Leistungen mit unterschiedlicher Laufstrecke benötigt!"
-						, "Laufstrecken identisch",JOptionPane.ERROR_MESSAGE);
-				chckbxLeistungenAuswahl.setSelected(false);
-        	} else {
-        		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben(); 
-        		setLeistungAutomatisch();
-        		chckbxLeistungenAuswahl.setSelected(true);
-        	}
+		try{
+			if (chckbxLeistungenAuswahl.isSelected()){
+				athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();				
+			} else {
+			}
+    	} catch (ThreeLeistungenForSlopeFaktorException e){
+			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte dürfen nur zwei Leistungen ausgewählt werden!"
+					, "Zwei Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
+    	} catch (GleicheStreckeException e){
+			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte müssen zwei Leistungen über unterschiedliche Distanzen ausgewählt werden!"
+					, "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
     	}
 	}
 
-	/**
-	 * Wählt die Leistungen über die kürzeste und längste Distanz für die Berechnung des Slope-Faktors aus.
-	 */	
-	private void setLeistungAutomatisch() {		
-		int kürzereStrecke = 0;
-		int längereStrecke = getZeilenAnzahl() - 1;
-
-		tabelleCheckboxenFürSlopeFaktorAuswahlAufheben();		
-		
-		Leistung leistungKurzeStrecke = getLeistungInZeile(kürzereStrecke);
-		Leistung leistungLangeStrecke = getLeistungInZeile(längereStrecke);
-
-		athlet.resetLeistungAuswahlForSlopeFaktor();
-		try {
-			athlet.setLeistungToAuswahlForSlopeFaktor(leistungLangeStrecke);		
-			athlet.setLeistungToAuswahlForSlopeFaktor(leistungKurzeStrecke);
-			automatischeVerarbeitung = true;
-			leistungenTabelle.setValueAt(true, kürzereStrecke, BOOLEAN_SPALTE);
-			leistungenTabelle.setValueAt(true, längereStrecke, BOOLEAN_SPALTE);
-			automatischeVerarbeitung = false;
-		} catch (Exception e) {
-			// TODO gleiche Leistung ausgewählt oder schon alle Leistungen für Berechnung des Slope-Faktors gesetzt
-			e.printStackTrace();
-		}
-	}
-	
 	public void leistungBearbeitenPressed() {
 		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
 		new LeistungDialog(athlet, leistung);
@@ -302,75 +253,11 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		// TODO: umstrukturieren!!
 		// ausDialog: wird dann auf true gesetzt, wenn deleteLeistungDialog() vom LeistungDialog aufgerufen wird
 		if (!ausDialog) {
-
-			//athlet.removeLeistungFromAuswahlForSlopeFaktor(leistungToRemove);
 			athlet.removeLeistung(leistungToRemove);
-			leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen();
 		}
 		setBearbeitenStatus(false);		
 	}
 	
-	// ----------------------------- Validators -----------------------
-
-	
-	private boolean isAutomatischeAuswahlZulässig() {
-		int zeilenAnzahl = getZeilenAnzahl();
-		int streckenIdSpalte = 8;
-		
-		if (!chckbxLeistungenAuswahl.isSelected()) {
-			return false;
-		}
-		
-		if (zeilenAnzahl>1) {
-			for (int i = 0; i < zeilenAnzahl-1; i++) {
-				int zahl1 = getIntAt(i, streckenIdSpalte);				
-				for (int j = i; j < zeilenAnzahl; j++) {
-					int zahl2 = getIntAt(j, streckenIdSpalte);
-					if (zahl1 != zahl2) {
-						return true;
-					}
-					if (zahl1 == -1 && zahl2 == -1) {
-						Leistung zahl1Leistung = getLeistungInZeile(i);
-						Leistung zahl2Leistung = getLeistungInZeile(j);
-						double zahl1Strecke = zahl1Leistung.getStrecke();
-						double zahl2Strecke = zahl2Leistung.getStrecke();
-						if (zahl1Strecke != zahl2Strecke) {
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		} else {
-			return false;
-		}
-	}
-	
-	// ------------------------ to consolidate --------------------------
-	
-	private void tabelleCheckboxenFürSlopeFaktorAuswahlAufheben() {
-		int zeilenAnzahl = getZeilenAnzahl();
-		for (int i = 0; i < zeilenAnzahl; i++) {
-			if (true == getBooleanAt(i, BOOLEAN_SPALTE)){
-				leistungenTabelle.setValueAt(false, i, BOOLEAN_SPALTE);
-			}
-		}		
-	}
-	
-	
-	/**
-	 * Schaltet eine automatische Auswahl ab, falls diese nicht möglich ist und
-	 * berechnet ansonsten die neuen Werte
-	 */
-	private void leistungsAuswahlBeiZeileLöschenBeiAutomatischerAuswahlNeuBerechnen() {
-		if (!isAutomatischeAuswahlZulässig()) {
-			chckbxLeistungenAuswahl.setSelected(false);
-		} else {
-			checkboxLeistungenAutomatischWählenClicked();
-		}
-	}
-	
-
 	
 	// ---------------------------------- TABLE-METHODS: GET/SET ----------------------------
 	
@@ -404,10 +291,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		return null;
 	}
 	
-	private int getZeilenAnzahl() {
-		return leistungenTabelle.getRowCount();
-	}
-	
 	private double getDoubleAt(int zeile, int spalte){
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		return Double.parseDouble((String) model.getValueAt(zeile, spalte));	
@@ -417,17 +300,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		return (String) model.getValueAt(zeile, spalte);		
 	}
-	
-	private boolean getBooleanAt (int zeile, int spalte) {
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		return (boolean) model.getValueAt(zeile, spalte);		
-	}
-	
-	private int getIntAt (int zeile, int spalte) {
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		return (int) model.getValueAt(zeile, spalte);		
-	}
-	
+		
 	//----------------------- view darstellung -----------------------
 
 	private void initLayout(String Athletenname) {

@@ -40,7 +40,6 @@ public class LeistungDialogController {
 		String datumString = df.format(datum);
 		if (this.leistung == null){
 			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, view.getGeschwindigkeit());
-			// TODO: hier sollte die Änderung des views (über observer) und des models (athlet.set..., bis jetzt in der Methode addZeile enthalten) strikt getrennt werden!
 			athlet.addLeistung(leistung);
 		} else {
 			long leistung_id = leistung.getId();

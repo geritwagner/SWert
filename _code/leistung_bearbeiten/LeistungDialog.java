@@ -52,6 +52,7 @@ public class LeistungDialog extends JDialog {
 
 	private double geschwindigkeit; //Enthält immer die aktuelle Geschwindigkeit in s/km (ungerundet)
 
+	@SuppressWarnings("unused")
 	private Leistung leistung;
 	private Athlet athlet;
 	

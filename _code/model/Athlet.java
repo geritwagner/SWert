@@ -153,6 +153,26 @@ public class Athlet extends Observable implements AthletInterface {
 		}
 	}
 	
+	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
+		// TODO: ggf. von kürzerer/längerer Strecke auf besten slope-Faktor umschreiben?
+		Leistung kürzereStreckenLeistung = alleLeistungen.get(0);
+		Leistung längereStreckenLeistung = alleLeistungen.get(1);
+		for (Leistung aktuelleLeistung : alleLeistungen){
+			if (aktuelleLeistung.getStrecke() < kürzereStreckenLeistung.getStrecke())
+				kürzereStreckenLeistung = aktuelleLeistung;
+		}
+
+		for (Leistung aktuelleLeistung : alleLeistungen){
+			if (aktuelleLeistung.getStrecke() > längereStreckenLeistung.getStrecke())
+				längereStreckenLeistung = aktuelleLeistung;
+		}
+		resetLeistungAuswahlForSlopeFaktor();
+		setLeistungToAuswahlForSlopeFaktor(kürzereStreckenLeistung);
+		setLeistungToAuswahlForSlopeFaktor(längereStreckenLeistung);
+		setChanged();
+		notifyObservers(this);
+	}
+	
 	public boolean isSetSlopeFaktor(){
 		if ( ! isValidLeistungAuswahlForSlopeFaktor()){
 			return false;

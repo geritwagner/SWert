@@ -42,7 +42,9 @@ public class SchwellenDialog extends JDialog {
 
 	private double geschwindigkeit; //Enthält immer die aktuelle, berechnete Geschwindigkeits
 
+	@SuppressWarnings("unused")
 	private Leistung leistung;
+	@SuppressWarnings("unused")
 	private Athlet athlet;
 
 	SchwellenDialogController controller;
