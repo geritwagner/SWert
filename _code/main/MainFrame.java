@@ -379,7 +379,7 @@ public class MainFrame {
 	}
 	
 	public void createTab (String name) {
-			Athlet athlet = new Athlet(name);
+			Athlet athlet = new Athlet(name, null);
 			ProfilTab newTab = new ProfilTab(athlet);			
 			tabList.add(0, newTab);
 			tabbedPane.insertTab("* "+name, null, newTab, null, 0);
@@ -387,7 +387,7 @@ public class MainFrame {
 	}
 	
 	public ProfilTab createTab (String name,long id) {
-		Athlet athlet = new Athlet(id, name);
+		Athlet athlet = new Athlet(id, name, null);
 		ProfilTab newTab = new ProfilTab(athlet);			
 		tabList.add(0, newTab);
 		tabbedPane.insertTab(name+" *", null, newTab, null, 0);

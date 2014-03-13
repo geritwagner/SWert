@@ -3,6 +3,7 @@ package main;
 import java.awt.event.*;
 import java.awt.Font;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.RowSorter.*;
 import javax.swing.event.*;
@@ -18,10 +19,9 @@ import net.miginfocom.swing.MigLayout;
 
 import globale_helper.*;
 import leistung_bearbeiten.LeistungDialog;
-import leistung_bearbeiten.SchwellenDialog;
 import model.*;
 
-public class ProfilTab extends JPanel implements TableModelListener {
+public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	
 	private static final long serialVersionUID = 1L;
 	private static final int BOOLEAN_SPALTE = 7;
@@ -56,6 +56,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 
 	public ProfilTab(Athlet athlet) {
 		this.athlet = athlet;
+		athlet.addObserver(this);
 		this.speicherPfad = null;
 		initLayout(athlet.getName());
 		setAnalysenVerfügbar(false);
@@ -155,11 +156,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	
 	public void leistungBearbeitenPressed() {
 		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
-		if (leistung.getId_strecke() == -1) {
-			new SchwellenDialog(leistung);
-		} else {
-			new LeistungDialog(athlet, leistung);
-		}
+		new LeistungDialog(athlet, leistung);
 	}
 
 	public void deleteZeileButtonPressed() {
@@ -253,7 +250,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	/**
 	 * Methoden um eine neue Zeile in der Tabelle hinzuzufügen oder bestehende zu löschen ?!??!?!?
 	 */
-	public void addZeile(Leistung leistung) {
+	public void addZeileX(Leistung leistung) {
 		// TODO: athlet.addLeistung in controller extrahieren!
 		athlet.addLeistung(leistung);
 		
@@ -263,6 +260,8 @@ public class ProfilTab extends JPanel implements TableModelListener {
 		// TODO: ggf. wieder einkommentieren:
 //		leistungsAuswahlBeiZeileHinzufügen();
 	}
+	
+	
 	
 	private Leistung[] getAusgewählteLeistungenForSlopeFaktorFromCheckbox() {
 		int zeilenAnzahl = getZeilenAnzahl();
@@ -283,6 +282,7 @@ public class ProfilTab extends JPanel implements TableModelListener {
 	 * ohne eine automatische Auswahl triggern zu können
 	 */
 	// is called from SchwellenDialog
+	// TODO: über observer ändern, nicht löschen & neu einfügen der Zeile!!
 	public void deleteZeileAusDialog() {
 		ausDialog = true;
 		deleteLeistung();
@@ -720,5 +720,11 @@ public class ProfilTab extends JPanel implements TableModelListener {
 			sorter.setSortable(i, false);
 		}
 		return leistungenTabelle;
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		System.out.println("athlet wurde geändert!");
+		
 	}
 }

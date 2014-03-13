@@ -59,6 +59,9 @@ public class LeistungDialog extends JDialog {
 	private Athlet athlet;
 	
 	public LeistungDialog(Athlet athlet, Leistung leistung) {
+		if (leistung != null && leistung.getId_strecke() == -1) {
+			new SchwellenDialog(leistung);
+		} else {
 		this.athlet = athlet;
 		this.leistung = leistung;
 		boolean leistungbearbeiten = (leistung != null);
@@ -68,7 +71,8 @@ public class LeistungDialog extends JDialog {
 			initWerte(leistung);
 		setFocus();
 		clearWarnings();
-		setVisible(true);					
+		setVisible(true);
+		}
 	}
 	
 	private void bestaetigenClicked(){
@@ -82,7 +86,6 @@ public class LeistungDialog extends JDialog {
 				    "Fehler",
 				    JOptionPane.ERROR_MESSAGE);
 		}
-
 	}
 	
 	private boolean leistungÄndern () {

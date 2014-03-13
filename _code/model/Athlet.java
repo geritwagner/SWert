@@ -11,7 +11,7 @@ import main.Main;
  * Model-Klasse für das "Athlet"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-public class Athlet implements AthletInterface{
+public class Athlet extends Observable implements AthletInterface {
 
 	private static final int ANZAHL_LEISTUNGEN_FÜR_BERECHNUNG_DES_SLOPE_FAKTORS = 2;
 	private static final int MINIMUM_VALID_SLOPE_FAKTOR = 15;
@@ -26,14 +26,16 @@ public class Athlet implements AthletInterface{
 	private LeistungHelper leistungHelper = Main.mainFrame.leistungHelper;
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
 	
-	public Athlet(String name) {
+	public Athlet(String name, LinkedList<Leistung> leistungen) {
 		this.id = getNextAthletId();
 		this.name = name;
+		this.alleLeistungen = leistungen;
 	}
 	
-	public Athlet(long id, String name) {
+	public Athlet(long id, String name, LinkedList<Leistung> leistungen) {
 		this.id = id;
-		this.name = name;		
+		this.name = name;
+		this.alleLeistungen = leistungen;
 	}
 	
 	private long getNextAthletId() {
@@ -61,6 +63,8 @@ public class Athlet implements AthletInterface{
 	
 	public boolean addLeistung(Leistung leistung) {
 		alleLeistungen.add(leistung);
+		setChanged();
+		notifyObservers(this);
 		return true;
 	}
 	
