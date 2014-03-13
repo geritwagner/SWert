@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.beans.*;
 import java.text.*;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.text.*;
@@ -26,10 +27,10 @@ public class LeistungDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize();
 	
-	private JTextField textFieldBezeichnung;
+	protected JTextField textFieldBezeichnung;
 	private JLabel lblBezeichnungError;
-	private JComboBox<String> comboBoxStrecke;
-	private JDateChooser calendar;
+	protected JComboBox<String> comboBoxStrecke;
+	protected JDateChooser calendar;
 	private JLabel lblCalendarError;
 	
 	private JRadioButton rdbtnZeit;
@@ -56,7 +57,7 @@ public class LeistungDialog extends JDialog {
 	
 	LeistungDialogController controller;
 	
-	to do: funtionalität in den Controller ausgliedern
+	// todo: funtionalität in den Controller ausgliedern
 
 	public LeistungDialog(Athlet athlet, Leistung leistung) {
 		if (leistung != null && leistung.getId_strecke() == -1) {
@@ -77,7 +78,7 @@ public class LeistungDialog extends JDialog {
 	}
 	
 	private void bestaetigenClicked(){
-		if(leistungÄndern()) {
+		if(controller.leistungÄndern()) {
 			release();				
 		} else {
 			JOptionPane.showMessageDialog(contentPanel,
@@ -87,30 +88,57 @@ public class LeistungDialog extends JDialog {
 		}
 	}
 	
-	private boolean leistungÄndern () {
-		if(true == validateInput()) {
-			änderungenDurchführen();
-			return true;
-		} else {
-			return false;
-		}
-	}
+	
 
-	private void änderungenDurchführen(){
-		long id_athlet = athlet.getId();
-		int id_strecke = comboBoxStrecke.getSelectedIndex();
+	protected boolean validateInput(){
+		boolean validInput = true;
 		String bezeichnungString = textFieldBezeichnung.getText();
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-		Date datum = calendar.getDate();
-		String datumString = df.format(datum);
-		if (this.leistung == null){
-			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
-			// TODO: hier sollte die Änderung des views (über observer) und des models (athlet.set..., bis jetzt in der Methode addZeile enthalten) strikt getrennt werden!
-			athlet.addLeistung(leistung);
-		} else {
-			long leistung_id = leistung.getId();
-			athlet.updateLeistung(leistung_id, id_strecke, bezeichnungString, datumString, geschwindigkeit);				
+		if(!isValidBezeichnung(bezeichnungString)) {
+			validInput = false;
 		}
+		Date datum = calendar.getDate();
+		if(!isValidDatum(datum)) {
+			validInput = false;
+		}
+
+		String zeitString = textFieldZeit.getText();
+		String kmhString = textFieldkmH.getText();
+		String msString = textFieldMs.getText();
+		String minkmString = textFieldminKm.getText();
+		if (rdbtnZeit.isSelected()) {
+			if(!isValidZeit(zeitString)) {
+				validInput = false;
+			}
+			setzeKmH(this.geschwindigkeit);
+			setzeMs(this.geschwindigkeit);
+			setzeMinKm(this.geschwindigkeit);
+		} else if (rdbtnkmH.isSelected()) {
+			if(!isValidKmh(kmhString)) {
+				validInput = false;
+			}
+			setzeZeit(this.geschwindigkeit);
+			setzeMs(this.geschwindigkeit);
+			setzeMinKm(this.geschwindigkeit);
+		} else if (rdbtnms.isSelected()) {
+			if(!isValidMs(msString)) {
+				validInput = false;
+			}
+			setzeZeit(this.geschwindigkeit);
+			setzeKmH(this.geschwindigkeit);
+			setzeMinKm(this.geschwindigkeit);
+		} else if (rdbtnminkm.isSelected()) {
+			if(!isValidMinKm(minkmString)) {
+				validInput = false;
+			}
+			setzeZeit(this.geschwindigkeit);
+			setzeKmH(this.geschwindigkeit);
+			setzeMs(this.geschwindigkeit);
+		}
+		return validInput;
+	}
+	
+	protected double getGeschwindigkeit() {
+		return geschwindigkeit;
 	}
 	
 	private boolean isValidBezeichnung(String bezeichnung) {
@@ -301,52 +329,7 @@ public class LeistungDialog extends JDialog {
 		textFieldZeit.setValue(lHelper.parseSecInZeitstring(sec));
 	}
 	
-	private boolean validateInput(){
-		boolean validInput = true;
-		String bezeichnungString = textFieldBezeichnung.getText();
-		if(!isValidBezeichnung(bezeichnungString)) {
-			validInput = false;
-		}
-		Date datum = calendar.getDate();
-		if(!isValidDatum(datum)) {
-			validInput = false;
-		}
 
-		String zeitString = textFieldZeit.getText();
-		String kmhString = textFieldkmH.getText();
-		String msString = textFieldMs.getText();
-		String minkmString = textFieldminKm.getText();
-		if (rdbtnZeit.isSelected()) {
-			if(!isValidZeit(zeitString)) {
-				validInput = false;
-			}
-			setzeKmH(this.geschwindigkeit);
-			setzeMs(this.geschwindigkeit);
-			setzeMinKm(this.geschwindigkeit);
-		} else if (rdbtnkmH.isSelected()) {
-			if(!isValidKmh(kmhString)) {
-				validInput = false;
-			}
-			setzeZeit(this.geschwindigkeit);
-			setzeMs(this.geschwindigkeit);
-			setzeMinKm(this.geschwindigkeit);
-		} else if (rdbtnms.isSelected()) {
-			if(!isValidMs(msString)) {
-				validInput = false;
-			}
-			setzeZeit(this.geschwindigkeit);
-			setzeKmH(this.geschwindigkeit);
-			setzeMinKm(this.geschwindigkeit);
-		} else if (rdbtnminkm.isSelected()) {
-			if(!isValidMinKm(minkmString)) {
-				validInput = false;
-			}
-			setzeZeit(this.geschwindigkeit);
-			setzeKmH(this.geschwindigkeit);
-			setzeMs(this.geschwindigkeit);
-		}
-		return validInput;
-	}
 	
 	// ---------------------------------- initialize view -------------------------------------
 

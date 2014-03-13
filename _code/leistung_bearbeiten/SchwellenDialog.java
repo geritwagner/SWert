@@ -47,8 +47,6 @@ public class SchwellenDialog extends JDialog {
 
 	SchwellenDialogController controller;
 	
-	to do: funtionalität in den Controller ausgliedern
-	
 	public SchwellenDialog(Athlet athlet, Leistung leistung) {
 		this.leistung = leistung;
 		this.athlet = athlet;
@@ -562,7 +560,7 @@ public class SchwellenDialog extends JDialog {
 	 * und hinzufügen dieses Objekts in die Leistungstabelle
 	 * @return TRUE, falls alle Eingaben i.o.
 	 */
-	private boolean validateInput () {
+	protected boolean validateInput () {
 		boolean validInput = true;
 		
 		String streckenString = textFieldStrecke.getText();
@@ -590,7 +588,7 @@ public class SchwellenDialog extends JDialog {
 	}
 	
 	private void bestaetigenClicked(){
-		if(leistungÄndern()) {
+		if(controller.leistungÄndern()) {
 			release();					
 		} else {
 			JOptionPane.showMessageDialog(contentPanel,
@@ -600,31 +598,8 @@ public class SchwellenDialog extends JDialog {
 		}
 	}
 	
-	private boolean leistungÄndern(){
-		if(true == validateInput()) {
-			änderungenDurchführen();
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	private void änderungenDurchführen(){
-		long id_athlet = athlet.getId();
-		int id_strecke = -1;
-		// TODO::
-		String bezeichnungString = "Direkt eingegebene Schwelle";
-		Date datum = new Date();
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-		String datumString = df.format(datum);
-		if (this.leistung == null){
-			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
-			// TODO: hier sollte die Änderung des views (über observer) und des models (athlet.set..., bis jetzt in der Methode addZeile enthalten) strikt getrennt werden!
-			athlet.addLeistung(leistung);
-		} else {
-			long leistung_id = leistung.getId();
-			athlet.updateLeistung(leistung_id, id_strecke, bezeichnungString, datumString, geschwindigkeit);				
-		}
+	protected double getGeschwindigkeit() {
+		return geschwindigkeit;
 	}
 	
 	private void clearWarnings() {
