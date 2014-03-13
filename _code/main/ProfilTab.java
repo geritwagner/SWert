@@ -9,10 +9,6 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import net.miginfocom.swing.MigLayout;
 
-import analyse_bestzeiten.BestzeitenDialog;
-import analyse_diagramm.DiagrammController;
-import analyse_trainingsbereich.TrainingsbereichDialog;
-import leistung_bearbeiten.LeistungDialog;
 import globale_helper.*;
 import model.*;
 
@@ -40,10 +36,12 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private boolean ausDialog = false;
 	private MainFrame mainFrame = Main.mainFrame;
 	private Athlet athlet;
+	private ProfilTabController controller;
 	
 	public ProfilTab(Athlet athlet) {
 		this.athlet = athlet;
 		this.speicherPfad = null;
+		controller = new ProfilTabController(athlet, this);
 		initLayout(athlet.getName());
 		setAnalysenVerfügbar(false);
 		initJTable();
@@ -59,20 +57,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	public String getSpeicherPfad() {
 		return speicherPfad;
 	}
-	
-	public void bestzeitenButtonPressed(){
-		new BestzeitenDialog(athlet);
-	}
 
-	public void leistungskurveButtonPressed(){
-		// TODO: call DiagrammFrame!!!
-		new DiagrammController();
-	}
-	
-	public void trainingsBereichButtonPressed(){
-		new TrainingsbereichDialog(athlet);
-	}
-	
 	// ----------------- Actions ------------------------------
 	
 	public void triggerTableChanged(int zeileView, int spalte, Object data){
@@ -124,26 +109,11 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	}
 	}
 
-	public void leistungBearbeitenPressed() {
-		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
-		new LeistungDialog(athlet, leistung);
-	}
-
-	public void deleteZeileButtonPressed() {
-		if (JOptionPane.showConfirmDialog(this, "Wollen Sie die Leistung wirklich löschen?", "Leistung löschen", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-			deleteLeistung();
-		}
-	}
-	
-	public void neueLeistungButtonPressed(){
-		setBearbeitenStatus(false);
-		new LeistungDialog(athlet, null);		
-	}
-
 	public void tabSchließen() {
 		setBearbeitenStatus(false);
         int i = mainFrame.tabbedPane.getSelectedIndex();
         // TODO: welcher Fall ist i=-1 bzw !=-1 ??? ggf. schon gespeichert???
+        // TODO: Redundanzen eliminieren!! (-> in release() integrieren!)
         if (i != -1) {
         	if (gespeichert) {
         		mainFrame.tabbedPane.remove(i); 
@@ -225,6 +195,12 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		}			
 	}
 	
+	public void deleteZeileButtonPressed() {
+		if (JOptionPane.showConfirmDialog(this, "Wollen Sie die Leistung wirklich löschen?", "Leistung löschen", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+			deleteLeistung();
+		}
+	}
+
 	/**
 	 * Löscht eine ausgewählte Zeile, wenn von Schwellen- oder Leistungsdialog gefordert,
 	 * ohne eine automatische Auswahl triggern zu können
@@ -258,6 +234,10 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		setBearbeitenStatus(false);		
 	}
 	
+	public void leistungBearbeitenPressed(){
+		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
+		controller.leistungBearbeitenPressed(leistung);
+	}
 	
 	// ---------------------------------- TABLE-METHODS: GET/SET ----------------------------
 	
@@ -358,7 +338,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnBestzeiten.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				bestzeitenButtonPressed();				
+				controller.bestzeitenButtonPressed();				
 			}
 		});
 		panel.add(btnBestzeiten, "cell 0 5,alignx right");
@@ -368,7 +348,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnTrainingsbereich.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				trainingsBereichButtonPressed();
+				controller.trainingsBereichButtonPressed();
 			}
 		});
 		panel.add(btnTrainingsbereich, "cell 1 5");
@@ -378,7 +358,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnLeistungskurve.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				leistungskurveButtonPressed();
+				controller.leistungskurveButtonPressed();
 			}
 		});
 		panel.add(btnLeistungskurve, "cell 2 5,alignx left");
@@ -397,7 +377,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnLeistungHinzufügen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				neueLeistungButtonPressed();
+				controller.neueLeistungButtonPressed();
 			}
 		});
 		
@@ -510,5 +490,11 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			setAnalysenVerfügbar(false);
 		}
 		setAlleLeistungen();
-		}
+	}
+	
+	private void release(){
+		// TODO: model.deleteObserver(this);
+		controller.release();
+		controller = null;
+	}
 }

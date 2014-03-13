@@ -50,8 +50,7 @@ public class TrainingsbereichDialog extends JDialog {
 	private void abbrechen(){
 		JOptionPane.showMessageDialog(this, "Für die Berechnung der Trainingsbereiche müssen zwei Leistungen für die Berechnung" +
 				"des Slope-Faktors ausgewählt werden.", "Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
-		setVisible(false);
-		dispose();
+		release();
 	}
 	
 	private void initProperties() {
