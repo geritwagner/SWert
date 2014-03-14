@@ -1,14 +1,10 @@
 package datei_operationen;
 
-import globale_helper.LeistungHelper;
-
 import java.io.*;
 import java.util.LinkedList;
-import javax.swing.JOptionPane;
-import main.Main;
-import main.ProfilTab;
-import model.*;
 import au.com.bytecode.opencsv.*;
+
+import model.*;
 
 /**
  * Controller für alle Aktionen, die die CSV-Dateien betreffen
@@ -16,43 +12,7 @@ import au.com.bytecode.opencsv.*;
  */
 public class CSVController {
 
-	private String nameAthlet;
-	private long idAthlet;
-
-	// TODO: auf protected ändern!!
 	
-	/**
-	 * Methode die eine CSV-Datei einliest und daraus ein Athleten-Profil erstellt;
-	 * false wird zurückgegeben, falls dabei eine Fehler entsteht
-	 * @return: TRUE für erfolgreiches Einlesen der CSV
-	 */
-	// TODO: sollte ein Athleten-Objekt zurückgeben, öffnen von Tabs sollte im Controller realisiert werden!
-	public boolean lesen (String pfad) {	
-		try{			
-		    CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
-		    if (!isSyntacticallyCorrect(pfad)) {
-		    	reader.close();
-		    	return false;
-		    }
-		    kopfzeileAuslesen(reader);
-		    if (Main.mainFrame.checkAthletGeöffnet(nameAthlet,idAthlet)) {
-		    	JOptionPane.showMessageDialog(Main.mainFrame.getContext(),
-		    			"Das ausgewählte Athletenprofil ist bereit geöffnet!",
-		    			"Athletenprofil bereits geöffnet",
-						JOptionPane.WARNING_MESSAGE);
-		    	reader.close();
-		    	return true;
-		    }
-		    ProfilTab tab = Main.mainFrame.createTab(nameAthlet, idAthlet, getLeistungen(reader));
-		    tab.setSpeicherPfad(pfad);
-		    tab.setSpeicherStatus(true);
-		    reader.close();
-		    return true;
-		}catch (Exception e) {
-			 e.printStackTrace();
-			 return false;
-		}
-	}
 	
 	/**
 	 * Methode, die ein übergebenes Profil-Tab unter der Pfadangabe
@@ -66,7 +26,7 @@ public class CSVController {
 		     writer.writeNext(entries);	     
 		     schreibeLeistungen(writer,athlet.getLeistungen());
 		     writer.close();
-		     if (isSyntacticallyCorrect(pfad)) {	    	 
+		     if (ValidatorHelper.isSyntacticallyCorrect(pfad)) {	    	 
 		    	 return true;
 		     } else {
 		    	 return false;
@@ -75,45 +35,15 @@ public class CSVController {
 	    	e.printStackTrace();
 			return false;
 		}
-	}
-	
-	private void kopfzeileAuslesen(CSVReader reader) throws IOException{
-	    String [] aktuelleZeile;
-	    aktuelleZeile = reader.readNext();
-	    nameAthlet = aktuelleZeile[1];
-	    idAthlet = Long.parseLong(aktuelleZeile[0]);
-	}
-	
-	private LinkedList<Leistung> getLeistungen(CSVReader reader) throws IOException{
-		String [] aktuelleZeile;
-		LinkedList<Leistung> leistungen = new LinkedList<>();
-		while ((aktuelleZeile = reader.readNext()) != null) {
-			leistungen.add (leistungAuslesen(aktuelleZeile));
-			// TODO: remove!
-//	    	tab.addZeile(naechsteLeistung);
-	    }
-		return leistungen;
-	}
-	
-	private Leistung leistungAuslesen (String[] leistung){
-		String datum = leistung[0];
-    	String strecke = leistung[1];
-    	int streckenId = Strecken.getStreckenIdByString(strecke);
-    	int streckenlänge = Strecken.getStreckenlaengeById(streckenId);
-    	String bezeichnung = leistung[2];
-    	double zeit = Double.parseDouble(leistung[3]);
-    	LeistungHelper leistungHelper = new LeistungHelper();
-    	double geschwindigkeit = leistungHelper.berechneGeschwindigkeit(streckenlänge, zeit);
-    	return new Leistung(streckenId, idAthlet, bezeichnung, datum, geschwindigkeit);
-	}
-	
+	}	
+
 	private String[] getAthletenInfo(Athlet athlet) {
 		String[] athletInfo = new String[4];
 		athletInfo[0] = String.valueOf(athlet.getId());
 		athletInfo[1] = athlet.getName();
 		return athletInfo;
 	}
-	
+
 	private void schreibeLeistungen (CSVWriter writer, LinkedList<Leistung> leistungen) {
 		// TODO: auch die getObjectData-Methode verwenden?
 		// TODO: besser lesbare Formate verwenden (1.000m und 12 km/h) - dann müsste aber die reader-Methoden ebenfalls angepasst werden.
@@ -128,41 +58,5 @@ public class CSVController {
 		} 
 	}
 	
-	private boolean isSyntacticallyCorrect (String pfad) {
-		try{
-			CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
-			if(!isSyntacticallyCorrectHeading(reader))	{
-				reader.close();
-				return false;
-			}
-			if(!isSyntacticallyCorrectLeistungen(reader))	{
-				reader.close();
-				return false;
-			}
-			reader.close();
-			return true;		
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
-		}		
-	}
-	
-	private boolean isSyntacticallyCorrectHeading(CSVReader reader) throws IOException{
-		String[] aktuelleZeile;	
-		aktuelleZeile = reader.readNext();
-		if (aktuelleZeile.length != 4) {
-			return false;
-		}
-		return true;
-	}
-	
-	private boolean isSyntacticallyCorrectLeistungen(CSVReader reader) throws IOException{
-		String[] aktuelleZeile;	
-		while ((aktuelleZeile = reader.readNext()) != null) {
-	       if (aktuelleZeile.length != 4) {
-	    	   return false;
-	       }
-	    }
-		return true;
-	}	
+
 }

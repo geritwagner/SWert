@@ -1,35 +1,42 @@
 package datei_operationen;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
 import main.Main;
 
 /**
- * Dialog zum Auswählen einer zu öffnenden CSV-Datei
+ * Dialog zum öffnen einer Datei
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class DateiPfadOeffnen {
-	
-	// TODO: protected verwenden!!
 
-	private JFileChooser chooser = new JFileChooser();
-	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
+	DateiOeffnenController controller;
 	
-	public DateiPfadOeffnen() {
-		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
-        chooser.addChoosableFileFilter(filter); 
+	public DateiPfadOeffnen() throws FileNotFoundException, IOException, AlreadyOpenException, SyntaxException   {
+		controller = new DateiOeffnenController(this);
+		String pfad = open();
+		controller.lesen(pfad);
+		controller.openAthlet();
+		release();
 	}
 	
-	/**
-	 * Methode die den Pfad einer zu öffnenden Datei als String zurückgibt
-	 */
-	public String open() {         
-        // Dialog zum Oeffnen von Dateien anzeigen
+	public String open() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
+		FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");chooser.addChoosableFileFilter(filter); 
 		if (chooser.showOpenDialog(Main.mainFrame.getContext()) == JFileChooser.APPROVE_OPTION){
 			return chooser.getSelectedFile().getAbsolutePath();        
 		}else {
 			return null;
 		}
+	}
+	
+	protected void release(){
+		controller.release();
+		controller = null;
 	}
 }

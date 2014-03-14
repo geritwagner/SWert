@@ -5,18 +5,13 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-
-
-import analyse_diagramm.DiagrammController;
 import net.miginfocom.swing.MigLayout;
 
-import datei_operationen.CSVController;
-import datei_operationen.DateiPfadOeffnen;
-import datei_operationen.DateiPfadSpeichern;
-import globale_helper.LeistungHelper;
-import leistung_bearbeiten.LeistungDialog;
-import model.Athlet;
-import model.Leistung;
+import analyse_diagramm.*;
+import datei_operationen.*;
+import globale_helper.*;
+import leistung_bearbeiten.*;
+import model.*;
 
 public class MainFrame {
 
@@ -294,18 +289,28 @@ public class MainFrame {
 	}
 	
 	private void dateiOeffnenClicked(){
-		try {						
-			DateiPfadOeffnen dö = new DateiPfadOeffnen();
-			String pfad = dö.open();						
-			if (pfad != null) {							
-				if (!csvController.lesen(pfad)){
-					fehlermeldungBeiLesen();
-				}
-			}	
-		}catch(Exception e) {
-			
+		try {
+			new DateiPfadOeffnen();
+		}catch(java.io.FileNotFoundException e) {
+			JOptionPane.showMessageDialog(mainFrame,
+				"Die Datei wurde nicht gefunden, bitte probieren Sie es noch einmal.",
+				"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);
+		}catch(java.io.IOException e) {
+			JOptionPane.showMessageDialog(mainFrame,
+				"Die Datei konnte nicht gelesen werden, bitte probieren Sie es noch einmal.",
+				"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);
+		} catch (SyntaxException  e){
+			JOptionPane.showMessageDialog(mainFrame,
+					"Es ist ein Fehler beim Öffnen der Datei aufgetreten (Format/Syntax), bitte überprüfen sie die Datei.",
+					"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);			
+		} catch (AlreadyOpenException  e){
+		JOptionPane.showMessageDialog(mainFrame,
+				"Die Datei ist schon geöffnet.",
+				"Datei schon geöffnet", JOptionPane.ERROR_MESSAGE);			
 		}
 	}
+	
+	
 	
 	private void tabSchließenClicked(){
 		if (selectedIndex != -1	) {
@@ -380,7 +385,7 @@ public class MainFrame {
 	}
 	
 	public void createTab (String name, LinkedList<Leistung> leistungen) {
-		// TODO: hier sollte kein Athlet angelegt werden!!!
+		// TODO: ggf .Liste<Athlet> add neuenathlet -  mit observer, der neue Tabs anlegt!?!?!?
 			Athlet athlet = new Athlet(name, leistungen);
 			ProfilTab newTab = new ProfilTab(athlet);			
 			tabList.add(0, newTab);
@@ -414,13 +419,6 @@ public class MainFrame {
 		JOptionPane.showMessageDialog(mainFrame, 
 				"Es ist ein Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 
 				"Fehler beim Speichern",
-				JOptionPane.ERROR_MESSAGE);
-	}
-	
-	public void fehlermeldungBeiLesen() {
-		JOptionPane.showMessageDialog(mainFrame,
-				"Es ist ein Fehler beim Öffnen der Datei aufgetreten, bitte probieren Sie es noch einmal.",
-				"Fehler beim Öffnen der Datei",
 				JOptionPane.ERROR_MESSAGE);
 	}
 	
