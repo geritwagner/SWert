@@ -21,10 +21,12 @@ public class DateiSpeichern {
 	private JFileChooser chooser;
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
 	DateiSpeichernCSVController controller;
+	Athlet athlet;
 	
 	
-	public DateiSpeichern(String pfad) {
+	public DateiSpeichern(Athlet athlet, String pfad) {
 		controller = new DateiSpeichernCSVController();
+		this.athlet = athlet;
 		if (pfad != null)
 			controller.setPfad(pfad);
 	}
@@ -33,7 +35,13 @@ public class DateiSpeichern {
 		return controller.isSetPfad();
 	}
 	
-	public void speichern(Athlet athlet) throws IOException{
+	public void setSpeicherPfad(String pfad){
+		controller.setPfad(pfad);
+	}
+	
+	public void speichern(boolean forceSpeichernUnter) throws IOException{
+		if (!isSetPfad() || forceSpeichernUnter)
+			setPfadFromUserDialog(athlet.getName());
 		controller.schreiben(athlet);
 	}
 	

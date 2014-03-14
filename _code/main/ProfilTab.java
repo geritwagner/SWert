@@ -44,7 +44,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	// TODO: auslagern!!
 	public Athlet getAthlet(){return athlet;}
 	public String getSpeicherPfad() {return speicherPfad;}
-	public void setSpeicherPfad(String speicherPfad) {this.speicherPfad = speicherPfad;}	
 	protected boolean getSpeicherStatus() {	return gespeichert;}
 
 	
@@ -64,6 +63,11 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		}
 		setBearbeitenStatus(false);
 	}
+	
+	public void setSpeicherPfad(String speicherPfad) {
+		// called after a new file is opened
+		controller.setSpeicherPfad(speicherPfad);
+	}	
 		
 	public void triggerTableChanged(int zeileView, int spalte, Object data){
 		// automatischeVerarbeitung: bricht den Methodenaufruf hier ab.
@@ -106,12 +110,10 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 					"Distanzen ausgewählt werden!", "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
     	}
 	}
-	
+		
 	protected void speichernClicked(boolean forceSpeichernUnter){
-		// TODO: sowohl speichern und speichernUnter: wenn pfad schon gesetzt, dann automatisch verwenden, sonst
-		// nach neuem Pfad fragen.
 		try{
-			controller.speichernUnter(forceSpeichernUnter);
+			controller.speichern(forceSpeichernUnter);
 		}catch (IOException e) {
 			JOptionPane.showMessageDialog(this, 
 				"Es ist ein Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 

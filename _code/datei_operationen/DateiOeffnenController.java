@@ -8,6 +8,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import javax.swing.JOptionPane;
 
 import main.Main;
+import main.ProfilTab;
 import model.*;
 
 public class DateiOeffnenController {
@@ -15,9 +16,9 @@ public class DateiOeffnenController {
 	private String nameAthlet;
 	private long idAthlet;
 	private LinkedList<Leistung> leistungen;
-	DateiPfadOeffnen view;
+	DateiOeffnen view;
 	
-	protected DateiOeffnenController(DateiPfadOeffnen view){
+	protected DateiOeffnenController(DateiOeffnen view){
 		this.view = view;
 	}
 	
@@ -46,9 +47,11 @@ public class DateiOeffnenController {
 	    leistungen = getLeistungen(reader);
 	}
 
-	protected void openAthlet(){
+	protected void openAthletInTab(String pfad){
 		// TODO: eleganter!! zu athletenliste hinzufügen, die von Mainframe observed wird (tab automatisch öffnen!!!)
-	    Main.mainFrame.createTab(nameAthlet, idAthlet, leistungen);
+	    ProfilTab tab = Main.mainFrame.createTab(nameAthlet, idAthlet, leistungen);
+	    tab.setSpeicherPfad(pfad);
+	    tab.setSpeicherStatus(true);
 	}
 	
 	private void kopfzeileAuslesen(CSVReader reader) throws IOException{

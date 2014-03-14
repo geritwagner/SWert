@@ -65,15 +65,16 @@ public class ProfilTabController {
 		athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();		
 	}
 
-	protected void speichernUnter(boolean forceSpeichernUnter) throws IOException{
+	protected void setSpeicherPfad(String pfad) {
 		if (speicher == null)
-			speicher = new DateiSpeichern("");
-		if (!speicher.isSetPfad())
-			speicher.setPfadFromUserDialog(athlet.getName());
-
-		// TODO: Pfad sollte beim öffnen bzw. bei speichern/UNTER über den 
-		// "View" DateiPfadSpeichern im entsprechenden Controller gesetzt werden!!!!
-		speicher.speichern(athlet);
+			speicher = new DateiSpeichern(athlet, "");
+		speicher.setSpeicherPfad(pfad);
+	}
+	
+	protected void speichern(boolean forceSpeichernUnter) throws IOException{
+		if (speicher == null)
+			speicher = new DateiSpeichern(athlet, "");
+		speicher.speichern(forceSpeichernUnter);
 		view.setSpeicherStatus(true);				
 	}	
 }

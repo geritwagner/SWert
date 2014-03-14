@@ -282,7 +282,7 @@ public class MainFrame {
 	
 	private void dateiOeffnenClicked(){
 		try {
-			new DateiPfadOeffnen();
+			new DateiOeffnen();
 		}catch(java.io.FileNotFoundException e) {
 			JOptionPane.showMessageDialog(mainFrame,
 				"Die Datei wurde nicht gefunden, bitte probieren Sie es noch einmal.",

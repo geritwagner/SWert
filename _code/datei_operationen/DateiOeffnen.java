@@ -12,19 +12,19 @@ import main.Main;
  * Dialog zum öffnen einer Datei
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-public class DateiPfadOeffnen {
+public class DateiOeffnen {
 
 	DateiOeffnenController controller;
 	
-	public DateiPfadOeffnen() throws FileNotFoundException, IOException, AlreadyOpenException, SyntaxException   {
+	public DateiOeffnen() throws FileNotFoundException, IOException, AlreadyOpenException, SyntaxException   {
 		controller = new DateiOeffnenController(this);
-		String pfad = open();
+		String pfad = getPfadFromUserDialog();
 		controller.openAthletFromCSVFile(pfad);
-		controller.openAthlet();
+		controller.openAthletInTab(pfad);
 		release();
 	}
 	
-	public String open() {
+	public String getPfadFromUserDialog() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
 		FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");chooser.addChoosableFileFilter(filter); 
