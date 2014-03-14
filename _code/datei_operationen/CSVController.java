@@ -121,7 +121,7 @@ public class CSVController {
 		for (Leistung aktuelleLeistung : leistungen){
 			String[] eingaben = new String[4];
 			eingaben[0] = aktuelleLeistung.getDatum();
-			eingaben[1] = String.valueOf(aktuelleLeistung.getStrecke());
+			eingaben[1] = String.valueOf(aktuelleLeistung.getStreckenString());
 			eingaben[2] = aktuelleLeistung.getBezeichnung();
 			eingaben[3] = String.valueOf(aktuelleLeistung.getZeit());
 			writer.writeNext(eingaben);

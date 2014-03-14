@@ -21,7 +21,6 @@ public class ProfilTabController {
 		athlet = null;
 	}
 	
-	
 	public void bestzeitenButtonPressed(){
 		new BestzeitenDialog(athlet);
 	}
@@ -43,5 +42,21 @@ public class ProfilTabController {
 	public void neueLeistungButtonPressed(){
 		view.setBearbeitenStatus(false);
 		new LeistungDialog(athlet, null);		
+	}
+	
+	public void leistungLöschen(Leistung leistung){
+		athlet.removeLeistung(leistung);
+	}
+
+	protected void auswahlFürSlopeFaktorÄndern(Leistung leistung, boolean setTo) throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException{
+		if (setTo == true){
+			athlet.setLeistungToAuswahlForSlopeFaktor(leistung);
+		} else {
+			athlet.removeLeistungFromAuswahlForSlopeFaktor(leistung);
+		}		
+	}
+
+	protected void automatischAuswählen() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException{
+		athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();		
 	}
 }

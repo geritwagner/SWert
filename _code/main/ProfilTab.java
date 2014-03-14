@@ -33,10 +33,17 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	
 	private boolean gespeichert = false;
 	private boolean automatischeVerarbeitung = false;
-	private boolean ausDialog = false;
 	private MainFrame mainFrame = Main.mainFrame;
 	private Athlet athlet;
 	private ProfilTabController controller;
+
+	
+	// TODO: auslagern!!
+	public Athlet getAthlet(){return athlet;}
+	public String getSpeicherPfad() {return speicherPfad;}
+	public void setSpeicherPfad(String speicherPfad) {this.speicherPfad = speicherPfad;}	
+	protected boolean getSpeicherStatus() {	return gespeichert;}
+
 	
 	public ProfilTab(Athlet athlet) {
 		this.athlet = athlet;
@@ -47,24 +54,18 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		initJTable();
 		setAlleLeistungen();
 		athlet.addObserver(this);
+		try {
+			controller.automatischAuswählen();
+			chckbxLeistungenAuswahl.setSelected(true);
+		} catch (Exception e) {
+		}
 		setBearbeitenStatus(false);
 	}
 		
-	public Athlet getAthlet(){
-		return athlet;
-	}
-	
-	public String getSpeicherPfad() {
-		return speicherPfad;
-	}
-
-	// ----------------- Actions ------------------------------
-	
 	public void triggerTableChanged(int zeileView, int spalte, Object data){
 		// automatischeVerarbeitung: bricht den Methodenaufruf hier ab.
 		if (automatischeVerarbeitung)
         	return;
-
         if (spalte == BOOLEAN_SPALTE )
         	auswahlFürSlopeFaktorÄndern(zeileView, spalte, (boolean) data);
 	}
@@ -73,12 +74,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	automatischeVerarbeitung = true;
     	Leistung leistung = getLeistungInZeile(zeileView);
     	try{
-	    	if (setTo == true){
-	    		athlet.setLeistungToAuswahlForSlopeFaktor(leistung);
-	    	} else {
-	    		athlet.removeLeistungFromAuswahlForSlopeFaktor(leistung);
-	    	}
-	    	// TODO: eleganter?
+    		controller.auswahlFürSlopeFaktorÄndern(leistung, setTo);
 	    	chckbxLeistungenAuswahl.setSelected(false);
     	} catch (ThreeLeistungenForSlopeFaktorException e){
         	DefaultTableModel tableModel = (DefaultTableModel) leistungenTabelle.getModel();
@@ -88,60 +84,73 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	} catch (GleicheStreckeException e){
         	DefaultTableModel tableModel = (DefaultTableModel) leistungenTabelle.getModel();
         	tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
-			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte müssen zwei Leistungen über unterschiedliche Distanzen ausgewählt werden!"
-					, "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte müssen zwei Leistungen über unterschiedliche " +
+					"Distanzen ausgewählt werden!", "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
     	}
     	automatischeVerarbeitung = false;
 	}
 	
-	public void checkboxLeistungenAutomatischWählenClicked() {		
+	private void checkboxLeistungenAutomatischWählenClicked() {		
 		try{
 			if (chckbxLeistungenAuswahl.isSelected()){
-				athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();				
-			} else {
+				controller.automatischAuswählen();
 			}
     	} catch (ThreeLeistungenForSlopeFaktorException e){
 			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte dürfen nur zwei Leistungen ausgewählt werden!"
 					, "Zwei Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
     	} catch (GleicheStreckeException e){
-			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte müssen zwei Leistungen über unterschiedliche Distanzen ausgewählt werden!"
-					, "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte müssen zwei Leistungen über unterschiedliche " +
+					"Distanzen ausgewählt werden!", "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
     	}
 	}
 
-	public void tabSchließen() {
+	protected void tabSchließen() {
 		setBearbeitenStatus(false);
-        int i = mainFrame.tabbedPane.getSelectedIndex();
-        // TODO: welcher Fall ist i=-1 bzw !=-1 ??? ggf. schon gespeichert???
-        // TODO: Redundanzen eliminieren!! (-> in release() integrieren!)
-        if (i != -1) {
+        int tabNumber = mainFrame.tabbedPane.getSelectedIndex();
+        if (tabNumber != -1) {
         	if (gespeichert) {
-        		mainFrame.tabbedPane.remove(i); 
-        		mainFrame.tabList.remove(i);
+        		release();
         	} else {
-        		int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
+        		int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+
+        				athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
         		if (nutzerauswahlSpeichern == 0) {
+        			// TODO: speichern besser lösen!!
         			mainFrame.speichern();
-        			mainFrame.tabbedPane.remove(i); 
-            		mainFrame.tabList.remove(i);
+            		release();
         		} else if (nutzerauswahlSpeichern == 1) {
-        			mainFrame.tabbedPane.remove(i); 
-            		mainFrame.tabList.remove(i);
+            		release();
         		}
         	}
         }
 	}
 	
-	// ------------------ Status functions ----------------------------------
+	private void setAlleLeistungen(){
+		// TODO: ggf. nicht alles löschen & neu eintragen... - über observing Leisung arbeiten?!!?
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		if (model.getRowCount() > 0) {
+		    for (int i = model.getRowCount() - 1; i > -1; i--) {
+		    	model.removeRow(i);
+		    }
+		}
 
-	public void setSpeicherPfad(String speicherPfad) {
-		this.speicherPfad = speicherPfad;
-	}	
-	
-	public boolean getSpeicherStatus() {
-		return gespeichert;
+		for (Leistung aktuelleLeistung: athlet.getLeistungen()){
+			model.addRow(aktuelleLeistung.getObjectDataForTable());
+		}			
 	}
-
+	
+	protected void deleteZeileButtonPressed() {
+		if (JOptionPane.showConfirmDialog(this, "Wollen Sie die Leistung wirklich löschen?", "Leistung löschen", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+			int rowToDelete = leistungenTabelle.getSelectedRow();
+			Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
+			controller.leistungLöschen(leistungToRemove);
+		}
+	}
+	
+	protected void leistungBearbeitenPressed(){
+		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
+		controller.leistungBearbeitenPressed(leistung);
+	}
+	
 	public void setSpeicherStatus (boolean gespeichert) {
 		this.gespeichert = gespeichert;
 		int tabStelle = mainFrame.tabbedPane.getSelectedIndex();
@@ -177,69 +186,36 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			btnLeistungskurve.setEnabled(false);
 			btnTrainingsbereich.setEnabled(false);										
 		}
-	}
-	
-	// ----------------------------- Getter and Setter -----------------------
-	
-	public void setAlleLeistungen(){
-		// TODO: ggf. nicht alles löschen & neu eintragen... - über observing Leisung arbeiten?!!?
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		if (model.getRowCount() > 0) {
-		    for (int i = model.getRowCount() - 1; i > -1; i--) {
-		    	model.removeRow(i);
-		    }
-		}
+	}	
 
-		for (Leistung aktuelleLeistung: athlet.getLeistungen()){
-			model.addRow(aktuelleLeistung.getObjectDataForTable());
-		}			
-	}
-	
-	public void deleteZeileButtonPressed() {
-		if (JOptionPane.showConfirmDialog(this, "Wollen Sie die Leistung wirklich löschen?", "Leistung löschen", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-			deleteLeistung();
+	public void update(Observable arg0, Object arg1) {
+		// TODO: differenzierter?
+		if (athlet.getSlopeFaktorStatus() == "set"){
+			LeistungHelper l = new LeistungHelper();
+			try {
+				textFieldSchwelle.setText(l.parseSecInMinutenstring(athlet.getAnaerobeSchwelle()));
+			} catch (Exception e) {
+			}			
+			setAnalysenVerfügbar(true);
+		} else {
+			textFieldSchwelle.setText("-");
+			setAnalysenVerfügbar(false);
 		}
-	}
-
-	/**
-	 * Löscht eine ausgewählte Zeile, wenn von Schwellen- oder Leistungsdialog gefordert,
-	 * ohne eine automatische Auswahl triggern zu können
-	 */
-	// is called from SchwellenDialog
-	// TODO: über observer ändern, nicht löschen & neu einfügen der Zeile!!
-	public void deleteZeileAusDialog() {
-		ausDialog = true;
-		deleteLeistung();
-		ausDialog = false;
+		setAlleLeistungen();
 	}
 	
-	public void deleteLeistung() {
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		int rowToDelete = leistungenTabelle.getSelectedRow();
-		
-		// deckt den Fall ab, wenn neue Leistungen hinzugefügt werden (es wird immer die markierte gelöscht und durch die neue
-		// ersetzt - bei neuen Leistungen ist aber standardmäßig keine bzw. Zeile -1 markiert, die aber nicht gelöscht werden kann)
-		// TODO: eleganter umsetzen??
-		if (-1 == rowToDelete) {
-			return;
-		}
-		Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
-		model.removeRow(leistungenTabelle.convertRowIndexToModel(rowToDelete));	
-		
-		// TODO: umstrukturieren!!
-		// ausDialog: wird dann auf true gesetzt, wenn deleteLeistungDialog() vom LeistungDialog aufgerufen wird
-		if (!ausDialog) {
-			athlet.removeLeistung(leistungToRemove);
-		}
-		setBearbeitenStatus(false);		
+	private void release(){
+		// TODO: model.deleteObserver(this); (auch in anderen observing views!!)
+		controller.release();
+		controller = null;
+		athlet.deleteObserver(this);
+		athlet = null;
+        int i = mainFrame.tabbedPane.getSelectedIndex();
+		mainFrame.tabbedPane.remove(i); 
+		mainFrame.tabList.remove(i);
 	}
 	
-	public void leistungBearbeitenPressed(){
-		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
-		controller.leistungBearbeitenPressed(leistung);
-	}
-	
-	// ---------------------------------- TABLE-METHODS: GET/SET ----------------------------
+	// ---------------------------------- TABLE-METHODS ----------------------------
 	
 	@Override
 	public void tableChanged(TableModelEvent e) {
@@ -290,7 +266,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		add(splitPane, "cell 0 0,grow");
 		
-		
 		JPanel panel = new JPanel();
 		splitPane.setLeftComponent(panel);
 		panel.setLayout(new MigLayout("", "[100][100][100][grow][100]", "[][][][][][]"));
@@ -300,9 +275,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnTabSchlieen.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Abbrechen_16x16.png")));
 		btnTabSchlieen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int i = mainFrame.tabbedPane.getSelectedIndex();
-				ProfilTab tab = (ProfilTab) mainFrame.tabbedPane.getComponentAt(i);
-				tab.tabSchließen();
+				tabSchließen();
 			}
 		});
 		panel.add(btnTabSchlieen, "cell 4 0,alignx right");
@@ -320,7 +293,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		textFieldSchwelle.setColumns(10);
 		
 		chckbxLeistungenAuswahl = new JCheckBox("Leistungen automatisch w\u00E4hlen");
-		// TODO: entsprechend der Logik ggf. wieder standardmäßig auf true setzen...
 		chckbxLeistungenAuswahl.setSelected(false);
 		chckbxLeistungenAuswahl.addActionListener(new ActionListener() {
             @Override
@@ -475,26 +447,5 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			sorter.setSortable(i, false);
 		}
 		return leistungenTabelle;
-	}
-
-	public void update(Observable arg0, Object arg1) {
-		if (athlet.getSlopeFaktorStatus() == "set"){
-			LeistungHelper l = new LeistungHelper();
-			try {
-				textFieldSchwelle.setText(l.parseSecInMinutenstring(athlet.getAnaerobeSchwelle()));
-			} catch (Exception e) {
-			}			
-			setAnalysenVerfügbar(true);
-		} else {
-			textFieldSchwelle.setText("-");
-			setAnalysenVerfügbar(false);
-		}
-		setAlleLeistungen();
-	}
-	
-	private void release(){
-		// TODO: model.deleteObserver(this);
-		controller.release();
-		controller = null;
 	}
 }
