@@ -1,5 +1,9 @@
 package main;
 
+import java.io.IOException;
+
+import datei_operationen.DateiSpeichernCSVController;
+import datei_operationen.DateiSpeichern;
 import analyse_bestzeiten.BestzeitenDialog;
 import analyse_diagramm.DiagrammController;
 import analyse_trainingsbereich.TrainingsbereichDialog;
@@ -10,6 +14,7 @@ public class ProfilTabController {
 	
 	Athlet athlet;
 	ProfilTab view;
+	DateiSpeichern speicher;
 	
 	protected ProfilTabController(Athlet athlet, ProfilTab view){
 		this.athlet = athlet;
@@ -59,4 +64,16 @@ public class ProfilTabController {
 	protected void automatischAuswählen() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException{
 		athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();		
 	}
+
+	protected void speichernUnter(boolean forceSpeichernUnter) throws IOException{
+		if (speicher == null)
+			speicher = new DateiSpeichern("");
+		if (!speicher.isSetPfad())
+			speicher.setPfadFromUserDialog(athlet.getName());
+
+		// TODO: Pfad sollte beim öffnen bzw. bei speichern/UNTER über den 
+		// "View" DateiPfadSpeichern im entsprechenden Controller gesetzt werden!!!!
+		speicher.speichern(athlet);
+		view.setSpeicherStatus(true);				
+	}	
 }

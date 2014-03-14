@@ -19,7 +19,6 @@ public class MainFrame {
 	public JTabbedPane tabbedPane;
 	public LinkedList<ProfilTab> tabList = new LinkedList<ProfilTab>();
 	public DiagrammController diagrammController;
-	private CSVController csvController;
 	public LeistungHelper leistungHelper;
 	
 	private Dimension d = mainFrame.getToolkit().getScreenSize();
@@ -31,14 +30,7 @@ public class MainFrame {
 	private int selectedIndex;
 
 	public MainFrame() {
-		initializeControllers();
 		initializeFrame();
-	}
-
-	public void initializeControllers() {
-		csvController 		= new CSVController();
-//		diagrammController 	= new DiagrammController();
-		leistungHelper 		= new LeistungHelper();
 	}
 	
 	private void initializeFrame() {		
@@ -103,7 +95,7 @@ public class MainFrame {
 		mntmSpeichern.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				speichern();
+				speichernClicked();
 			}
 		});
 		
@@ -142,7 +134,7 @@ public class MainFrame {
 		mntmLeistungenHinzufgen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Athlet athlet = tabList.get(getAktivesTab()).getAthlet();
+				Athlet athlet = getAktivesTab().getAthlet();
 				@SuppressWarnings("unused")
 				LeistungDialog dialog = new LeistungDialog(athlet , null);
 			}
@@ -155,7 +147,7 @@ public class MainFrame {
 		mntmLeistungenBearbeiten.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ProfilTab tab = tabList.get(getAktivesTab());
+				ProfilTab tab = getAktivesTab();
 				tab.leistungBearbeitenPressed();
 			}
 		});
@@ -168,7 +160,7 @@ public class MainFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					tabList.get(getAktivesTab()).deleteZeileButtonPressed();
+					getAktivesTab().deleteZeileButtonPressed();
 				} catch (Exception e) {
 					System.out.println("Bitte ein Tab wählen");
 				}
@@ -267,7 +259,7 @@ public class MainFrame {
     					tabbedPane.setSelectedComponent(tab);
     					tabbedPane.remove(tabbedPane.getSelectedIndex());
     				} else {
-    					speichern();
+    					speichernClicked();
     				}
     				iterator = tabList.iterator();
     			}
@@ -321,42 +313,16 @@ public class MainFrame {
 		}
 	}
 	
-	protected void speichern () {
+	protected void speichernClicked () {
 		int aktivesTab = tabbedPane.getSelectedIndex();
 		if (aktivesTab == -1) {
 			//TODO Fehlermeldung falls Start ausgewählt
 			return;
 		}
-		ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
-		if (tab.getSpeicherPfad()==null){
-			try{
-				DateiPfadSpeichern ds = new DateiPfadSpeichern();
-				String pfad = ds.getDateiSpeichernInfo(tab.getAthlet().getName());
-				if (pfad == null) {
-					return;
-				}
-				tab.setSpeicherPfad(pfad);
-				if (!csvController.schreiben(tab.getSpeicherPfad(),tab.getAthlet())) {
-					fehlermeldungBeiSpeichern();
-				} else {
-					tab.setSpeicherStatus(true);
-				}
-			}catch (Exception e) {
-				//TODO
-				e.printStackTrace();
-			}
-		} else {
-			try{											
-				if (!csvController.schreiben(tab.getSpeicherPfad(),tab.getAthlet())) {
-					fehlermeldungBeiSpeichern();
-				} else {
-					tab.setSpeicherStatus(true);
-				}
-			}catch (Exception e) {
-				//TODO
-				e.printStackTrace();
-			}
-		}
+		
+		// TODO: der "view" DateiSpeichern sollte sofort nach dem Öffnen angelegt und vom Tab aus referneziert werden.
+		ProfilTab tab = getAktivesTab();
+		tab.speichernClicked(false);
 	}
 	
 	protected void speichernUnter() {
@@ -364,24 +330,8 @@ public class MainFrame {
 		if (aktivesTab == -1) {
 			return;
 		}
-		ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());			
-		try{
-			DateiPfadSpeichern ds = new DateiPfadSpeichern();
-			String pfad = ds.getDateiSpeichernInfo(tab.getAthlet().getName());
-			if (pfad == null) {
-				return;
-			}
-			tab.setSpeicherPfad(pfad);
-			// TODO: wird der Pfad wirklich sinnvoll belegt??!?
-			if (!csvController.schreiben(tab.getSpeicherPfad(),tab.getAthlet())) {
-				fehlermeldungBeiSpeichern();
-			} else {
-				tab.setSpeicherStatus(true);				
-			}
-		}catch (Exception e) {
-			//TODO
-			e.printStackTrace();
-		}
+		ProfilTab tab = getAktivesTab();			
+		tab.speichernClicked(true);
 	}
 	
 	public void createTab (String name, LinkedList<Leistung> leistungen) {
@@ -415,20 +365,14 @@ public class MainFrame {
 		return false;
 	}
 	
-	public void fehlermeldungBeiSpeichern() {	
-		JOptionPane.showMessageDialog(mainFrame, 
-				"Es ist ein Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 
-				"Fehler beim Speichern",
-				JOptionPane.ERROR_MESSAGE);
-	}
-	
-	public int getAktivesTab() {		
+	public ProfilTab getAktivesTab() {		
 		for (int i = 0; i < tabList.size(); i++) {
 			if (tabList.get(i).isShowing() == true) {
-				return i;
+				return  tabList.get(i);
 			}
 		}
-		return -1;		
+		// TODO: null ok??
+		return null;		
 	}
 	
 	public void leistungBearbeitenMenüVerfügbar() {

@@ -25,7 +25,6 @@ public class AthletTest {
 	@Before
     public void initTest() {
 		Main.mainFrame = new MainFrame();
-		Main.mainFrame.initializeControllers();
     }
 	
 	@Test

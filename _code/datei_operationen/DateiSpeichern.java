@@ -1,6 +1,7 @@
 package datei_operationen;
 
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -8,25 +9,34 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import main.Main;
 import main.MainFrame;
 import main.ProfilTab;
+import model.Athlet;
 
 /**
  * Dialog zum Auswählen des Names und Pfades einer zu speichernden CSV-Datei
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
-public class DateiPfadSpeichern {
-	
-	// TODO: protected verwenden!!
-	
+public class DateiSpeichern {
+		
 	private MainFrame mainFrame = Main.mainFrame;
 	private JFileChooser chooser;
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
+	DateiSpeichernCSVController controller;
 	
-	public DateiPfadSpeichern() {
-		initFileChooser();
-		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
-        chooser.addChoosableFileFilter(filter);        
+	
+	public DateiSpeichern(String pfad) {
+		controller = new DateiSpeichernCSVController();
+		if (pfad != null)
+			controller.setPfad(pfad);
 	}
 
+	public boolean isSetPfad(){
+		return controller.isSetPfad();
+	}
+	
+	public void speichern(Athlet athlet) throws IOException{
+		controller.schreiben(athlet);
+	}
+	
 	private void initFileChooser() {
 		chooser = new JFileChooser(){
 			private static final long serialVersionUID = 1L;
@@ -49,17 +59,19 @@ public class DateiPfadSpeichern {
 		};;
 	}
 	
-	public String getDateiSpeichernInfo(String name) {		
-		String saveString = "Profil '"+name+"' speichern";
+	public void setPfadFromUserDialog (String athletName) {		
+		initFileChooser();
+		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
+        chooser.addChoosableFileFilter(filter);   
+
+		String saveString = "Profil '"+athletName+"' speichern";
 		if (chooser.showDialog(mainFrame.getContext(), saveString) == JFileChooser.APPROVE_OPTION){		
 			String ausgewählterPfad = chooser.getSelectedFile().getAbsolutePath();
 			if (ausgewählterPfad.contains(".csv")) {
-				return ausgewählterPfad;
+				controller.setPfad(ausgewählterPfad);
 			} else {				
-				return ausgewählterPfad+".csv";
+				controller.setPfad(ausgewählterPfad+".csv");
 			}		
-		} else {
-			return null;
 		}
 	}
 }

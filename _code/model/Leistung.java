@@ -36,7 +36,9 @@ public class Leistung implements LeistungInterface{
 		this.id_leistung = getNextLeistungId();
 		this.id_strecke = id_strecke;
 		this.id_athlet = id_athlet;
-		this.zeit = leistungHelper.berechneZeit(getStrecke(), geschwindigkeit);
+		int strecke = Strecken.getStreckenlaengeById(id_strecke);
+		LeistungHelper leistungHelper = new LeistungHelper();
+		this.zeit = leistungHelper.berechneZeit(strecke, geschwindigkeit);
 		this.geschwindigkeit = geschwindigkeit;
 		this.bezeichnung = bezeichnung;
 		this.datum = datum;	
@@ -111,7 +113,9 @@ public class Leistung implements LeistungInterface{
 
 	public void updateLeistung(int id_strecke, String bezeichnung, String datum, double geschwindigkeit) {
 		this.id_strecke = id_strecke;
-		this.zeit = leistungHelper.berechneZeit(getStrecke(), geschwindigkeit);
+		int strecke = Strecken.getStreckenlaengeById(id_strecke);
+		LeistungHelper leistungHelper = new LeistungHelper();
+		this.zeit = leistungHelper.berechneZeit(strecke, geschwindigkeit);
 		this.geschwindigkeit = geschwindigkeit;
 		String zeitString = leistungHelper.parseSecInZeitstring(zeit);
 		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), zeitString);
@@ -124,6 +128,7 @@ public class Leistung implements LeistungInterface{
 	}
 
 	public String getZeitString() {
+		LeistungHelper leistungHelper = new LeistungHelper();
 		return leistungHelper.parseSecInZeitstring(zeit);
 	}
 	
@@ -148,6 +153,7 @@ public class Leistung implements LeistungInterface{
 
 	@Override
 	public Object[] getObjectDataForTable() {
+		LeistungHelper leistungHelper = new LeistungHelper();
 		DecimalFormat f = new DecimalFormat("#0.00");
 		double geschwindigkeit = this.getGeschwindigkeit();
 		double kmH = UnitsHelper.toKmH(geschwindigkeit);

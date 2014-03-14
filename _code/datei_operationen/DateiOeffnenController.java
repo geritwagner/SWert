@@ -17,7 +17,7 @@ public class DateiOeffnenController {
 	private LinkedList<Leistung> leistungen;
 	DateiPfadOeffnen view;
 	
-	public DateiOeffnenController(DateiPfadOeffnen view){
+	protected DateiOeffnenController(DateiPfadOeffnen view){
 		this.view = view;
 	}
 	
@@ -27,11 +27,8 @@ public class DateiOeffnenController {
 		this.leistungen = null;
 		this.view = null;
 	}
-	/**
-	 * Methode die eine CSV-Datei einliest und ggf. Exceptions wirft.
-	 */
-	// TODO: sollte ein Athleten-Objekt zurückgeben, öffnen von Tabs sollte im Controller realisiert werden!
-	public void lesen (String pfad) throws FileNotFoundException, IOException, AlreadyOpenException, SyntaxException {	
+
+	protected void openAthletFromCSVFile (String pfad) throws FileNotFoundException, IOException, AlreadyOpenException, SyntaxException {	
 	    CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
 	    if (!ValidatorHelper.isSyntacticallyCorrect(pfad)) {
 	    	reader.close();
@@ -50,6 +47,7 @@ public class DateiOeffnenController {
 	}
 
 	protected void openAthlet(){
+		// TODO: eleganter!! zu athletenliste hinzufügen, die von Mainframe observed wird (tab automatisch öffnen!!!)
 	    Main.mainFrame.createTab(nameAthlet, idAthlet, leistungen);
 	}
 	

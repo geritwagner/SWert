@@ -19,7 +19,7 @@ public class DateiPfadOeffnen {
 	public DateiPfadOeffnen() throws FileNotFoundException, IOException, AlreadyOpenException, SyntaxException   {
 		controller = new DateiOeffnenController(this);
 		String pfad = open();
-		controller.lesen(pfad);
+		controller.openAthletFromCSVFile(pfad);
 		controller.openAthlet();
 		release();
 	}

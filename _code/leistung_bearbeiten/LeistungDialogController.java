@@ -39,7 +39,8 @@ public class LeistungDialogController {
 		Date datum = view.calendar.getDate();
 		String datumString = df.format(datum);
 		if (this.leistung == null){
-			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, view.getGeschwindigkeit());
+			double geschwindigkeit = view.getGeschwindigkeit();
+			Leistung leistung = new Leistung(id_strecke, id_athlet, bezeichnungString, datumString, geschwindigkeit);
 			athlet.addLeistung(leistung);
 		} else {
 			long leistung_id = leistung.getId();

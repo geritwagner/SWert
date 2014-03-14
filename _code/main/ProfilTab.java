@@ -2,11 +2,15 @@ package main;
 
 import java.awt.event.*;
 import java.awt.Font;
+import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
+import datei_operationen.DateiSpeichernCSVController;
+import datei_operationen.DateiSpeichern;
 import net.miginfocom.swing.MigLayout;
 
 import globale_helper.*;
@@ -37,7 +41,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private Athlet athlet;
 	private ProfilTabController controller;
 
-	
 	// TODO: auslagern!!
 	public Athlet getAthlet(){return athlet;}
 	public String getSpeicherPfad() {return speicherPfad;}
@@ -103,7 +106,19 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 					"Distanzen ausgewählt werden!", "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
     	}
 	}
-
+	
+	protected void speichernClicked(boolean forceSpeichernUnter){
+		// TODO: sowohl speichern und speichernUnter: wenn pfad schon gesetzt, dann automatisch verwenden, sonst
+		// nach neuem Pfad fragen.
+		try{
+			controller.speichernUnter(forceSpeichernUnter);
+		}catch (IOException e) {
+			JOptionPane.showMessageDialog(this, 
+				"Es ist ein Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 
+				"Fehler beim Speichern", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+		
 	protected void tabSchließen() {
 		setBearbeitenStatus(false);
         int tabNumber = mainFrame.tabbedPane.getSelectedIndex();
@@ -115,7 +130,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         				athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
         		if (nutzerauswahlSpeichern == 0) {
         			// TODO: speichern besser lösen!!
-        			mainFrame.speichern();
+        			mainFrame.speichernClicked();
             		release();
         		} else if (nutzerauswahlSpeichern == 1) {
             		release();
