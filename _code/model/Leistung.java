@@ -3,10 +3,7 @@ package model;
 import java.text.*;
 import java.util.*;
 import java.util.prefs.*;
-
-import globale_helper.LeistungHelper;
-import globale_helper.UnitsHelper;
-import main.Main;
+import globale_helper.*;
 
 /**
  * Model-Klasse für das "Leistung"-Objekt
@@ -17,7 +14,8 @@ public class Leistung implements LeistungInterface{
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
 	
 	// TODO: ggf. später: id_strecke kapseln, beliebige Streckenlängen lösen
-	
+	// TODO: Schwellenleistungen überdenken - ggf. über Polymorphismus
+
 	private static final int ID_SCHWELLENLEISTUNG = -1;
 	
 	private long id_leistung;
@@ -30,15 +28,20 @@ public class Leistung implements LeistungInterface{
 	private String datum;
 	private boolean selectedForCalculatingSlopeFaktor;
 	
-	private LeistungHelper leistungHelper = Main.mainFrame.leistungHelper;
+	private LeistungHelper leistungHelper;
 	
 	public Leistung(int id_strecke, long id_athlet, String bezeichnung, String datum, double geschwindigkeit) {
+		leistungHelper = new LeistungHelper();
 		this.id_leistung = getNextLeistungId();
 		this.id_strecke = id_strecke;
 		this.id_athlet = id_athlet;
-		int strecke = Strecken.getStreckenlaengeById(id_strecke);
-		LeistungHelper leistungHelper = new LeistungHelper();
-		this.zeit = leistungHelper.berechneZeit(strecke, geschwindigkeit);
+		if (id_strecke == ID_SCHWELLENLEISTUNG){
+			this.zeit = 3600;
+		} else {
+			int strecke = Strecken.getStreckenlaengeById(id_strecke);
+			LeistungHelper leistungHelper = new LeistungHelper();
+			this.zeit = leistungHelper.berechneZeit(strecke, geschwindigkeit);			
+		}
 		this.geschwindigkeit = geschwindigkeit;
 		this.bezeichnung = bezeichnung;
 		this.datum = datum;	
@@ -113,9 +116,13 @@ public class Leistung implements LeistungInterface{
 
 	public void updateLeistung(int id_strecke, String bezeichnung, String datum, double geschwindigkeit) {
 		this.id_strecke = id_strecke;
-		int strecke = Strecken.getStreckenlaengeById(id_strecke);
-		LeistungHelper leistungHelper = new LeistungHelper();
-		this.zeit = leistungHelper.berechneZeit(strecke, geschwindigkeit);
+		if (id_strecke == ID_SCHWELLENLEISTUNG){
+			this.zeit = 3600;
+		} else {
+			int strecke = Strecken.getStreckenlaengeById(id_strecke);
+			LeistungHelper leistungHelper = new LeistungHelper();
+			this.zeit = leistungHelper.berechneZeit(strecke, geschwindigkeit);			
+		}
 		this.geschwindigkeit = geschwindigkeit;
 		String zeitString = leistungHelper.parseSecInZeitstring(zeit);
 		this.geschwindigkeit = leistungHelper.berechneGeschwindigkeit(getStrecke(), zeitString);
@@ -161,7 +168,7 @@ public class Leistung implements LeistungInterface{
 		
 		int streckenID = this.getId_strecke();
 		String streckenString;
-		if(streckenID == -1) {
+		if(streckenID == ID_SCHWELLENLEISTUNG) {
 			int strecke = leistungHelper.berechneSchwellenStreckeAusGeschwindigkeit(geschwindigkeit);
 			DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.GERMANY);
 			streckenString = formatter.format(strecke);
