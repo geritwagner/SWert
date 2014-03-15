@@ -1,16 +1,4 @@
 SWert
 =====
 
-Architektur (MVC)
----------------
-
-Convention:
-
-```
-public ViewXY (Model athlet) {
-	if (athlet == null){
-			athlet = new Athlet ();
-	}
-	controller = new ControllerXY (athlet, this);
-}
-```
+* [Architektur](https://github.com/geritwagner/SWert/wiki/Architektur-und-Coding-Guidelines)
