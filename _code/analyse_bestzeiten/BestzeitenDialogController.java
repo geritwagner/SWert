@@ -1,12 +1,8 @@
 package analyse_bestzeiten;
 
-import globale_helper.LeistungHelper;
-
-import java.util.LinkedList;
-
-import model.Athlet;
-import model.Leistung;
-import model.Strecken;
+import globale_helper.*;
+import java.util.*;
+import model.*;
 
 public class BestzeitenDialogController {
 	
@@ -48,11 +44,9 @@ public class BestzeitenDialogController {
 	}
 	
 	/**
-	 * Berechnen der möglichen Bestzeiten zu den fixen Streckenlängen,
-	 * die direkt an die JTable übergeben werden
 	 * @return: Array mit [][0] als Streckenlänge (String) und [][1] als Bestzeit (String: 00:00,00)
 	 */
-	protected Object[][] berechneBestzeiten() {
+	protected Object[][] generateBestzeitenTableFormat() {
 		int streckenAnzahl = Strecken.getStreckenArrayLength();
 		Object[][] data = new Object [streckenAnzahl][2];
 		try {

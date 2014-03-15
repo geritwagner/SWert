@@ -28,7 +28,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private JCheckBox chckbxLeistungenAuswahl;
 	private JTable leistungenTabelle;
 	public TableRowSorter<TableModel> sorter;
-	private String speicherPfad;
 	private JButton btnLeistungBearbeiten;
 	private JButton btnLeistungLöschen;
 	private JButton btnTabSchlieen;
@@ -39,15 +38,12 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private Athlet athlet;
 	private ProfilTabController controller;
 
-	// TODO: auslagern!!
+	// TODO: auslagern!?!?!??
 	public Athlet getAthlet(){return athlet;}
-	public String getSpeicherPfad() {return speicherPfad;}
 	protected boolean getSpeicherStatus() {	return gespeichert;}
 
-	
 	public ProfilTab(Athlet athlet) {
 		this.athlet = athlet;
-		this.speicherPfad = null;
 		controller = new ProfilTabController(athlet, this);
 		initLayout(athlet.getName());
 		setAnalysenVerfügbar(false);
@@ -61,9 +57,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		}
 		setLeistungBearbeitenAvailable(false);
 	}
-	
-//	TODO Dateien Öffnen/Schließen müsste intensiv getestet werden (auch mit speichern unter, direkt: tab/fenster schließen etc.)
-	
+		
 	public void setSpeicherPfad(String speicherPfad) {
 		// called after a new file is opened
 		controller.setSpeicherPfad(speicherPfad);
@@ -149,7 +143,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		    	model.removeRow(i);
 		    }
 		}
-
 		for (Leistung aktuelleLeistung: athlet.getLeistungen()){
 			model.addRow(aktuelleLeistung.getObjectDataForTable());
 		}			

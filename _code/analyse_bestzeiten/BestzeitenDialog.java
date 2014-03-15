@@ -2,13 +2,10 @@ package analyse_bestzeiten;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-
-
 
 import globale_helper.*;
 import model.*;
@@ -33,7 +30,7 @@ public class BestzeitenDialog extends JDialog {
 		if ("set" == inputAthlet.getSlopeFaktorStatus()){
 			controller = new BestzeitenDialogController(inputAthlet, this);
 			initProperties();
-			Object[][] bestzeiten = controller.berechneBestzeiten();
+			Object[][] bestzeiten = controller.generateBestzeitenTableFormat();
 			initComponents(bestzeiten);
 			setModal(true);
 			setVisible(true);		
