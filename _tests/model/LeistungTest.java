@@ -2,19 +2,11 @@ package model;
 
 import static org.junit.Assert.*;
 
-import main.Main;
-import main.MainFrame;
-
 import org.junit.*;
 
 public class LeistungTest {
 
 	Leistung testLeistung;
-	
-	@Before
-    public void initTest() {
-		Main.mainFrame = new MainFrame();
-    }
 	
 	@Test
 	public void testConstructorAndDataMethods(){

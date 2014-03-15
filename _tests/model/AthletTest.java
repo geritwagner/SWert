@@ -4,10 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.LinkedList;
 
-import main.Main;
-import main.MainFrame;
-
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -21,11 +17,7 @@ public class AthletTest {
 	
     @Rule
     public ExpectedException thrown= ExpectedException.none();
-    
-	@Before
-    public void initTest() {
-		Main.mainFrame = new MainFrame();
-    }
+
 	
 	@Test
 	public void testConstructorAndDataMethods(){

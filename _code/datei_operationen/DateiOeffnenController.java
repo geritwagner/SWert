@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import au.com.bytecode.opencsv.CSVReader;
 import javax.swing.JOptionPane;
 
-import main.Main;
+import main.Hauptfenster;
 import main.ProfilTab;
 import model.*;
 
@@ -36,8 +36,8 @@ public class DateiOeffnenController {
 	    	throw new SyntaxException();
 	    }
 	    kopfzeileAuslesen(reader);
-	    if (Main.mainFrame.checkAthletGeöffnet(nameAthlet,idAthlet)) {
-	    	JOptionPane.showMessageDialog(Main.mainFrame.getContext(),
+	    if (Hauptfenster.aktuellesHauptfenster.checkAthletGeöffnet(nameAthlet,idAthlet)) {
+	    	JOptionPane.showMessageDialog(Hauptfenster.aktuellesHauptfenster.getContext(),
 	    			"Das ausgewählte Athletenprofil ist bereit geöffnet!",
 	    			"Athletenprofil bereits geöffnet",
 					JOptionPane.WARNING_MESSAGE);
@@ -49,7 +49,7 @@ public class DateiOeffnenController {
 
 	protected void openAthletInTab(String pfad){
 		// TODO: eleganter!! zu athletenliste hinzufügen, die von Mainframe observed wird (tab automatisch öffnen!!!)
-	    ProfilTab tab = Main.mainFrame.createTab(nameAthlet, idAthlet, leistungen);
+	    ProfilTab tab = Hauptfenster.aktuellesHauptfenster.createTab(nameAthlet, idAthlet, leistungen);
 	    tab.setSpeicherPfad(pfad);
 	    tab.setSpeicherStatus(true);
 	}

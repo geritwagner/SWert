@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
-import main.Main;
+import main.Hauptfenster;
 
 /**
  * Dialog zum öffnen einer Datei
@@ -28,7 +28,7 @@ public class DateiOeffnen {
 		JFileChooser chooser = new JFileChooser();
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
 		FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");chooser.addChoosableFileFilter(filter); 
-		if (chooser.showOpenDialog(Main.mainFrame.getContext()) == JFileChooser.APPROVE_OPTION){
+		if (chooser.showOpenDialog(Hauptfenster.aktuellesHauptfenster.getContext()) == JFileChooser.APPROVE_OPTION){
 			return chooser.getSelectedFile().getAbsolutePath();        
 		}else {
 			return null;

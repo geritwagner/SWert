@@ -10,7 +10,7 @@
       <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="main.MainFrame" project="SWert" file="/SWert/_code/main/MainFrame.java" 
+  <class id="2" language="java" name="main.Hauptfenster" project="SWert" file="/SWert/_code/main/Hauptfenster.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1317" y="437"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 

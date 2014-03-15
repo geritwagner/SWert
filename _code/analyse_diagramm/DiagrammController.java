@@ -3,7 +3,7 @@ package analyse_diagramm;
 import globale_helper.UnitsHelper;
 
 import java.util.*;
-import main.Main;
+import main.Hauptfenster;
 import main.ProfilTab;
 import model.*;
 import org.jfree.data.xy.XYSeries;
@@ -29,12 +29,12 @@ public class DiagrammController {
 
 	private void openAllAthletes(){
 		// TODO: Athletenliste auf andere Weise holen!
-		int countAthletes = Main.mainFrame.tabbedPane.getTabCount() - 1;
+		int countAthletes = Hauptfenster.aktuellesHauptfenster.tabbedPane.getTabCount() - 1;
 		Athlet aktuellerAthlet;
 		ProfilTab tab;
 		for(int i = 0; i < countAthletes; i++){
 			try {
-				tab = (ProfilTab) Main.mainFrame.tabbedPane.getComponentAt(i);
+				tab = (ProfilTab) Hauptfenster.aktuellesHauptfenster.tabbedPane.getComponentAt(i);
 				aktuellerAthlet = tab.getAthlet();
 				plotLeistungen(aktuellerAthlet);	
 				plotBerechneteBestzeiten(aktuellerAthlet);

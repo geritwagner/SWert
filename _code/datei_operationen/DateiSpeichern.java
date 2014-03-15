@@ -6,8 +6,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import main.Main;
-import main.MainFrame;
+import main.Hauptfenster;
 import main.ProfilTab;
 import model.Athlet;
 
@@ -17,7 +16,7 @@ import model.Athlet;
  */
 public class DateiSpeichern {
 		
-	private MainFrame mainFrame = Main.mainFrame;
+	private Hauptfenster mainFrame = Hauptfenster.aktuellesHauptfenster;
 	private JFileChooser chooser;
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
 	DateiSpeichernCSVController controller;

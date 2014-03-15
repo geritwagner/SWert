@@ -34,7 +34,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	
 	private boolean gespeichert = false;
 	private boolean automatischeVerarbeitung = false;
-	private MainFrame mainFrame = Main.mainFrame;
+	private Hauptfenster mainFrame = Hauptfenster.aktuellesHauptfenster;
 	private Athlet athlet;
 	private ProfilTabController controller;
 

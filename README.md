@@ -1,4 +1,5 @@
 SWert
 =====
 
-* [Architektur](https://github.com/geritwagner/SWert/wiki/Architektur-und-Coding-Guidelines)
+
+* [Architektur und Coding Guidelines](https://github.com/geritwagner/SWert/wiki/Architektur-und-Coding-Guidelines)

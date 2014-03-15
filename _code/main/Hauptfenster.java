@@ -13,7 +13,10 @@ import globale_helper.*;
 import leistung_bearbeiten.*;
 import model.*;
 
-public class MainFrame {
+import java.awt.EventQueue;
+import javax.swing.UIManager;
+
+public class Hauptfenster {
 
 	private JFrame mainFrame = new JFrame();
 	public JTabbedPane tabbedPane;
@@ -31,12 +34,30 @@ public class MainFrame {
 	
 	private int selectedIndex;
 
-	public MainFrame() {
+	public static Hauptfenster aktuellesHauptfenster;	
+	
+	public static void main (String args[]) {
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					aktuellesHauptfenster = new Hauptfenster();
+					aktuellesHauptfenster.getContext().setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});		
+	}
+	
+	
+	public Hauptfenster() {
 		initializeFrame();
 	}
 	
 	private void initializeFrame() {		
-		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/bilder/Logo_32x32.png")));
+		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(Hauptfenster.class.getResource("/bilder/Logo_32x32.png")));
 		mainFrame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
@@ -57,7 +78,7 @@ public class MainFrame {
 		menuBar.add(mnDatei);
 		
 		JMenuItem mntmNeuesProfilAnlegen = new JMenuItem("Neues Athletenprofil anlegen");
-		mntmNeuesProfilAnlegen.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/NeuerAthlet_16x16.png")));
+		mntmNeuesProfilAnlegen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeuerAthlet_16x16.png")));
 		mntmNeuesProfilAnlegen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -67,7 +88,7 @@ public class MainFrame {
 		mnDatei.add(mntmNeuesProfilAnlegen);
 		
 		JMenuItem mntmProfilffnen = new JMenuItem("Athletenprofil \u00F6ffnen");		
-		mntmProfilffnen.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/EditAthlet_16x16.png")));
+		mntmProfilffnen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditAthlet_16x16.png")));
 		mnDatei.add(mntmProfilffnen);
 		mntmProfilffnen.addActionListener(new ActionListener() {
 			@Override
@@ -90,7 +111,7 @@ public class MainFrame {
 		mnDatei.add(separator);
 		
 		mntmSpeichern = new JMenuItem("Speichern");
-		mntmSpeichern.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/Speichern_16x16.png")));
+		mntmSpeichern.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/Speichern_16x16.png")));
 		mntmSpeichern.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		mnDatei.add(mntmSpeichern);
 		mntmSpeichern.addActionListener(new ActionListener() {
@@ -101,7 +122,7 @@ public class MainFrame {
 		});
 		
 		mntmSpeicherUnter = new JMenuItem("Speichern unter...");
-		mntmSpeicherUnter.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/SpeichernUnter_16x16.png")));
+		mntmSpeicherUnter.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/SpeichernUnter_16x16.png")));
 		mnDatei.add(mntmSpeicherUnter);
 		mntmSpeicherUnter.addActionListener(new ActionListener() {
 			@Override
@@ -130,7 +151,7 @@ public class MainFrame {
 		mnBearbeiten.add(mnLeistungen);
 		
 		JMenuItem mntmLeistungenHinzufgen = new JMenuItem("Leistung hinzuf\u00FCgen");
-		mntmLeistungenHinzufgen.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/NeueLeistung_16x16.png")));
+		mntmLeistungenHinzufgen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeueLeistung_16x16.png")));
 		mnLeistungen.add(mntmLeistungenHinzufgen);
 		mntmLeistungenHinzufgen.addActionListener(new ActionListener() {
 			@Override
@@ -142,7 +163,7 @@ public class MainFrame {
 		});
 		
 		mntmLeistungenBearbeiten = new JMenuItem("Leistung bearbeiten");
-		mntmLeistungenBearbeiten.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/EditLeistung_16x16.png")));
+		mntmLeistungenBearbeiten.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditLeistung_16x16.png")));
 		mnLeistungen.add(mntmLeistungenBearbeiten);
 		mntmLeistungenBearbeiten.setEnabled(false);
 		mntmLeistungenBearbeiten.addActionListener(new ActionListener() {
@@ -154,7 +175,7 @@ public class MainFrame {
 		});
 		
 		mntmLeistungenLoeschen = new JMenuItem("Leistung l\u00F6schen");
-		mntmLeistungenLoeschen.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/LeistungLoeschen_16x16.png")));
+		mntmLeistungenLoeschen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/LeistungLoeschen_16x16.png")));
 		mntmLeistungenLoeschen.setEnabled(false);
 		mnLeistungen.add(mntmLeistungenLoeschen);
 		mntmLeistungenLoeschen.addActionListener(new ActionListener() {
@@ -188,7 +209,7 @@ public class MainFrame {
 		mainFrame.getContentPane().add(tabbedPane);
 		
 		JPanel dummyTab = new JPanel();
-		tabbedPane.addTab("Start", new ImageIcon(MainFrame.class.getResource("/bilder/Logo_16x16.png")), dummyTab, null);
+		tabbedPane.addTab("Start", new ImageIcon(Hauptfenster.class.getResource("/bilder/Logo_16x16.png")), dummyTab, null);
 		dummyTab.setLayout(new MigLayout("", "[grow][205px][grow]", "[5:50:200][14px][2px][23px][20px][][][][2px][23px]"));
 		
 		JLabel lblLegenSieHier = new JLabel("Legen Sie hier ein neues Athletenprofil an:", SwingConstants.CENTER);
@@ -200,7 +221,7 @@ public class MainFrame {
 		
 		JButton btnNeuesAthletenprofilAnlegen = new JButton("Neues Athletenprofil anlegen");
 		btnNeuesAthletenprofilAnlegen.setToolTipText("Anlegen eines neuen Athletenprofils");
-		btnNeuesAthletenprofilAnlegen.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/NeuerAthlet_24x24.png")));
+		btnNeuesAthletenprofilAnlegen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeuerAthlet_24x24.png")));
 		btnNeuesAthletenprofilAnlegen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -219,7 +240,7 @@ public class MainFrame {
 		
 		JButton btnAthletenprofilffnen = new JButton("Athletenprofil \u00F6ffnen");
 		btnAthletenprofilffnen.setToolTipText("\u00D6ffnen und Bearbeiten eines bestehende Athletenprofils");
-		btnAthletenprofilffnen.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/EditAthlet_24x24.png")));
+		btnAthletenprofilffnen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditAthlet_24x24.png")));
 		btnAthletenprofilffnen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
