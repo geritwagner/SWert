@@ -64,6 +64,7 @@ public class BestzeitenDialogController {
 				data[i][1] = aktuelleLeistung.getZeitString();			
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return data;
 	}

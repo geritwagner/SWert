@@ -5,8 +5,6 @@ import globale_helper.LeistungHelper;
 import java.util.*;
 import java.util.prefs.*;
 
-import main.Main;
-
 /**
  * Model-Klasse für das "Athlet"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
@@ -23,10 +21,11 @@ public class Athlet extends Observable implements AthletInterface {
 	private double anaerobeSchwelle;
 	private LinkedList<Leistung> alleLeistungen;
 
-	private LeistungHelper leistungHelper = Main.mainFrame.leistungHelper;
+	private LeistungHelper leistungHelper;
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
 	
 	public Athlet(String name, LinkedList<Leistung> leistungen) {
+		leistungHelper = new LeistungHelper();
 		this.id = getNextAthletId();
 		this.name = name;
 		if (leistungen == null){
@@ -37,6 +36,7 @@ public class Athlet extends Observable implements AthletInterface {
 	}
 	
 	public Athlet(long id, String name, LinkedList<Leistung> leistungen) {
+		leistungHelper = new LeistungHelper();
 		this.id = id;
 		this.name = name;
 		if (leistungen == null){

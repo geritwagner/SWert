@@ -207,6 +207,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}	
 
 	public void update(Observable arg0, Object speicherStatusChanged) {
+		// TODO: Info, wenn Schwelle auf grund eines zu guten/zu schlechten Slope-Faktors nicht gesetzt wird
 		if (athlet.getSlopeFaktorStatus() == "set"){
 			LeistungHelper l = new LeistungHelper();
 			try {
@@ -404,7 +405,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
                 "km/h",
                 "m/s",
                 "1.000m Zeit",
-                "für Slope-Faktor ausgewählt",
+                "für Analysen ausgewählt",
                 "StreckenId",
                 "s/km"};
 		

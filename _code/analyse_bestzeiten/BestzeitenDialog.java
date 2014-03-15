@@ -33,7 +33,8 @@ public class BestzeitenDialog extends JDialog {
 		if ("set" == inputAthlet.getSlopeFaktorStatus()){
 			controller = new BestzeitenDialogController(inputAthlet, this);
 			initProperties();
-			initComponents();
+			Object[][] bestzeiten = controller.berechneBestzeiten();
+			initComponents(bestzeiten);
 			setModal(true);
 			setVisible(true);		
 		}
@@ -52,9 +53,9 @@ public class BestzeitenDialog extends JDialog {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
-	private void initComponents() {
+	private void initComponents(Object[][] bestzeiten) {
 		initComponentsGeneral();		
-		initJTable();
+		initJTable(bestzeiten);
 		initButtonPane();	
 	}
 	
@@ -118,7 +119,7 @@ public class BestzeitenDialog extends JDialog {
 		buttonPane.add(cancelButton);
 	}
 	
-	private void initJTable() {	
+	private void initJTable(Object[][] bestzeiten) {	
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportBorder(null);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
@@ -127,8 +128,9 @@ public class BestzeitenDialog extends JDialog {
 		contentPanel.add(scrollPane);
 		
 		trainingsTabelle = new JTable();
+		//TODO
 		trainingsTabelle.setModel(new DefaultTableModel(
-				controller.berechneBestzeiten(),
+				bestzeiten,
 				new String[] {
 					"Streckenlänge", "Bestzeit"
 				}
