@@ -97,7 +97,7 @@ public class NeuerAthletDialog extends JDialog{
 			setVisible(false);
 			dispose();
 			// TODO: anders umsetzen:
-			Main.mainFrame.createTab(name, null);
+			Main.mainFrame.createTab(name, -1, null);
 		}
 		else {
 			JOptionPane.showMessageDialog(NeuerAthletDialog.this,

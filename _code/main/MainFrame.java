@@ -26,6 +26,8 @@ public class MainFrame {
 	private JMenu mnBearbeiten;
 	private JMenuItem mntmLeistungenBearbeiten;
 	private JMenuItem mntmLeistungenLoeschen;
+	private JMenuItem mntmSpeichern;
+	private JMenuItem mntmSpeicherUnter;
 	
 	private int selectedIndex;
 
@@ -59,8 +61,7 @@ public class MainFrame {
 		mntmNeuesProfilAnlegen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				@SuppressWarnings("unused")
-				NeuerAthletDialog dialog = new NeuerAthletDialog();
+				new NeuerAthletDialog();
 			}
 		});
 		mnDatei.add(mntmNeuesProfilAnlegen);
@@ -88,24 +89,24 @@ public class MainFrame {
 		JSeparator separator = new JSeparator();
 		mnDatei.add(separator);
 		
-		JMenuItem mntmSpeichern = new JMenuItem("Speichern");
+		mntmSpeichern = new JMenuItem("Speichern");
 		mntmSpeichern.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/Speichern_16x16.png")));
 		mntmSpeichern.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		mnDatei.add(mntmSpeichern);
 		mntmSpeichern.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				speichernClicked();
+				speichernClicked(false);
 			}
 		});
 		
-		JMenuItem mntmSpeicherUnter = new JMenuItem("Speichern unter...");
+		mntmSpeicherUnter = new JMenuItem("Speichern unter...");
 		mntmSpeicherUnter.setIcon(new ImageIcon(MainFrame.class.getResource("/bilder/SpeichernUnter_16x16.png")));
 		mnDatei.add(mntmSpeicherUnter);
 		mntmSpeicherUnter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				speichernUnter();
+				speichernClicked(true);
 			}
 		});
 		
@@ -226,6 +227,7 @@ public class MainFrame {
 			}
 		});
 		dummyTab.add(btnAthletenprofilffnen, "cell 1 7,growx,aligny top");
+		speichernMenüVerfügbar(false);
 	}
 	
 	public JFrame getContext() {
@@ -259,7 +261,7 @@ public class MainFrame {
     					tabbedPane.setSelectedComponent(tab);
     					tabbedPane.remove(tabbedPane.getSelectedIndex());
     				} else {
-    					speichernClicked();
+    					speichernClicked(false);
     				}
     				iterator = tabList.iterator();
     			}
@@ -302,54 +304,43 @@ public class MainFrame {
 		}
 	}
 	
-	
-	
-	private void tabSchließenClicked(){
-		if (selectedIndex != -1	) {
+	protected void tabSchließenClicked(){
+		selectedIndex = tabbedPane.getSelectedIndex();
+		if (selectedIndex != -1 ) {
 			ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(selectedIndex);
 			tab.tabSchließen();					
 		} else {
 			return;
 		}
+		// TODO: funktioniert noch nicht, das Start-Tab hat anscheinend keinen festen Index. - besser über observe athletenListe realisiern...
+		if (selectedIndex == -1)
+			speichernMenüVerfügbar(false);
 	}
 	
-	protected void speichernClicked () {
+	protected void speichernClicked (boolean forceSpeichernUnter) {
 		int aktivesTab = tabbedPane.getSelectedIndex();
 		if (aktivesTab == -1) {
-			//TODO Fehlermeldung falls Start ausgewählt
+			//TODO Fehlermeldung falls Start ausgewählt - sollte nicht nötig sein, wenn speichern ausgegraut wird!!
 			return;
 		}
-		
-		// TODO: der "view" DateiSpeichern sollte sofort nach dem Öffnen angelegt und vom Tab aus referneziert werden.
 		ProfilTab tab = getAktivesTab();
-		tab.speichernClicked(false);
-	}
-	
-	protected void speichernUnter() {
-		int aktivesTab = tabbedPane.getSelectedIndex();
-		if (aktivesTab == -1) {
-			return;
-		}
-		ProfilTab tab = getAktivesTab();			
-		tab.speichernClicked(true);
-	}
-	
-	public void createTab (String name, LinkedList<Leistung> leistungen) {
-		// TODO: ggf .Liste<Athlet> add neuenathlet -  mit observer, der neue Tabs anlegt!?!?!?
-			Athlet athlet = new Athlet(name, leistungen);
-			ProfilTab newTab = new ProfilTab(athlet);			
-			tabList.add(0, newTab);
-			tabbedPane.insertTab("* "+name, null, newTab, null, 0);
-			tabbedPane.setSelectedIndex(0);	
+		tab.speichernClicked(forceSpeichernUnter);
 	}
 	
 	public ProfilTab createTab (String name,long id, LinkedList<Leistung> leistungen) {
 		// TODO: hier sollte kein Athlet angelegt werden!!!
-		Athlet athlet = new Athlet(id, name, leistungen);
+		// TODO: ggf .Liste<Athlet> add neuenathlet -  mit observer, der neue Tabs anlegt!?!?!?
+		Athlet athlet;
+		if (id == -1){
+			athlet = new Athlet(name, leistungen);
+		} else {
+			athlet = new Athlet(id, name, leistungen);			
+		}
 		ProfilTab newTab = new ProfilTab(athlet);			
 		tabList.add(0, newTab);
 		tabbedPane.insertTab(name+" *", null, newTab, null, 0);
 		tabbedPane.setSelectedIndex(0);
+		speichernMenüVerfügbar(true);
 		return newTab;
 	}
 	
@@ -375,19 +366,22 @@ public class MainFrame {
 		return null;		
 	}
 	
-	public void leistungBearbeitenMenüVerfügbar() {
-		mntmLeistungenBearbeiten.setEnabled(true);
+	public void speichernMenüVerfügbar(boolean setTo){
+		mntmSpeichern.setEnabled(setTo);
+		mntmSpeicherUnter.setEnabled(setTo);
 	}
 	
-	public void leistungBearbeitenMenüAusgrauen() {
-		mntmLeistungenBearbeiten.setEnabled(false);
+	protected void setLeistungenMenüVerfügbar(boolean setTo){
+		leistungLöschenMenüVerfügbar(setTo);
+		leistungBearbeitenMenüVerfügbar(setTo);
 	}
 	
-	public void leistungLöschenMenüVerfügbar() {
-		mntmLeistungenLoeschen.setEnabled(true);
+	private void leistungBearbeitenMenüVerfügbar(boolean setTo) {
+		mntmLeistungenBearbeiten.setEnabled(setTo);
+	}
+		
+	private void leistungLöschenMenüVerfügbar(boolean setTo) {
+		mntmLeistungenLoeschen.setEnabled(setTo);
 	}
 	
-	public void leistungLöschenMenüAusgrauen() {
-		mntmLeistungenLoeschen.setEnabled(false);
-	}
 }

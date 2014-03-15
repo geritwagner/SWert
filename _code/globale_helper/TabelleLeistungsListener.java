@@ -21,6 +21,6 @@ public class TabelleLeistungsListener implements ListSelectionListener{
     	if (e.getValueIsAdjusting()) {
     		return;
         }
-        profilTab.setBearbeitenStatus(true);
+        profilTab.setLeistungBearbeitenAvailable(true);
     }
 }

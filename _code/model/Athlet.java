@@ -72,7 +72,7 @@ public class Athlet extends Observable implements AthletInterface {
 	public boolean addLeistung(Leistung leistung) {
 		alleLeistungen.add(leistung);
 		setChanged();
-		notifyObservers(this);
+		notifyObservers(true);
 		return true;
 	}
 	
@@ -82,7 +82,7 @@ public class Athlet extends Observable implements AthletInterface {
 			if(aktuelleLeistung.equals(leistungToRemove)){
 				alleLeistungen.remove(i);
 				setChanged();
-				notifyObservers(this);
+				notifyObservers(true);
 				return true;
 			}
 		}
@@ -102,7 +102,7 @@ public class Athlet extends Observable implements AthletInterface {
 		Leistung zuÄnderndeLeistung = getLeistungById(id_leistung);
 		zuÄnderndeLeistung.updateLeistung(id_strecke, bezeichnung, datum, geschwindigkeit);
 		setChanged();
-		notifyObservers(this);
+		notifyObservers(true);
 	}
 
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
@@ -122,7 +122,7 @@ public class Athlet extends Observable implements AthletInterface {
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(true);
 				setChanged();
-				notifyObservers(this);
+				notifyObservers(false);
 			}
 		}
 	}
@@ -135,7 +135,7 @@ public class Athlet extends Observable implements AthletInterface {
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(false);
 				setChanged();
-				notifyObservers(this);
+				notifyObservers(false);
 			}
 		}
 	}
@@ -157,7 +157,7 @@ public class Athlet extends Observable implements AthletInterface {
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			aktuelleLeistung.setIsUsedForSlopeFaktor(false);
 			setChanged();
-			notifyObservers(this);
+			notifyObservers(false);
 		}
 	}
 	
@@ -178,7 +178,7 @@ public class Athlet extends Observable implements AthletInterface {
 		setLeistungToAuswahlForSlopeFaktor(kürzereStreckenLeistung);
 		setLeistungToAuswahlForSlopeFaktor(längereStreckenLeistung);
 		setChanged();
-		notifyObservers(this);
+		notifyObservers(false);
 	}
 	
 	public boolean isSetSlopeFaktor(){

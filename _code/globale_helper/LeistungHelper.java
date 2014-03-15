@@ -1,8 +1,5 @@
 package globale_helper;
 
-import java.text.*;
-import java.util.Locale;
-
 
 /**
  * Controller zum Handlen aller Aktionen, die einzelne Leistungen betreffen
@@ -143,24 +140,7 @@ public class LeistungHelper {
 		}
 		return zeitString;
 	}
-	
-	/**
-	 * Ersetzen des Dezimal-Kommes innerhalb eines String ("12,34") durch
-	 * Punkt und parsen des entstehenden Double-Wertes (12.34)
-	 */
-	private double convertGeschwindigkeitStringToDouble (String geschwindigkeitString) {
-		NumberFormat format = NumberFormat.getInstance(Locale.GERMANY);
-		Number number;
-		double geschwindigkeit = 0d;
-		try {
-			number = format.parse(geschwindigkeitString);
-			geschwindigkeit = number.doubleValue();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return geschwindigkeit;
-	}
-	
+		
 	/**
 	 * Umwandeln des formatierten Strings ("00:00:00,00") in [sec]
 	 */

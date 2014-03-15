@@ -9,8 +9,6 @@ import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import datei_operationen.DateiSpeichernCSVController;
-import datei_operationen.DateiSpeichern;
 import net.miginfocom.swing.MigLayout;
 
 import globale_helper.*;
@@ -61,8 +59,10 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			chckbxLeistungenAuswahl.setSelected(true);
 		} catch (Exception e) {
 		}
-		setBearbeitenStatus(false);
+		setLeistungBearbeitenAvailable(false);
 	}
+	
+//	TODO Dateien Öffnen/Schließen müsste intensiv getestet werden (auch mit speichern unter, direkt: tab/fenster schließen etc.)
 	
 	public void setSpeicherPfad(String speicherPfad) {
 		// called after a new file is opened
@@ -122,7 +122,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}
 		
 	protected void tabSchließen() {
-		setBearbeitenStatus(false);
+		setLeistungBearbeitenAvailable(false);
         int tabNumber = mainFrame.tabbedPane.getSelectedIndex();
         if (tabNumber != -1) {
         	if (gespeichert) {
@@ -132,7 +132,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         				athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
         		if (nutzerauswahlSpeichern == 0) {
         			// TODO: speichern besser lösen!!
-        			mainFrame.speichernClicked();
+        			mainFrame.speichernClicked(false);
             		release();
         		} else if (nutzerauswahlSpeichern == 1) {
             		release();
@@ -178,19 +178,20 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		}
 	}
 
-	public void setBearbeitenStatus(boolean editable){
+	public void setLeistungBearbeitenAvailable(boolean editable){
 		if (editable){
-			btnLeistungBearbeiten.setEnabled(true);
-			btnLeistungLöschen.setEnabled(true);
-	        mainFrame.leistungBearbeitenMenüVerfügbar();
-	        mainFrame.leistungLöschenMenüVerfügbar();
-		} else {
+			mainFrame.setLeistungenMenüVerfügbar(true);
+			setLeistungButtonsVerfügbar(true);
+	        		} else {
 			leistungenTabelle.getSelectionModel().clearSelection();
-			mainFrame.leistungBearbeitenMenüAusgrauen();
-			mainFrame.leistungLöschenMenüAusgrauen();
-			btnLeistungBearbeiten.setEnabled(false);
-			btnLeistungLöschen.setEnabled(false);
+			mainFrame.setLeistungenMenüVerfügbar(false);
+			setLeistungButtonsVerfügbar(false);
 		}
+	}
+	
+	private void setLeistungButtonsVerfügbar(boolean setTo){
+        btnLeistungBearbeiten.setEnabled(setTo);
+		btnLeistungLöschen.setEnabled(setTo);		
 	}
 	
 	private void setAnalysenVerfügbar(boolean AnalyseVerfügbar){
@@ -205,8 +206,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		}
 	}	
 
-	public void update(Observable arg0, Object arg1) {
-		// TODO: differenzierter?
+	public void update(Observable arg0, Object speicherStatusChanged) {
 		if (athlet.getSlopeFaktorStatus() == "set"){
 			LeistungHelper l = new LeistungHelper();
 			try {
@@ -219,10 +219,12 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			setAnalysenVerfügbar(false);
 		}
 		setAlleLeistungen();
+		
+		if ((boolean)speicherStatusChanged)
+			setSpeicherStatus(false);
 	}
 	
 	private void release(){
-		// TODO: model.deleteObserver(this); (auch in anderen observing views!!)
 		controller.release();
 		controller = null;
 		athlet.deleteObserver(this);
@@ -292,7 +294,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnTabSchlieen.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Abbrechen_16x16.png")));
 		btnTabSchlieen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				tabSchließen();
+				mainFrame.tabSchließenClicked();
 			}
 		});
 		panel.add(btnTabSchlieen, "cell 4 0,alignx right");

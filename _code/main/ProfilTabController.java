@@ -2,7 +2,6 @@ package main;
 
 import java.io.IOException;
 
-import datei_operationen.DateiSpeichernCSVController;
 import datei_operationen.DateiSpeichern;
 import analyse_bestzeiten.BestzeitenDialog;
 import analyse_diagramm.DiagrammController;
@@ -45,7 +44,7 @@ public class ProfilTabController {
 
 	
 	public void neueLeistungButtonPressed(){
-		view.setBearbeitenStatus(false);
+		view.setLeistungBearbeitenAvailable(false);
 		new LeistungDialog(athlet, null);		
 	}
 	

@@ -60,7 +60,10 @@ public class StreckenTest {
 		assertEquals(11, Strecken.getStreckenIdByString("Marathon"));
 		
 		assertEquals(-1, Strecken.getStreckenIdByString("Schwelle"));	
-		
+	}
+	
+	@Test
+	public void testGetStreckenlaengenStringArray() {
 		String[] expectedStrecken = {
 				"400m",
 				"800m",
@@ -75,6 +78,10 @@ public class StreckenTest {
 				"25km",
 				"Marathon"};
 		
-		assertEquals(expectedStrecken, Strecken.getStreckenlaengenStringArray());
+		String[] streckenGemMethode = Strecken.getStreckenlaengenStringArray();
+		
+		for (int i = 0; i< expectedStrecken.length; i++){
+			assertEquals(expectedStrecken[i], streckenGemMethode[i]);
+		}
 	}
 }

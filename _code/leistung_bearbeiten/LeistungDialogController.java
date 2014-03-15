@@ -1,7 +1,7 @@
 package leistung_bearbeiten;
 
-import java.text.DateFormat;
-import java.util.Date;
+import java.text.*;
+import java.util.*;
 
 import model.*;
 
@@ -46,6 +46,8 @@ public class LeistungDialogController {
 			long leistung_id = leistung.getId();
 			athlet.updateLeistung(leistung_id, id_strecke, bezeichnungString, datumString, view.getGeschwindigkeit());				
 		}
+		// TODO: 
+		// setSpeicherStatus(false);
 	}
 	
 }
