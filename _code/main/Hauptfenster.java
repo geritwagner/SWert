@@ -36,6 +36,7 @@ public class Hauptfenster implements Observer {
 	private int selectedIndex;
 
 	public static Hauptfenster aktuellesHauptfenster;	
+	public HauptfensterController controller;
 	
 	public static AthletenListe athletenListe;
 	
@@ -56,6 +57,7 @@ public class Hauptfenster implements Observer {
 	
 	public Hauptfenster() {
 		initializeFrame();
+		controller = new HauptfensterController(this);
 		athletenListe = new AthletenListe();
 		athletenListe.addObserver(this);
 		getContext().setVisible(true);
@@ -297,16 +299,6 @@ public class Hauptfenster implements Observer {
 		}
 	}
 	
-	private void menueVerfuegbar() {
-		mntmAthletenprofilSchliessen.setEnabled(true);
-		mnBearbeiten.setEnabled(true);
-	}
-	
-	private void menueAusgrauen() {
-		mntmAthletenprofilSchliessen.setEnabled(false);
-		mnBearbeiten.setEnabled(false);
-	}
-	
 	private void dateiOeffnenClicked(){
 		try {
 			new DateiOeffnen(athletenListe);
@@ -353,24 +345,6 @@ public class Hauptfenster implements Observer {
 		tab.speichernClicked(forceSpeichernUnter);
 	}
 	
-	public ProfilTab createTab (String name,long id, LinkedList<Leistung> leistungen) {
-		// deprecated!!
-		// TODO: hier sollte kein Athlet angelegt werden!!!
-		// TODO: ggf .Liste<Athlet> add neuenathlet -  mit observer, der neue Tabs anlegt!?!?!?
-		Athlet athlet;
-		if (id == -1){
-			athlet = new Athlet(name, leistungen);
-		} else {
-			athlet = new Athlet(id, name, leistungen);			
-		}
-		ProfilTab newTab = new ProfilTab(athletenListe, athlet);			
-		tabList.add(0, newTab);
-		tabbedPane.insertTab(name+" *", null, newTab, null, 0);
-		tabbedPane.setSelectedIndex(0);
-		speichernMenüVerfügbar(true);
-		return newTab;
-	}
-	
 	public ProfilTab createTab (Athlet athlet) {
 		ProfilTab newTab = new ProfilTab(athletenListe, athlet);			
 		tabList.add(0, newTab);
@@ -401,6 +375,16 @@ public class Hauptfenster implements Observer {
 		return null;		
 	}
 	
+	private void menueVerfuegbar() {
+		mntmAthletenprofilSchliessen.setEnabled(true);
+		mnBearbeiten.setEnabled(true);
+	}
+	
+	private void menueAusgrauen() {
+		mntmAthletenprofilSchliessen.setEnabled(false);
+		mnBearbeiten.setEnabled(false);
+	}
+	
 	public void speichernMenüVerfügbar(boolean setTo){
 		mntmSpeichern.setEnabled(setTo);
 		mntmSpeicherUnter.setEnabled(setTo);
@@ -419,49 +403,39 @@ public class Hauptfenster implements Observer {
 		mntmLeistungenLoeschen.setEnabled(setTo);
 	}
 
-	public LinkedList<Athlet> getGeoeffneteAthleten(){
-		LinkedList<Athlet> geoffneteAthleten = new LinkedList<>();
-		for (ProfilTab aktuellesTab : tabList){
-			try {
-				geoffneteAthleten.add(aktuellesTab.getAthlet());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//TODO: testen!!
-		}
-		return geoffneteAthleten;
+	public int getAnzahlGeoeffneteAthleten(){
+		return tabList.size();
 	}
 	
 	public void update(Observable arg0, Object arg1) {
-		System.out.println("called update");
 		//TODO tab oeffnen/schließen (etc?) integrieren!!
-		int anzahlGeoffneteAthleten = getGeoeffneteAthleten().size();
+		int anzahlGeoffneteAthleten = getAnzahlGeoeffneteAthleten();
 		int anzahlAngelegteAthleten = athletenListe.getAlleAthleten().size();
 		
-		if (anzahlGeoffneteAthleten < anzahlAngelegteAthleten)
-			createTab(athletenListe.getLetzterGeoeffneterAthlet());
-			getAktivesTab().setSpeicherStatus(true);
-			speichernMenüVerfügbar(true);
+		if (anzahlGeoffneteAthleten < anzahlAngelegteAthleten){
+			Athlet letzterGeoeffneterAthlet = athletenListe.getLetzterGeoeffneterAthlet();
+			createTab(letzterGeoeffneterAthlet);
+			if (letzterGeoeffneterAthlet.isSetSpeicherpfad()){
+				getAktivesTab().setSpeicherStatus(true);				
+			} else {
+				getAktivesTab().setSpeicherStatus(false);								
+			}
+			speichernMenüVerfügbar(true);	
+		}
 		if (anzahlGeoffneteAthleten > anzahlAngelegteAthleten){
 			getAktivesTab().release();			
 	        int i = tabbedPane.getSelectedIndex();
 			tabbedPane.remove(i); 
 			tabList.remove(i);
 		}
-		
-//		zwei methoden der Athletenliste: getDeltaToOpen(GeoeffneteAthleten) and getDeltaToClose(GeoeffneteAthleten)
-//		vergleich mit athletenliste und rückgabe der zu öffnenden bzw. zu schließenden athleten
-		
-		
-		//menüs deaktivieren etc.
-//		if (getAktivesTab().getName() == "Start"){
-//			System.out.println("Start: menü etc.");
-//			speichernMenüVerfügbar(false);
-//			setLeistungenMenüVerfügbar(false);
-//		} else {
-//			speichernMenüVerfügbar(true);
-//		}
+				
+		//Start-Tab: menüs deaktivieren etc.
+		if (tabList.size() == 0){
+			speichernMenüVerfügbar(false);
+			setLeistungenMenüVerfügbar(false);
+		} else {
+			speichernMenüVerfügbar(true);
+		}
 		
 	}
 	

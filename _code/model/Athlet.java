@@ -20,7 +20,8 @@ public class Athlet extends Observable implements AthletInterface {
 	private double slopeFaktor;
 	private double anaerobeSchwelle;
 	private LinkedList<Leistung> alleLeistungen;
-
+	private String speicherpfad = "";
+	
 	private LeistungHelper leistungHelper;
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
 	
@@ -103,6 +104,20 @@ public class Athlet extends Observable implements AthletInterface {
 		zuÄnderndeLeistung.updateLeistung(id_strecke, bezeichnung, datum, geschwindigkeit);
 		setChanged();
 		notifyObservers(true);
+	}
+
+	public String getSpeicherpfad() {
+		return speicherpfad;
+	}
+
+	public void setSpeicherpfad(String speicherpfad) {
+		this.speicherpfad = speicherpfad;
+	}
+	
+	public boolean isSetSpeicherpfad(){
+		if (speicherpfad == "")
+			return false;
+		return true;
 	}
 
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
@@ -200,17 +215,16 @@ public class Athlet extends Observable implements AthletInterface {
 		return "set";
 	}
 	
-	private void requireSlopeFaktor() throws Exception{
+	private void requireSlopeFaktor() throws SlopeFaktorNotSetException{
 		if ("set" != getSlopeFaktorStatus()){
-			throw new Exception();
-			// TODO: change to SlopeFaktorNotSetException
+			throw new SlopeFaktorNotSetException();
 		}
 	}
 	
 	/**
 	 * Schätzen der möglichen Bestzeiten anhand SlopeFaktor und einer Referenzleistung
 	 */
-	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws Exception { 
+	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws SlopeFaktorNotSetException { 
 		requireSlopeFaktor();
 
 		LinkedList<Leistung> bestzeitenListe = new LinkedList<Leistung>();
@@ -225,7 +239,7 @@ public class Athlet extends Observable implements AthletInterface {
 		return bestzeitenListe; 
 	}
 	
-	public double calculateSpeedSecondsPerKm(double entfernung) throws Exception {
+	public double calculateSpeedSecondsPerKm(double entfernung) throws SlopeFaktorNotSetException {
 		Leistung referenzLeistung = getLeistungAuswahlForSlopeFaktor()[0];
 		double referenzGeschwindigkeit = referenzLeistung.getGeschwindigkeit();
 		double referenzEntfernung = referenzLeistung.getStrecke();
@@ -233,7 +247,7 @@ public class Athlet extends Observable implements AthletInterface {
 		return speed;
 	}
 	
-	public double calculateTime (double entfernung) throws Exception {
+	public double calculateTime (double entfernung) throws SlopeFaktorNotSetException {
 		requireSlopeFaktor();
 		
 		double kilometerGeschwindigkeit = calculateSpeedSecondsPerKm(entfernung);
@@ -241,7 +255,7 @@ public class Athlet extends Observable implements AthletInterface {
 		return geschätzteGeschwindigkeit;
 	}
 	
-	public double getAnaerobeSchwelle() throws Exception{
+	public double getAnaerobeSchwelle() throws SlopeFaktorNotSetException{
 		requireSlopeFaktor();
 		return anaerobeSchwelle;
 	}
@@ -329,5 +343,4 @@ public class Athlet extends Observable implements AthletInterface {
 		}
 		return false;
 	}
-
 }

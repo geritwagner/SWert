@@ -24,23 +24,14 @@ public class DateiSpeichern {
 	private JFileChooser chooser;
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
 	Athlet athlet;
-	
-	private String pfad;
-
-	
-	public DateiSpeichern(Athlet athlet, String pfad) {
+		
+	public DateiSpeichern(Athlet athlet) {
 		this.athlet = athlet;
-		if (pfad != null)
-			setPfad(pfad);
-	}
-	
-	public void setSpeicherPfad(String pfad){
-		setPfad(pfad);
 	}
 	
 	public void speichern(boolean forceSpeichernUnter) throws IOException{
 		if (!isSetPfad() || forceSpeichernUnter)
-			setPfadFromUserDialog(athlet.getName());
+			setPfadFromUserDialog();
 		schreiben(athlet);
 	}
 	
@@ -56,6 +47,7 @@ public class DateiSpeichern {
 							System.getProperty("line.separator") + "Möchten Sie sie ersetzen?", "Speichern bestätigen",
 							JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 						super.approveSelection();
+						// TODO: ggf. über observer?
 						((ProfilTab) mainFrame.tabbedPane.getComponentAt(mainFrame.tabbedPane.getSelectedIndex())).setSpeicherStatus(true);						
 					}
 				} else {
@@ -63,30 +55,26 @@ public class DateiSpeichern {
 					((ProfilTab) mainFrame.tabbedPane.getComponentAt(mainFrame.tabbedPane.getSelectedIndex())).setSpeicherStatus(true);
 				}
 			}
-		};;
-	}
-	
-	public void setPfadFromUserDialog (String athletName) {		
-		initFileChooser();
+		};
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
         chooser.addChoosableFileFilter(filter);   
-
-		String saveString = "Profil '"+athletName+"' speichern";
-		if (chooser.showDialog(mainFrame.getContext(), saveString) == JFileChooser.APPROVE_OPTION){		
+	}
+	
+	public void setPfadFromUserDialog () {		
+		initFileChooser();
+		
+		String info = "Profil '"+ athlet.getName() +"' speichern";
+		if (chooser.showDialog(mainFrame.getContext(), info) == JFileChooser.APPROVE_OPTION){	
 			String ausgewählterPfad = chooser.getSelectedFile().getAbsolutePath();
-			if (ausgewählterPfad.contains(".csv")) {
-				setPfad(ausgewählterPfad);
-			} else {				
-				setPfad(ausgewählterPfad+".csv");
-			}		
+			if ( ! ausgewählterPfad.contains(".csv")) {
+				ausgewählterPfad += ".csv";
+			}
+			athlet.setSpeicherpfad(ausgewählterPfad);
 		}
 	}
 	
-	public void setPfad(String pfad) {
-		this.pfad = pfad;
-	}
-
 	public boolean isSetPfad(){
+		String pfad = athlet.getSpeicherpfad();
 		if (pfad != null && pfad != "")
 			return true;
 		return false;
@@ -98,14 +86,15 @@ public class DateiSpeichern {
 	 * @throws IOException 
 	 */	
 	public void schreiben(Athlet athlet) throws IOException {
-		     CSVWriter writer = new CSVWriter(new FileWriter(pfad), ';', '\0');
-		     String[] entries = generateAthletenInfo(athlet);
-		     writer.writeNext(entries);	     
-		     schreibeLeistungen(writer,athlet.getLeistungen());
-		     writer.close();
-		     if (ValidatorHelper.isSyntacticallyCorrect(pfad)) {	    	 
-		    	 // TODO: SyntaxException()
-		     }		    
+	     String pfad = athlet.getSpeicherpfad();
+	     CSVWriter writer = new CSVWriter(new FileWriter(pfad), ';', '\0');
+	     String[] entries = generateAthletenInfo(athlet);
+	     writer.writeNext(entries);	     
+	     schreibeLeistungen(writer,athlet.getLeistungen());
+	     writer.close();
+	     if (ValidatorHelper.isSyntacticallyCorrect(pfad)) {	    	 
+	    	 // TODO: SyntaxException()
+	     }		    
 	}	
 
 	private String[] generateAthletenInfo(Athlet athlet) {

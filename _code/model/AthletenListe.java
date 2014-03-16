@@ -6,11 +6,20 @@ public class AthletenListe extends Observable {
 
 	LinkedList<Athlet> alleAthleten;
 	Athlet letzterGeoeffneterAthlet;
+	Athlet letzterGeschlossenerAthlet;
 	
 	//TODO: attributes to manage: active (tab), saved (status), editable (~Leistung ausgewählt)
 	
 	public Athlet getLetzterGeoeffneterAthlet() {
-		return letzterGeoeffneterAthlet;
+		Athlet aktuellerAthlet = letzterGeoeffneterAthlet;
+		letzterGeoeffneterAthlet = null;
+		return aktuellerAthlet;
+	}
+
+	public Athlet getLetzterGeschlossenerAthlet() {
+		Athlet aktuellerAthlet = letzterGeschlossenerAthlet;
+		letzterGeschlossenerAthlet = null;
+		return aktuellerAthlet;
 	}
 
 	public AthletenListe(){
@@ -34,6 +43,7 @@ public class AthletenListe extends Observable {
 		for (int i = 0; i<alleAthleten.size(); i++){
 			if (alleAthleten.get(i).equals(athlet)){
 				alleAthleten.remove(i);
+				letzterGeschlossenerAthlet = athlet;
 				setChanged();
 				notifyObservers();				
 			}

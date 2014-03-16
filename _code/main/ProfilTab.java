@@ -60,11 +60,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		setLeistungBearbeitenAvailable(false);
 	}
 		
-	public void setSpeicherPfad(String speicherPfad) {
-		// called after a new file is opened
-		controller.setSpeicherPfad(speicherPfad);
-	}	
-		
 	public void triggerTableChanged(int zeileView, int spalte, Object data){
 		// automatischeVerarbeitung: bricht den Methodenaufruf hier ab.
 		if (automatischeVerarbeitung)

@@ -20,14 +20,14 @@ public class DateiOeffnen {
 	private String nameAthlet;
 	private long idAthlet;
 	private LinkedList<Leistung> leistungen;
-	private AthletenListe athletenliste;
+	protected AthletenListe athletenliste;
 
 	public DateiOeffnen(AthletenListe athletenliste) throws FileNotFoundException, IOException, AlreadyOpenException, SyntaxException   {
 		this.athletenliste = athletenliste;
 		String pfad = getPfadFromUserDialog();
 		Athlet geöffneterAthlet = openAthletFromCSVFile(pfad);
+	    geöffneterAthlet.setSpeicherpfad(pfad);
 	    athletenliste.addAthlet(geöffneterAthlet);
-//	    tab.setSpeicherPfad(pfad);
 		release();
 	}
 	

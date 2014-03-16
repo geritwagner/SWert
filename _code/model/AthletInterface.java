@@ -11,6 +11,8 @@ interface AthletInterface {
 	public boolean removeLeistung(Leistung leistungToRemove);
 	public Leistung getLeistungById(long id);
 	public void updateLeistung(long id_leistung, int id_strecke, String bezeichnung, String datum, double geschwindigkeit);
+	public String getSpeicherpfad();
+	public void setSpeicherpfad(String speicherpfad);
 	
 	// Leistungen für Slope-Faktor bearbeiten
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception;
@@ -23,8 +25,8 @@ interface AthletInterface {
 	public String getSlopeFaktorStatus();
 
 	// Berechnete Leistungen
-	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws Exception;
-	public double calculateSpeedSecondsPerKm (double entfernung) throws Exception;
-	public double calculateTime (double entfernung) throws Exception;
-	public double getAnaerobeSchwelle() throws Exception;	
+	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws SlopeFaktorNotSetException;
+	public double calculateSpeedSecondsPerKm (double entfernung) throws SlopeFaktorNotSetException;
+	public double calculateTime (double entfernung) throws SlopeFaktorNotSetException;
+	public double getAnaerobeSchwelle() throws SlopeFaktorNotSetException;	
 }

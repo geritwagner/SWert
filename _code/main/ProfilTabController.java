@@ -63,16 +63,10 @@ public class ProfilTabController {
 	protected void automatischAuswählen() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException{
 		athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();		
 	}
-
-	protected void setSpeicherPfad(String pfad) {
-		if (speicher == null)
-			speicher = new DateiSpeichern(athlet, "");
-		speicher.setSpeicherPfad(pfad);
-	}
 	
 	protected void speichern(boolean forceSpeichernUnter) throws IOException{
 		if (speicher == null)
-			speicher = new DateiSpeichern(athlet, "");
+			speicher = new DateiSpeichern(athlet);
 		speicher.speichern(forceSpeichernUnter);
 		view.setSpeicherStatus(true);				
 	}	
