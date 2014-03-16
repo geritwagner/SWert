@@ -37,12 +37,14 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private Hauptfenster mainFrame = Hauptfenster.aktuellesHauptfenster;
 	private Athlet athlet;
 	private ProfilTabController controller;
+	private AthletenListe athletenListe;
 
 	// TODO: auslagern!?!?!??
 	public Athlet getAthlet(){return athlet;}
 	protected boolean getSpeicherStatus() {	return gespeichert;}
-
-	public ProfilTab(Athlet athlet) {
+	
+	public ProfilTab(AthletenListe athletenliste, Athlet athlet) {
+		this.athletenListe = athletenliste;
 		this.athlet = athlet;
 		controller = new ProfilTabController(athlet, this);
 		initLayout(athlet.getName());
@@ -115,23 +117,21 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		}
 	}
 		
-	protected void tabSchließen() {
-		setLeistungBearbeitenAvailable(false);
+	protected void tabSchließenClicked() {
+		// TODO: über update (Haupfenster) realisieren
+//		setLeistungBearbeitenAvailable(false);
         int tabNumber = mainFrame.tabbedPane.getSelectedIndex();
         if (tabNumber != -1) {
-        	if (gespeichert) {
-        		release();
-        	} else {
+        	if ( ! gespeichert){
         		int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+
         				athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
         		if (nutzerauswahlSpeichern == 0) {
         			// TODO: speichern besser lösen!!
         			mainFrame.speichernClicked(false);
-            		release();
-        		} else if (nutzerauswahlSpeichern == 1) {
-            		release();
-        		}
+        		} 
         	}
+        	athletenListe.removeAthlet(athlet);
+//        	release();
         }
 	}
 	
@@ -218,14 +218,11 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			setSpeicherStatus(false);
 	}
 	
-	private void release(){
+	protected void release(){
 		controller.release();
 		controller = null;
 		athlet.deleteObserver(this);
 		athlet = null;
-        int i = mainFrame.tabbedPane.getSelectedIndex();
-		mainFrame.tabbedPane.remove(i); 
-		mainFrame.tabList.remove(i);
 	}
 	
 	// ---------------------------------- TABLE-METHODS ----------------------------
@@ -288,7 +285,8 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnTabSchlieen.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Abbrechen_16x16.png")));
 		btnTabSchlieen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainFrame.tabSchließenClicked();
+//				mainFrame.tabSchließenClicked();
+				tabSchließenClicked();
 			}
 		});
 		panel.add(btnTabSchlieen, "cell 4 0,alignx right");

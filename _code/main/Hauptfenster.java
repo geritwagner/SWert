@@ -3,6 +3,7 @@ package main;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import net.miginfocom.swing.MigLayout;
@@ -16,7 +17,7 @@ import model.*;
 import java.awt.EventQueue;
 import javax.swing.UIManager;
 
-public class Hauptfenster {
+public class Hauptfenster implements Observer {
 
 	private JFrame mainFrame = new JFrame();
 	public JTabbedPane tabbedPane;
@@ -25,7 +26,7 @@ public class Hauptfenster {
 	public LeistungHelper leistungHelper;
 	
 	private Dimension d = mainFrame.getToolkit().getScreenSize();
-	private JMenuItem mntmAthletenprofilSchlieen;
+	private JMenuItem mntmAthletenprofilSchliessen;
 	private JMenu mnBearbeiten;
 	private JMenuItem mntmLeistungenBearbeiten;
 	private JMenuItem mntmLeistungenLoeschen;
@@ -36,6 +37,8 @@ public class Hauptfenster {
 
 	public static Hauptfenster aktuellesHauptfenster;	
 	
+	public static AthletenListe athletenListe;
+	
 	public static void main (String args[]) {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -43,7 +46,6 @@ public class Hauptfenster {
 				try {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					aktuellesHauptfenster = new Hauptfenster();
-					aktuellesHauptfenster.getContext().setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -54,6 +56,9 @@ public class Hauptfenster {
 	
 	public Hauptfenster() {
 		initializeFrame();
+		athletenListe = new AthletenListe();
+		athletenListe.addObserver(this);
+		getContext().setVisible(true);
 	}
 	
 	private void initializeFrame() {		
@@ -82,7 +87,7 @@ public class Hauptfenster {
 		mntmNeuesProfilAnlegen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new NeuerAthletDialog();
+				new NeuerAthletDialog(athletenListe);
 			}
 		});
 		mnDatei.add(mntmNeuesProfilAnlegen);
@@ -97,15 +102,15 @@ public class Hauptfenster {
 			}
 		});
 		
-		mntmAthletenprofilSchlieen = new JMenuItem("Athletenprofil schlie\u00DFen");
-		mntmAthletenprofilSchlieen.addActionListener(new ActionListener() {
+		mntmAthletenprofilSchliessen = new JMenuItem("Athletenprofil schlie\u00DFen");
+		mntmAthletenprofilSchliessen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				tabSchließenClicked();
 			}
 		});
-		mntmAthletenprofilSchlieen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
-		mnDatei.add(mntmAthletenprofilSchlieen);
+		mntmAthletenprofilSchliessen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
+		mnDatei.add(mntmAthletenprofilSchliessen);
 		
 		JSeparator separator = new JSeparator();
 		mnDatei.add(separator);
@@ -211,7 +216,7 @@ public class Hauptfenster {
 		JPanel dummyTab = new JPanel();
 		tabbedPane.addTab("Start", new ImageIcon(Hauptfenster.class.getResource("/bilder/Logo_16x16.png")), dummyTab, null);
 		dummyTab.setLayout(new MigLayout("", "[grow][205px][grow]", "[5:50:200][14px][2px][23px][20px][][][][2px][23px]"));
-		
+
 		JLabel lblLegenSieHier = new JLabel("Legen Sie hier ein neues Athletenprofil an:", SwingConstants.CENTER);
 		lblLegenSieHier.setFont(new Font("Tahoma", Font.BOLD, 11));
 		dummyTab.add(lblLegenSieHier, "cell 1 1,growx,aligny top");
@@ -225,8 +230,7 @@ public class Hauptfenster {
 		btnNeuesAthletenprofilAnlegen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				NeuerAthletDialog dialog = new NeuerAthletDialog();
-				dialog.setVisible(true);
+				new NeuerAthletDialog(athletenListe);
 			}
 		});
 		dummyTab.add(btnNeuesAthletenprofilAnlegen, "cell 1 3,growx,aligny top");
@@ -294,18 +298,18 @@ public class Hauptfenster {
 	}
 	
 	private void menueVerfuegbar() {
-		mntmAthletenprofilSchlieen.setEnabled(true);
+		mntmAthletenprofilSchliessen.setEnabled(true);
 		mnBearbeiten.setEnabled(true);
 	}
 	
 	private void menueAusgrauen() {
-		mntmAthletenprofilSchlieen.setEnabled(false);
+		mntmAthletenprofilSchliessen.setEnabled(false);
 		mnBearbeiten.setEnabled(false);
 	}
 	
 	private void dateiOeffnenClicked(){
 		try {
-			new DateiOeffnen();
+			new DateiOeffnen(athletenListe);
 		}catch(java.io.FileNotFoundException e) {
 			JOptionPane.showMessageDialog(mainFrame,
 				"Die Datei wurde nicht gefunden, bitte probieren Sie es noch einmal.",
@@ -326,10 +330,11 @@ public class Hauptfenster {
 	}
 	
 	protected void tabSchließenClicked(){
+		// TODO: delete!?!
 		selectedIndex = tabbedPane.getSelectedIndex();
 		if (selectedIndex != -1 ) {
 			ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(selectedIndex);
-			tab.tabSchließen();					
+			tab.tabSchließenClicked();					
 		} else {
 			return;
 		}
@@ -349,6 +354,7 @@ public class Hauptfenster {
 	}
 	
 	public ProfilTab createTab (String name,long id, LinkedList<Leistung> leistungen) {
+		// deprecated!!
 		// TODO: hier sollte kein Athlet angelegt werden!!!
 		// TODO: ggf .Liste<Athlet> add neuenathlet -  mit observer, der neue Tabs anlegt!?!?!?
 		Athlet athlet;
@@ -357,11 +363,19 @@ public class Hauptfenster {
 		} else {
 			athlet = new Athlet(id, name, leistungen);			
 		}
-		ProfilTab newTab = new ProfilTab(athlet);			
+		ProfilTab newTab = new ProfilTab(athletenListe, athlet);			
 		tabList.add(0, newTab);
 		tabbedPane.insertTab(name+" *", null, newTab, null, 0);
 		tabbedPane.setSelectedIndex(0);
 		speichernMenüVerfügbar(true);
+		return newTab;
+	}
+	
+	public ProfilTab createTab (Athlet athlet) {
+		ProfilTab newTab = new ProfilTab(athletenListe, athlet);			
+		tabList.add(0, newTab);
+		tabbedPane.insertTab(athlet.getName() + " *", null, newTab, null, 0);
+		tabbedPane.setSelectedIndex(0);
 		return newTab;
 	}
 	
@@ -403,6 +417,52 @@ public class Hauptfenster {
 		
 	private void leistungLöschenMenüVerfügbar(boolean setTo) {
 		mntmLeistungenLoeschen.setEnabled(setTo);
+	}
+
+	public LinkedList<Athlet> getGeoeffneteAthleten(){
+		LinkedList<Athlet> geoffneteAthleten = new LinkedList<>();
+		for (ProfilTab aktuellesTab : tabList){
+			try {
+				geoffneteAthleten.add(aktuellesTab.getAthlet());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//TODO: testen!!
+		}
+		return geoffneteAthleten;
+	}
+	
+	public void update(Observable arg0, Object arg1) {
+		System.out.println("called update");
+		//TODO tab oeffnen/schließen (etc?) integrieren!!
+		int anzahlGeoffneteAthleten = getGeoeffneteAthleten().size();
+		int anzahlAngelegteAthleten = athletenListe.getAlleAthleten().size();
+		
+		if (anzahlGeoffneteAthleten < anzahlAngelegteAthleten)
+			createTab(athletenListe.getLetzterGeoeffneterAthlet());
+			getAktivesTab().setSpeicherStatus(true);
+			speichernMenüVerfügbar(true);
+		if (anzahlGeoffneteAthleten > anzahlAngelegteAthleten){
+			getAktivesTab().release();			
+	        int i = tabbedPane.getSelectedIndex();
+			tabbedPane.remove(i); 
+			tabList.remove(i);
+		}
+		
+//		zwei methoden der Athletenliste: getDeltaToOpen(GeoeffneteAthleten) and getDeltaToClose(GeoeffneteAthleten)
+//		vergleich mit athletenliste und rückgabe der zu öffnenden bzw. zu schließenden athleten
+		
+		
+		//menüs deaktivieren etc.
+//		if (getAktivesTab().getName() == "Start"){
+//			System.out.println("Start: menü etc.");
+//			speichernMenüVerfügbar(false);
+//			setLeistungenMenüVerfügbar(false);
+//		} else {
+//			speichernMenüVerfügbar(true);
+//		}
+		
 	}
 	
 }

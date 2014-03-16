@@ -1,14 +1,18 @@
 package datei_operationen;
 
 import java.io.*;
+import java.util.LinkedList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
 import main.Hauptfenster;
 import main.ProfilTab;
 import model.Athlet;
+import model.Leistung;
 
 /**
  * Dialog zum Auswählen des Names und Pfades einer zu speichernden CSV-Datei
@@ -19,29 +23,25 @@ public class DateiSpeichern {
 	private Hauptfenster mainFrame = Hauptfenster.aktuellesHauptfenster;
 	private JFileChooser chooser;
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
-	DateiSpeichernCSVController controller;
 	Athlet athlet;
 	
+	private String pfad;
+
 	
 	public DateiSpeichern(Athlet athlet, String pfad) {
-		controller = new DateiSpeichernCSVController();
 		this.athlet = athlet;
 		if (pfad != null)
-			controller.setPfad(pfad);
-	}
-
-	public boolean isSetPfad(){
-		return controller.isSetPfad();
+			setPfad(pfad);
 	}
 	
 	public void setSpeicherPfad(String pfad){
-		controller.setPfad(pfad);
+		setPfad(pfad);
 	}
 	
 	public void speichern(boolean forceSpeichernUnter) throws IOException{
 		if (!isSetPfad() || forceSpeichernUnter)
 			setPfadFromUserDialog(athlet.getName());
-		controller.schreiben(athlet);
+		schreiben(athlet);
 	}
 	
 	private void initFileChooser() {
@@ -75,10 +75,54 @@ public class DateiSpeichern {
 		if (chooser.showDialog(mainFrame.getContext(), saveString) == JFileChooser.APPROVE_OPTION){		
 			String ausgewählterPfad = chooser.getSelectedFile().getAbsolutePath();
 			if (ausgewählterPfad.contains(".csv")) {
-				controller.setPfad(ausgewählterPfad);
+				setPfad(ausgewählterPfad);
 			} else {				
-				controller.setPfad(ausgewählterPfad+".csv");
+				setPfad(ausgewählterPfad+".csv");
 			}		
 		}
+	}
+	
+	public void setPfad(String pfad) {
+		this.pfad = pfad;
+	}
+
+	public boolean isSetPfad(){
+		if (pfad != null && pfad != "")
+			return true;
+		return false;
+	}
+	
+	/**
+	 * Methode, die ein übergebenes Profil-Tab unter der Pfadangabe
+	 * als CSV-Datei erstellt
+	 * @throws IOException 
+	 */	
+	public void schreiben(Athlet athlet) throws IOException {
+		     CSVWriter writer = new CSVWriter(new FileWriter(pfad), ';', '\0');
+		     String[] entries = generateAthletenInfo(athlet);
+		     writer.writeNext(entries);	     
+		     schreibeLeistungen(writer,athlet.getLeistungen());
+		     writer.close();
+		     if (ValidatorHelper.isSyntacticallyCorrect(pfad)) {	    	 
+		    	 // TODO: SyntaxException()
+		     }		    
+	}	
+
+	private String[] generateAthletenInfo(Athlet athlet) {
+		String[] athletInfo = new String[4];
+		athletInfo[0] = String.valueOf(athlet.getId());
+		athletInfo[1] = athlet.getName();
+		return athletInfo;
+	}
+
+	private void schreibeLeistungen (CSVWriter writer, LinkedList<Leistung> leistungen) {
+		for (Leistung aktuelleLeistung : leistungen){
+			String[] eingaben = new String[4];
+			eingaben[0] = aktuelleLeistung.getDatum();
+			eingaben[1] = String.valueOf(aktuelleLeistung.getStreckenString());
+			eingaben[2] = aktuelleLeistung.getBezeichnung();
+			eingaben[3] = String.valueOf(aktuelleLeistung.getZeitString());
+			writer.writeNext(eingaben);
+		} 
 	}
 }

@@ -5,6 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import model.*;
+
 public class NeuerAthletDialog extends JDialog{
 
 	private static final long serialVersionUID = 1L;
@@ -12,7 +14,10 @@ public class NeuerAthletDialog extends JDialog{
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textFieldName = new JTextField();
 
-	public NeuerAthletDialog() {
+	private AthletenListe athletenListe;
+	
+	public NeuerAthletDialog(AthletenListe athletenListe) {
+		this.athletenListe = athletenListe;
 		initProperties();
 		initLayout();
 		setVisible(true);
@@ -96,8 +101,8 @@ public class NeuerAthletDialog extends JDialog{
 		if(isValid(name)) {
 			setVisible(false);
 			dispose();
-			// TODO: anders umsetzen:
-			Hauptfenster.aktuellesHauptfenster.createTab(name, -1, null);
+			Athlet neuerAthlet = new Athlet(name, null);
+			athletenListe.addAthlet(neuerAthlet);
 		}
 		else {
 			JOptionPane.showMessageDialog(NeuerAthletDialog.this,
@@ -108,6 +113,7 @@ public class NeuerAthletDialog extends JDialog{
 	}
 	
 	private boolean isValid(String name) {
+		// TODO: name sollte kein ";" enthalten!
 		if (name.toCharArray().length > 0) {
 			return true;
 		}
