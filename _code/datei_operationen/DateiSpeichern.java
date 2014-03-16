@@ -64,7 +64,7 @@ public class DateiSpeichern {
 		initFileChooser();
 		
 		String info = "Profil '"+ athlet.getName() +"' speichern";
-		if (chooser.showDialog(mainFrame.getContext(), info) == JFileChooser.APPROVE_OPTION){	
+		if (chooser.showDialog(mainFrame, info) == JFileChooser.APPROVE_OPTION){	
 			String ausgewählterPfad = chooser.getSelectedFile().getAbsolutePath();
 			if ( ! ausgewählterPfad.contains(".csv")) {
 				ausgewählterPfad += ".csv";

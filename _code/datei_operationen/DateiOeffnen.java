@@ -39,7 +39,7 @@ public class DateiOeffnen {
 	    }
 	    kopfzeileAuslesen(reader);
 	    if (Hauptfenster.aktuellesHauptfenster.checkAthletGeöffnet(nameAthlet,idAthlet)) {
-	    	JOptionPane.showMessageDialog(Hauptfenster.aktuellesHauptfenster.getContext(),
+	    	JOptionPane.showMessageDialog(Hauptfenster.aktuellesHauptfenster,
 	    			"Das ausgewählte Athletenprofil ist bereit geöffnet!",
 	    			"Athletenprofil bereits geöffnet",
 					JOptionPane.WARNING_MESSAGE);
@@ -84,7 +84,7 @@ public class DateiOeffnen {
 		JFileChooser chooser = new JFileChooser();
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
 		FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");chooser.addChoosableFileFilter(filter); 
-		if (chooser.showOpenDialog(Hauptfenster.aktuellesHauptfenster.getContext()) == JFileChooser.APPROVE_OPTION){
+		if (chooser.showOpenDialog(Hauptfenster.aktuellesHauptfenster) == JFileChooser.APPROVE_OPTION){
 			return chooser.getSelectedFile().getAbsolutePath();        
 		}else {
 			return null;

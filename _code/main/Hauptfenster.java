@@ -8,24 +8,18 @@ import javax.swing.*;
 import javax.swing.event.*;
 import net.miginfocom.swing.MigLayout;
 
-import analyse_diagramm.*;
 import datei_operationen.*;
-import globale_helper.*;
-import leistung_bearbeiten.*;
 import model.*;
 
 import java.awt.EventQueue;
 import javax.swing.UIManager;
 
-public class Hauptfenster implements Observer {
+public class Hauptfenster extends JFrame implements Observer {
 
-	private JFrame mainFrame = new JFrame();
+	private static final long serialVersionUID = 1L;
 	public JTabbedPane tabbedPane;
 	public LinkedList<ProfilTab> tabList = new LinkedList<ProfilTab>();
-	public DiagrammController diagrammController;
-	public LeistungHelper leistungHelper;
 	
-	private Dimension d = mainFrame.getToolkit().getScreenSize();
 	private JMenuItem mntmAthletenprofilSchliessen;
 	private JMenu mnBearbeiten;
 	private JMenuItem mntmLeistungenBearbeiten;
@@ -56,61 +50,48 @@ public class Hauptfenster implements Observer {
 	
 	
 	public Hauptfenster() {
-		initializeFrame();
-		controller = new HauptfensterController(this);
 		athletenListe = new AthletenListe();
 		athletenListe.addObserver(this);
-		getContext().setVisible(true);
+		controller = new HauptfensterController(athletenListe, this);
+		initializeFrame();
+		addWindowListener(controller);
+		setVisible(true);
 	}
 	
 	private void initializeFrame() {		
-		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(Hauptfenster.class.getResource("/bilder/Logo_32x32.png")));
-		mainFrame.addWindowListener(new WindowAdapter() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Hauptfenster.class.getResource("/bilder/Logo_32x32.png")));
+		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
 				programmSchliessen();
 			}
 		});
-		mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		mainFrame.setTitle("S-Wert 3.0");
-		mainFrame.setBounds(100, 100, 950, 500);
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setLocation((int) ((d.getWidth() - mainFrame.getWidth()) / 2), (int) ((d.getHeight() - mainFrame.getHeight()) / 2));
-		mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		setTitle("S-Wert 3.0");
+		setBounds(100, 100, 950, 500);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Dimension d = getToolkit().getScreenSize();
+		setLocation((int) ((d.getWidth() - getWidth()) / 2), (int) ((d.getHeight() - getHeight()) / 2));
+		setExtendedState(Frame.MAXIMIZED_BOTH);
 		
 		JMenuBar menuBar = new JMenuBar();
-		mainFrame.setJMenuBar(menuBar);
+		setJMenuBar(menuBar);
 		
 		JMenu mnDatei = new JMenu("Datei");
 		menuBar.add(mnDatei);
 		
 		JMenuItem mntmNeuesProfilAnlegen = new JMenuItem("Neues Athletenprofil anlegen");
 		mntmNeuesProfilAnlegen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeuerAthlet_16x16.png")));
-		mntmNeuesProfilAnlegen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				new NeuerAthletDialog(athletenListe);
-			}
-		});
+		mntmNeuesProfilAnlegen.addActionListener(controller);
 		mnDatei.add(mntmNeuesProfilAnlegen);
 		
 		JMenuItem mntmProfilffnen = new JMenuItem("Athletenprofil \u00F6ffnen");		
 		mntmProfilffnen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditAthlet_16x16.png")));
 		mnDatei.add(mntmProfilffnen);
-		mntmProfilffnen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				dateiOeffnenClicked();
-			}
-		});
+		mntmProfilffnen.addActionListener(controller);
 		
 		mntmAthletenprofilSchliessen = new JMenuItem("Athletenprofil schlie\u00DFen");
-		mntmAthletenprofilSchliessen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				tabSchließenClicked();
-			}
-		});
+		mntmAthletenprofilSchliessen.addActionListener(controller);
 		mntmAthletenprofilSchliessen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
 		mnDatei.add(mntmAthletenprofilSchliessen);
 		
@@ -121,33 +102,18 @@ public class Hauptfenster implements Observer {
 		mntmSpeichern.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/Speichern_16x16.png")));
 		mntmSpeichern.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		mnDatei.add(mntmSpeichern);
-		mntmSpeichern.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				speichernClicked(false);
-			}
-		});
+		mntmSpeichern.addActionListener(controller);
 		
 		mntmSpeicherUnter = new JMenuItem("Speichern unter...");
 		mntmSpeicherUnter.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/SpeichernUnter_16x16.png")));
 		mnDatei.add(mntmSpeicherUnter);
-		mntmSpeicherUnter.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				speichernClicked(true);
-			}
-		});
+		mntmSpeicherUnter.addActionListener(controller);
 		
 		JSeparator separator_1 = new JSeparator();
 		mnDatei.add(separator_1);
 		
-		JMenuItem mntmSwertSchlieen = new JMenuItem("S-Wert 3.0 schlie\u00DFen");
-		mntmSwertSchlieen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				programmSchliessen();
-			}
-		});
+		JMenuItem mntmSwertSchlieen = new JMenuItem("S-Wert schlie\u00DFen");
+		mntmSwertSchlieen.addActionListener(controller);
 		mnDatei.add(mntmSwertSchlieen);
 		
 		mnBearbeiten = new JMenu("Bearbeiten");
@@ -160,46 +126,25 @@ public class Hauptfenster implements Observer {
 		JMenuItem mntmLeistungenHinzufgen = new JMenuItem("Leistung hinzuf\u00FCgen");
 		mntmLeistungenHinzufgen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeueLeistung_16x16.png")));
 		mnLeistungen.add(mntmLeistungenHinzufgen);
-		mntmLeistungenHinzufgen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				Athlet athlet = getAktivesTab().getAthlet();
-				@SuppressWarnings("unused")
-				LeistungDialog dialog = new LeistungDialog(athlet , null);
-			}
-		});
+		mntmLeistungenHinzufgen.addActionListener(controller);
 		
 		mntmLeistungenBearbeiten = new JMenuItem("Leistung bearbeiten");
 		mntmLeistungenBearbeiten.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditLeistung_16x16.png")));
 		mnLeistungen.add(mntmLeistungenBearbeiten);
 		mntmLeistungenBearbeiten.setEnabled(false);
-		mntmLeistungenBearbeiten.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				ProfilTab tab = getAktivesTab();
-				tab.leistungBearbeitenPressed();
-			}
-		});
+		mntmLeistungenBearbeiten.addActionListener(controller);
 		
 		mntmLeistungenLoeschen = new JMenuItem("Leistung l\u00F6schen");
 		mntmLeistungenLoeschen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/LeistungLoeschen_16x16.png")));
 		mntmLeistungenLoeschen.setEnabled(false);
 		mnLeistungen.add(mntmLeistungenLoeschen);
-		mntmLeistungenLoeschen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					getAktivesTab().deleteZeileButtonPressed();
-				} catch (Exception e) {
-					System.out.println("Bitte ein Tab wählen");
-				}
-				
-			}
-		});
-		mainFrame.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
+		mntmLeistungenLoeschen.addActionListener(controller);
+
+		getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
 		
 		tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		tabbedPane.addChangeListener(new ChangeListener() {
+			// TODO: contoller als listener??!?!
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				
@@ -213,7 +158,7 @@ public class Hauptfenster implements Observer {
 				}
 			}
 		});
-		mainFrame.getContentPane().add(tabbedPane);
+		getContentPane().add(tabbedPane);
 		
 		JPanel dummyTab = new JPanel();
 		tabbedPane.addTab("Start", new ImageIcon(Hauptfenster.class.getResource("/bilder/Logo_16x16.png")), dummyTab, null);
@@ -229,12 +174,8 @@ public class Hauptfenster implements Observer {
 		JButton btnNeuesAthletenprofilAnlegen = new JButton("Neues Athletenprofil anlegen");
 		btnNeuesAthletenprofilAnlegen.setToolTipText("Anlegen eines neuen Athletenprofils");
 		btnNeuesAthletenprofilAnlegen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeuerAthlet_24x24.png")));
-		btnNeuesAthletenprofilAnlegen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				new NeuerAthletDialog(athletenListe);
-			}
-		});
+		btnNeuesAthletenprofilAnlegen.addActionListener(controller);
+				
 		dummyTab.add(btnNeuesAthletenprofilAnlegen, "cell 1 3,growx,aligny top");
 		
 		JLabel lblffnenSieEin = new JLabel("\u00D6ffnen Sie ein bestehendes Athletenprofil:");
@@ -247,21 +188,13 @@ public class Hauptfenster implements Observer {
 		JButton btnAthletenprofilffnen = new JButton("Athletenprofil \u00F6ffnen");
 		btnAthletenprofilffnen.setToolTipText("\u00D6ffnen und Bearbeiten eines bestehende Athletenprofils");
 		btnAthletenprofilffnen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditAthlet_24x24.png")));
-		btnAthletenprofilffnen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dateiOeffnenClicked();
-			}
-		});
+		btnAthletenprofilffnen.addActionListener(controller);
+		
 		dummyTab.add(btnAthletenprofilffnen, "cell 1 7,growx,aligny top");
 		speichernMenüVerfügbar(false);
 	}
 	
-	public JFrame getContext() {
-		return mainFrame;
-	}
-	
-	private void programmSchliessen() {
+	protected void programmSchliessen() {
 		Iterator<ProfilTab> iterator = tabList.iterator();
 		boolean gespeichert = true;
 		while (iterator.hasNext()) {
@@ -272,13 +205,12 @@ public class Hauptfenster implements Observer {
 		}
 		if(!gespeichert) {
 			// TODO: ggf. YES_NO_CANCEL_OPTION
-			int art = JOptionPane.showConfirmDialog(mainFrame.getContentPane(),
-													"S-Wert 3.0 wird geschlossen.\nWollen Sie Ihre Änderungen speichern?", 
-													"Achtung!",
-													JOptionPane.YES_NO_OPTION);
+			int art = JOptionPane.showConfirmDialog(getContentPane(),
+				"S-Wert 3.0 wird geschlossen.\nWollen Sie Ihre Änderungen speichern?", 
+				"Achtung!", JOptionPane.YES_NO_OPTION);
     		if (art == 1) {
-    			mainFrame.setEnabled(false);
-    			mainFrame.dispose();
+    			setEnabled(false);
+    			dispose();
     		} else if (art== 0) {
     			iterator = tabList.iterator();
     			while(iterator.hasNext()) {
@@ -299,23 +231,23 @@ public class Hauptfenster implements Observer {
 		}
 	}
 	
-	private void dateiOeffnenClicked(){
+	protected void dateiOeffnenClicked(){
 		try {
 			new DateiOeffnen(athletenListe);
 		}catch(java.io.FileNotFoundException e) {
-			JOptionPane.showMessageDialog(mainFrame,
+			JOptionPane.showMessageDialog(this,
 				"Die Datei wurde nicht gefunden, bitte probieren Sie es noch einmal.",
 				"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);
 		}catch(java.io.IOException e) {
-			JOptionPane.showMessageDialog(mainFrame,
+			JOptionPane.showMessageDialog(this,
 				"Die Datei konnte nicht gelesen werden, bitte probieren Sie es noch einmal.",
 				"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);
 		} catch (SyntaxException  e){
-			JOptionPane.showMessageDialog(mainFrame,
+			JOptionPane.showMessageDialog(this,
 					"Es ist ein Fehler beim Öffnen der Datei aufgetreten (Format/Syntax), bitte überprüfen sie die Datei.",
 					"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);			
 		} catch (AlreadyOpenException  e){
-		JOptionPane.showMessageDialog(mainFrame,
+		JOptionPane.showMessageDialog(this,
 				"Die Datei ist schon geöffnet.",
 				"Datei schon geöffnet", JOptionPane.ERROR_MESSAGE);			
 		}
