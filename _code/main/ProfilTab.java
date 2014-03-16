@@ -114,7 +114,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		
 	protected void tabSchließenClicked() {
 		// TODO: über update (Haupfenster) realisieren
-//		setLeistungBearbeitenAvailable(false);
         int tabNumber = mainFrame.tabbedPane.getSelectedIndex();
         if (tabNumber != -1) {
         	if ( ! gespeichert){
@@ -122,7 +121,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         				athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
         		if (nutzerauswahlSpeichern == 0) {
         			// TODO: speichern besser lösen!!
-        			mainFrame.speichernClicked(false);
+        			speichernClicked(false);
         		} 
         	}
         	athletenListe.removeAthlet(athlet);

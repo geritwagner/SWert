@@ -3,16 +3,11 @@ package main;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-
+import java.awt.EventQueue;
 import javax.swing.*;
-import javax.swing.event.*;
 import net.miginfocom.swing.MigLayout;
-
 import datei_operationen.*;
 import model.*;
-
-import java.awt.EventQueue;
-import javax.swing.UIManager;
 
 public class Hauptfenster extends JFrame implements Observer {
 
@@ -27,11 +22,9 @@ public class Hauptfenster extends JFrame implements Observer {
 	private JMenuItem mntmSpeichern;
 	private JMenuItem mntmSpeicherUnter;
 	
-	private int selectedIndex;
-
+	protected int selectedIndex;
 	public static Hauptfenster aktuellesHauptfenster;	
 	public HauptfensterController controller;
-	
 	public static AthletenListe athletenListe;
 	
 	public static void main (String args[]) {
@@ -48,24 +41,21 @@ public class Hauptfenster extends JFrame implements Observer {
 		});		
 	}
 	
-	
 	public Hauptfenster() {
 		athletenListe = new AthletenListe();
 		athletenListe.addObserver(this);
 		controller = new HauptfensterController(athletenListe, this);
 		initializeFrame();
+		initDummyPane();
+		athletenMenüVerfügbar(false);
 		addWindowListener(controller);
 		setVisible(true);
 	}
 	
 	private void initializeFrame() {		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Hauptfenster.class.getResource("/bilder/Logo_32x32.png")));
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent arg0) {
-				programmSchliessen();
-			}
-		});
+		addWindowListener(controller);
+
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setTitle("S-Wert 3.0");
 		setBounds(100, 100, 950, 500);
@@ -143,23 +133,12 @@ public class Hauptfenster extends JFrame implements Observer {
 		getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
 		
 		tabbedPane = new JTabbedPane(SwingConstants.TOP);
-		tabbedPane.addChangeListener(new ChangeListener() {
-			// TODO: contoller als listener??!?!
-			@Override
-			public void stateChanged(ChangeEvent arg0) {
-				
-				int alleTabs = tabbedPane.getTabCount();
-				int selectedTab = tabbedPane.getSelectedIndex();
-				if(selectedTab != alleTabs-1) {
-					selectedIndex = selectedTab;
-					menueVerfuegbar();
-				} else {
-					menueAusgrauen();
-				}
-			}
-		});
+		tabbedPane.addChangeListener(controller);
+
 		getContentPane().add(tabbedPane);
-		
+	}
+	
+	protected void initDummyPane(){
 		JPanel dummyTab = new JPanel();
 		tabbedPane.addTab("Start", new ImageIcon(Hauptfenster.class.getResource("/bilder/Logo_16x16.png")), dummyTab, null);
 		dummyTab.setLayout(new MigLayout("", "[grow][205px][grow]", "[5:50:200][14px][2px][23px][20px][][][][2px][23px]"));
@@ -191,10 +170,9 @@ public class Hauptfenster extends JFrame implements Observer {
 		btnAthletenprofilffnen.addActionListener(controller);
 		
 		dummyTab.add(btnAthletenprofilffnen, "cell 1 7,growx,aligny top");
-		speichernMenüVerfügbar(false);
 	}
 	
-	protected void programmSchliessen() {
+	protected void release() {
 		Iterator<ProfilTab> iterator = tabList.iterator();
 		boolean gespeichert = true;
 		while (iterator.hasNext()) {
@@ -206,7 +184,7 @@ public class Hauptfenster extends JFrame implements Observer {
 		if(!gespeichert) {
 			// TODO: ggf. YES_NO_CANCEL_OPTION
 			int art = JOptionPane.showConfirmDialog(getContentPane(),
-				"S-Wert 3.0 wird geschlossen.\nWollen Sie Ihre Änderungen speichern?", 
+				"S-Wert wird geschlossen.\nWollen Sie Ihre Änderungen speichern?", 
 				"Achtung!", JOptionPane.YES_NO_OPTION);
     		if (art == 1) {
     			setEnabled(false);
@@ -220,7 +198,7 @@ public class Hauptfenster extends JFrame implements Observer {
     					tabbedPane.setSelectedComponent(tab);
     					tabbedPane.remove(tabbedPane.getSelectedIndex());
     				} else {
-    					speichernClicked(false);
+    					tab.speichernClicked(false);
     				}
     				iterator = tabList.iterator();
     			}
@@ -252,31 +230,7 @@ public class Hauptfenster extends JFrame implements Observer {
 				"Datei schon geöffnet", JOptionPane.ERROR_MESSAGE);			
 		}
 	}
-	
-	protected void tabSchließenClicked(){
-		// TODO: delete!?!
-		selectedIndex = tabbedPane.getSelectedIndex();
-		if (selectedIndex != -1 ) {
-			ProfilTab tab = (ProfilTab) tabbedPane.getComponentAt(selectedIndex);
-			tab.tabSchließenClicked();					
-		} else {
-			return;
-		}
-		// TODO: funktioniert noch nicht, das Start-Tab hat anscheinend keinen festen Index. - besser über observe athletenListe realisiern...
-		if (selectedIndex == -1)
-			speichernMenüVerfügbar(false);
-	}
-	
-	protected void speichernClicked (boolean forceSpeichernUnter) {
-		int aktivesTab = tabbedPane.getSelectedIndex();
-		if (aktivesTab == -1) {
-			//TODO Fehlermeldung falls Start ausgewählt - sollte nicht nötig sein, wenn speichern ausgegraut wird!!
-			return;
-		}
-		ProfilTab tab = getAktivesTab();
-		tab.speichernClicked(forceSpeichernUnter);
-	}
-	
+		
 	public ProfilTab createTab (Athlet athlet) {
 		ProfilTab newTab = new ProfilTab(athletenListe, athlet);			
 		tabList.add(0, newTab);
@@ -307,41 +261,20 @@ public class Hauptfenster extends JFrame implements Observer {
 		return null;		
 	}
 	
-	private void menueVerfuegbar() {
-		mntmAthletenprofilSchliessen.setEnabled(true);
-		mnBearbeiten.setEnabled(true);
-	}
-	
-	private void menueAusgrauen() {
-		mntmAthletenprofilSchliessen.setEnabled(false);
-		mnBearbeiten.setEnabled(false);
-	}
-	
-	public void speichernMenüVerfügbar(boolean setTo){
+	protected void athletenMenüVerfügbar(boolean setTo){
 		mntmSpeichern.setEnabled(setTo);
 		mntmSpeicherUnter.setEnabled(setTo);
+		mntmAthletenprofilSchliessen.setEnabled(setTo);
+		mnBearbeiten.setEnabled(setTo);
 	}
 	
 	protected void setLeistungenMenüVerfügbar(boolean setTo){
-		leistungLöschenMenüVerfügbar(setTo);
-		leistungBearbeitenMenüVerfügbar(setTo);
-	}
-	
-	private void leistungBearbeitenMenüVerfügbar(boolean setTo) {
 		mntmLeistungenBearbeiten.setEnabled(setTo);
-	}
-		
-	private void leistungLöschenMenüVerfügbar(boolean setTo) {
 		mntmLeistungenLoeschen.setEnabled(setTo);
-	}
-
-	public int getAnzahlGeoeffneteAthleten(){
-		return tabList.size();
 	}
 	
 	public void update(Observable arg0, Object arg1) {
-		//TODO tab oeffnen/schließen (etc?) integrieren!!
-		int anzahlGeoffneteAthleten = getAnzahlGeoeffneteAthleten();
+		int anzahlGeoffneteAthleten = tabList.size();
 		int anzahlAngelegteAthleten = athletenListe.getAlleAthleten().size();
 		
 		if (anzahlGeoffneteAthleten < anzahlAngelegteAthleten){
@@ -352,7 +285,6 @@ public class Hauptfenster extends JFrame implements Observer {
 			} else {
 				getAktivesTab().setSpeicherStatus(false);								
 			}
-			speichernMenüVerfügbar(true);	
 		}
 		if (anzahlGeoffneteAthleten > anzahlAngelegteAthleten){
 			getAktivesTab().release();			
@@ -360,15 +292,6 @@ public class Hauptfenster extends JFrame implements Observer {
 			tabbedPane.remove(i); 
 			tabList.remove(i);
 		}
-				
-		//Start-Tab: menüs deaktivieren etc.
-		if (tabList.size() == 0){
-			speichernMenüVerfügbar(false);
-			setLeistungenMenüVerfügbar(false);
-		} else {
-			speichernMenüVerfügbar(true);
-		}
-		
+
 	}
-	
 }
