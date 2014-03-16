@@ -30,7 +30,7 @@ public class DiagrammController {
 			try {
 				plotLeistungen(aktuellerAthlet);	
 				plotBerechneteBestzeiten(aktuellerAthlet);
-			} catch (Exception e) {
+			} catch (SlopeFaktorNotSetException e) {
 				e.printStackTrace();
 				// Bestzeiten können nur für Athleten berechnet werden, bei denen der Slope-Faktor bekannt ist.
 			}
@@ -53,7 +53,7 @@ public class DiagrammController {
 		view.addLeistungsSerie(athletenSerie);
 	}
 
-	protected void plotBerechneteBestzeiten (Athlet athlet) throws Exception {
+	protected void plotBerechneteBestzeiten (Athlet athlet) throws SlopeFaktorNotSetException {
 		LinkedList<Leistung> bestzeiten = athlet.getMoeglicheBestzeitenListe();
 		String athletName = athlet.getName();
 		Iterator<Leistung> leistungenIterator = bestzeiten.iterator();

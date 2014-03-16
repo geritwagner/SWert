@@ -8,9 +8,7 @@ import javax.swing.*;
 import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-
 import net.miginfocom.swing.MigLayout;
-
 import globale_helper.*;
 import model.*;
 
@@ -38,10 +36,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private Athlet athlet;
 	private ProfilTabController controller;
 	private AthletenListe athletenListe;
-
-	// TODO: auslagern!?!?!??
-	public Athlet getAthlet(){return athlet;}
-	protected boolean getSpeicherStatus() {	return gespeichert;}
 	
 	public ProfilTab(AthletenListe athletenliste, Athlet athlet) {
 		this.athletenListe = athletenliste;
@@ -60,6 +54,14 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		setLeistungBearbeitenAvailable(false);
 	}
 		
+	public Athlet getAthlet(){
+		return athlet;
+	}
+	
+	protected boolean getSpeicherStatus() {	
+		return gespeichert;
+	}
+
 	public void triggerTableChanged(int zeileView, int spalte, Object data){
 		// automatischeVerarbeitung: bricht den Methodenaufruf hier ab.
 		if (automatischeVerarbeitung)
@@ -88,7 +90,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	automatischeVerarbeitung = false;
 	}
 	
-	private void checkboxLeistungenAutomatischW‰hlenClicked() {		
+	private void checkboxLeistungenAutomatischW‰hlenClicked() {
 		try{
 			if (chckbxLeistungenAuswahl.isSelected()){
 				controller.automatischAusw‰hlen();
@@ -113,24 +115,21 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}
 		
 	protected void tabSchlieﬂenClicked() {
-		// TODO: ¸ber update (Haupfenster) realisieren
         int tabNumber = mainFrame.tabbedPane.getSelectedIndex();
         if (tabNumber != -1) {
         	if ( ! gespeichert){
         		int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die ƒnderungen am Profil '"+
         				athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
         		if (nutzerauswahlSpeichern == 0) {
-        			// TODO: speichern besser lˆsen!!
         			speichernClicked(false);
         		} 
         	}
         	athletenListe.removeAthlet(athlet);
-//        	release();
         }
 	}
 	
 	private void setAlleLeistungen(){
-		// TODO: ggf. nicht alles lˆschen & neu eintragen... - ¸ber observing Leisung arbeiten?!!?
+		// TODO: ggf. nicht alles lˆschen & neu eintragen... - ¸ber observing Leistung arbeiten?!!?
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		if (model.getRowCount() > 0) {
 		    for (int i = model.getRowCount() - 1; i > -1; i--) {
@@ -279,7 +278,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnTabSchlieen.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Abbrechen_16x16.png")));
 		btnTabSchlieen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				mainFrame.tabSchlieﬂenClicked();
 				tabSchlieﬂenClicked();
 			}
 		});

@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.prefs.*;
 
 /**
- * Model-Klasse für das "Athlet"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
 public class Athlet extends Observable implements AthletInterface {
@@ -32,7 +31,7 @@ public class Athlet extends Observable implements AthletInterface {
 		if (leistungen == null){
 			alleLeistungen = new LinkedList<Leistung>();
 		} else {
-			alleLeistungen = leistungen;			
+			alleLeistungen = leistungen;
 		}
 	}
 	
@@ -120,11 +119,12 @@ public class Athlet extends Observable implements AthletInterface {
 		return true;
 	}
 
-	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
+	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) 
+			throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
 		if(!inAlleLeistungenEnthalten(ausgewaehlteLeistung)){
 			return;
 		}
-		// bis jetzt wurde keine oder eine Leistung ausgewählt, d.h. es muss noch eine Leistung ausgewählt werden
+		// Es dürfen nicht mehr als zwei Leistungen ausgewählt werden.
 		if (getLeistungAuswahlForSlopeFaktor()[1] != null){
 			throw new ThreeLeistungenForSlopeFaktorException();
 		}
@@ -176,8 +176,11 @@ public class Athlet extends Observable implements AthletInterface {
 		}
 	}
 	
-	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
-		// TODO: ggf. von kürzerer/längerer Strecke auf besten slope-Faktor umschreiben?
+	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() 
+			throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
+		// TODO: ggf. von kürzerer/längerer Strecke auf besten slope-Faktor umschreiben?, 
+		// jedenfalls sollte hier kein ungültiger (zu gut/zu schlecht) gesetzt werden.
+		
 		Leistung kürzereStreckenLeistung = alleLeistungen.get(0);
 		Leistung längereStreckenLeistung = alleLeistungen.get(1);
 		for (Leistung aktuelleLeistung : alleLeistungen){

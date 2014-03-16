@@ -33,6 +33,16 @@ public class AthletTest {
 		assertTrue( 0 == testAthlet.getLeistungen().size());
 		Leistung testLeistung = new Leistung(4, 12, "Test Wettkampf", "01-01-2014", 180);
 		testAthlet.addLeistung(testLeistung);
+		
+		testAthlet.updateLeistung(testLeistung.getId(), 4, "updated", "01-01-2014", 180);
+		assertEquals("updated", testLeistung.getBezeichnung());
+		
+		
+		long id = testLeistung.getId();
+		assertTrue(testAthlet.getLeistungById(id).equals(testLeistung));
+		assertEquals(null, testAthlet.getLeistungById(id+1));
+		
+		
 		assertTrue( testAthlet.getLeistungen().get(0).equals(testLeistung));
 		assertTrue( 360 == testAthlet.getLeistungen().get(0).getZeit());
 		testAthlet.removeLeistung(testLeistung);
@@ -44,15 +54,30 @@ public class AthletTest {
 	}
 	
 	@Test
-	public void testSlopeFaktorLogik() throws Exception {
+	public void testSpeicherPfad(){
 		testAthlet = new Athlet(12, "Tester", null);
-		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
+		assertEquals(false, testAthlet.isSetSpeicherpfad());
+		testAthlet.setSpeicherpfad("C:/user/athlet.csv");
+		assertEquals("C:/user/athlet.csv", testAthlet.getSpeicherpfad());
+		assertEquals(true, testAthlet.isSetSpeicherpfad());
+	}
+	
+	@Test
+	public void testSlopeFaktorLogik() throws Exception {
+//		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
 		
 		// testen, ob ein "zu guter" Slope-Faktor erkannt & nicht verwendet wird.
 		Leistung leistung1 = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
 		Leistung leistung2 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 61000);
-		testAthlet.addLeistung(leistung1);
-		testAthlet.addLeistung(leistung2);
+		LinkedList<Leistung> leistungen = new LinkedList<>();
+		leistungen.add(leistung1);
+		leistungen.add(leistung2);
+
+		testAthlet = new Athlet("Tester", leistungen);
+		testAthlet = new Athlet(12, "Tester", leistungen);
+		testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();
+		testAthlet.resetLeistungAuswahlForSlopeFaktor();
+		
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
 		assertEquals(testAthlet.getLeistungAuswahlForSlopeFaktor()[0], leistung1);

@@ -171,6 +171,7 @@ public class Hauptfenster extends JFrame implements Observer {
 	}
 	
 	protected void release() {
+		
 		Iterator<ProfilTab> iterator = tabList.iterator();
 		boolean gespeichert = true;
 		while (iterator.hasNext()) {
@@ -191,7 +192,7 @@ public class Hauptfenster extends JFrame implements Observer {
     			iterator = tabList.iterator();
     			while(iterator.hasNext()) {
     				ProfilTab tab = iterator.next();
-    				if (tab.getSpeicherStatus()) {
+    				if (tab.getSpeicherStatus() == true) {
     					iterator.remove();
     					tabbedPane.setSelectedComponent(tab);
     					tabbedPane.remove(tabbedPane.getSelectedIndex());
@@ -254,7 +255,6 @@ public class Hauptfenster extends JFrame implements Observer {
 				return  tabList.get(i);
 			}
 		}
-		// TODO: null ok??
 		return null;		
 	}
 	
@@ -289,6 +289,5 @@ public class Hauptfenster extends JFrame implements Observer {
 			tabbedPane.remove(i); 
 			tabList.remove(i);
 		}
-
 	}
 }

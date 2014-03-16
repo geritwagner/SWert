@@ -1,7 +1,6 @@
 package main;
 
 import java.io.IOException;
-
 import datei_operationen.DateiSpeichern;
 import analyse_bestzeiten.BestzeitenDialog;
 import analyse_diagramm.DiagrammFrame;
@@ -26,6 +25,10 @@ public class ProfilTabController {
 		view = null;
 		athlet = null;
 	}
+	
+	//TODO: Button-Pressed Methoden über Action-Listener lösen
+	// da für das Hauptfenster schon ein Listener hinzugefügt wurde müsste man hier evtl. mit einem container!?!? arbeiten
+	// ein "weiterleiten" vom HauptfensterController zum ProfilTabController wäre vermutlich zu aufwendig...
 	
 	public void bestzeitenButtonPressed(){
 		new BestzeitenDialog(athlet);

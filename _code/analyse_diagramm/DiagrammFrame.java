@@ -36,8 +36,8 @@ public class DiagrammFrame extends JFrame {
 	private Random random = new Random();
 	private Color letzteFarbe = Color.GREEN;
 	
-	private DiagrammController controller;
-	private AthletenListe athletenliste;
+	protected DiagrammController controller;
+	protected AthletenListe athletenliste;
 	
 	public DiagrammFrame(AthletenListe athletenliste) {
 		this.athletenliste = athletenliste;
