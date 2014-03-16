@@ -1,12 +1,10 @@
 package analyse_diagramm;
 
 import globale_helper.UnitsHelper;
-
-import java.util.*;
-import main.Hauptfenster;
-import main.ProfilTab;
-import model.*;
 import org.jfree.data.xy.XYSeries;
+import java.util.*;
+import model.*;
+
 
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
@@ -14,28 +12,22 @@ import org.jfree.data.xy.XYSeries;
 public class DiagrammController {
 	
 	private DiagrammFrame view;
-//	private List<Athlet> alleAthleten - im Konstruktor übergeben?
-
-	// TODO: change to protected!!
-	public DiagrammController() {
-		view = new DiagrammFrame();
+	private AthletenListe athletenListe;
+	
+	public DiagrammController(DiagrammFrame view, AthletenListe athletenListe) {
+		this.view = view;
+		this.athletenListe = athletenListe;
 		openAllAthletes();
 	}
 	
 	protected void release(){
 		view = null;
-//		athlet = null;
+		athletenListe = null;
 	}
 
 	private void openAllAthletes(){
-		// TODO: Athletenliste auf andere Weise holen!
-		int countAthletes = Hauptfenster.aktuellesHauptfenster.tabbedPane.getTabCount() - 1;
-		Athlet aktuellerAthlet;
-		ProfilTab tab;
-		for(int i = 0; i < countAthletes; i++){
+		for (Athlet aktuellerAthlet : athletenListe.getAlleAthleten()){
 			try {
-				tab = (ProfilTab) Hauptfenster.aktuellesHauptfenster.tabbedPane.getComponentAt(i);
-				aktuellerAthlet = tab.getAthlet();
 				plotLeistungen(aktuellerAthlet);	
 				plotBerechneteBestzeiten(aktuellerAthlet);
 			} catch (Exception e) {

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import datei_operationen.DateiSpeichern;
 import analyse_bestzeiten.BestzeitenDialog;
-import analyse_diagramm.DiagrammController;
+import analyse_diagramm.DiagrammFrame;
 import analyse_trainingsbereich.TrainingsbereichDialog;
 import leistung_bearbeiten.LeistungDialog;
 import model.*;
@@ -14,9 +14,11 @@ public class ProfilTabController {
 	Athlet athlet;
 	ProfilTab view;
 	DateiSpeichern speicher;
+	AthletenListe athletenliste;
 	
-	protected ProfilTabController(Athlet athlet, ProfilTab view){
+	protected ProfilTabController(AthletenListe athletenliste, Athlet athlet, ProfilTab view){
 		this.athlet = athlet;
+		this.athletenliste = athletenliste;
 		this.view = view;
 	}
 
@@ -30,8 +32,7 @@ public class ProfilTabController {
 	}
 
 	public void leistungskurveButtonPressed(){
-		// TODO: call DiagrammFrame!!!
-		new DiagrammController();
+		new DiagrammFrame(athletenliste);
 	}
 	
 	public void trainingsBereichButtonPressed(){

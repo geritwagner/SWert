@@ -46,7 +46,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	public ProfilTab(AthletenListe athletenliste, Athlet athlet) {
 		this.athletenListe = athletenliste;
 		this.athlet = athlet;
-		controller = new ProfilTabController(athlet, this);
+		controller = new ProfilTabController(athletenliste, athlet, this);
 		initLayout(athlet.getName());
 		setAnalysenVerfügbar(false);
 		initJTable();

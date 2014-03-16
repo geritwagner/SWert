@@ -6,6 +6,9 @@ import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
+
+import model.AthletenListe;
+
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.labels.*;
@@ -32,8 +35,12 @@ public class DiagrammFrame extends JFrame {
 	
 	private Random random = new Random();
 	private Color letzteFarbe = Color.GREEN;
-
-	public DiagrammFrame() {
+	
+	private DiagrammController controller;
+	private AthletenListe athletenliste;
+	
+	public DiagrammFrame(AthletenListe athletenliste) {
+		this.athletenliste = athletenliste;
 		initWindowProperties();
 		
 		datenSammlungLeistungen = datenLeistungen;
@@ -51,8 +58,11 @@ public class DiagrammFrame extends JFrame {
         ChartPanel cp = new ChartPanel(chart);
         contentPane.add(cp);
         pack();
-    	this.setEnabled(true);
-		this.setVisible(true);
+        
+        controller = new DiagrammController(this, athletenliste);
+        
+    	setEnabled(true);
+		setVisible(true);
 	}
 
 	private JFreeChart initChart(){
@@ -82,8 +92,8 @@ public class DiagrammFrame extends JFrame {
 	}
 	
 	private void closeWindowClicked(){
-		this.setEnabled(false);
-		this.dispose();
+		setEnabled(false);
+		dispose();
 	}
 	
 	protected void addLeistungsSerie(XYSeries serie) {
