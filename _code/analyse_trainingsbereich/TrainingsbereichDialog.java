@@ -1,41 +1,38 @@
 package analyse_trainingsbereich;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import javax.swing.table.*;
-
 
 import model.*;
 import globale_helper.*;
 
 /**
- * Dialog zum Anzeigen einer Tabelle der Trainingsbereiche des Athleten
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 public class TrainingsbereichDialog extends JDialog {
 	
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private final Dimension d = this.getToolkit().getScreenSize();
+	private final Dimension d = getToolkit().getScreenSize();
 		
 	private JTextField txtAnaerobeSchwelle;
 	private JTextField txtAnaerobeProfilierteSchwelle;
-	public JTable trainingsTabelle;
-	private JSlider slider;
-	private JLabel lblRundenanzahl;
+	protected JTable trainingsTabelle;
+	protected JSlider slider;
+	protected JLabel lblRundenanzahl;
 	private JScrollPane scrollPane;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 		
-	TrainingsbereichController controller;
-	Athlet athlet;
+	private TrainingsbereichController controller;
 	
 	public TrainingsbereichDialog(Athlet athlet) {
 		try {
-			this.athlet = athlet;
+			// ggf. this.athlet = athlet;
+			// ggf. athlet.addObserver(this);
 			controller = new TrainingsbereichController(athlet, this);
+
 			initProperties();
 			double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
 			double anaerobeProfilierteSchwelle = anaerobeSchwelle*TrainingsbereichController.getWinzererAufschlag();
@@ -43,14 +40,8 @@ public class TrainingsbereichDialog extends JDialog {
 			setModal(true);
 			setVisible(true);
 		} catch (Exception e) {
-			abbrechen();
+			// Es sollte nicht möglich sein, die Trainingsbereiche zu öffnen, wenn der Slope-Faktor nicht gesetzt ist
 		}
-	}
-	
-	private void abbrechen(){
-		JOptionPane.showMessageDialog(this, "Für die Berechnung der Trainingsbereiche müssen zwei Leistungen für die Berechnung" +
-				"des Slope-Faktors ausgewählt werden.", "Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
-		release();
 	}
 	
 	private void initProperties() {
@@ -58,12 +49,11 @@ public class TrainingsbereichDialog extends JDialog {
 		setResizable(false);
 		setTitle("Trainingsbereiche berechnen");
 		setBounds(100, 100, 350, 439);
-		setLocation((int) ((d.getWidth() - this.getWidth()) / 2), (int) ((d.getHeight() - this.getHeight()) / 2));
+		setLocation((int) ((d.getWidth() - getWidth()) / 2), (int) ((d.getHeight() - getHeight()) / 2));
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
-		//contentPanel.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{textFieldBezeichnung, comboBoxStrecke, textFieldZeit, textFieldGeschwindigkeit, comboBoxGeschwindigkeit}));
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
@@ -122,17 +112,8 @@ public class TrainingsbereichDialog extends JDialog {
 	    slider.setLabelTable(slider.createStandardLabels(1));	
 	    slider.setVisible(false);	    
 	    
-	    slider.addChangeListener(new ChangeListener() {
-	        @Override
-			public void stateChanged(ChangeEvent evt) {
-	          JSlider slider = (JSlider) evt.getSource();
-	          if (!slider.getValueIsAdjusting()) {
-	        	int rundenZahl = slider.getValue();
-	            controller.updateRundenzeit(rundenZahl);	            
-	          }
-	        }
-	      });
-	      
+	    slider.addChangeListener(controller);
+
 		contentPanel.add(slider);
 		
 		scrollPane = new JScrollPane();
@@ -152,25 +133,13 @@ public class TrainingsbereichDialog extends JDialog {
 		rdbtnNewRadioButton.setSelected(true);
 		rdbtnNewRadioButton.setBounds(112, 32, 156, 23);
 		contentPanel.add(rdbtnNewRadioButton);
-		rdbtnNewRadioButton.addActionListener(new ActionListener(){
-		    @Override
-			public void actionPerformed(ActionEvent e) {
-		      initJTable();		      
-		      slider.setVisible(false);
-		      lblRundenanzahl.setVisible(false);
-		    }
-		});
+		rdbtnNewRadioButton.addActionListener(controller);
 		
 		JRadioButton rdbtnProfilierteStrecke = new JRadioButton("RWH");
 		buttonGroup.add(rdbtnProfilierteStrecke);
 		rdbtnProfilierteStrecke.setBounds(112, 60, 156, 23);
 		contentPanel.add(rdbtnProfilierteStrecke);
-		rdbtnProfilierteStrecke.addActionListener(new ActionListener(){
-		    @Override
-			public void actionPerformed(ActionEvent e) {
-		      initJTableProfiliert();
-		    }
-		});
+		rdbtnProfilierteStrecke.addActionListener(controller);
 	}
 	
 	private void initButtonPane() {
@@ -179,17 +148,13 @@ public class TrainingsbereichDialog extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 		
 		JButton cancelButton = new JButton("Schlie\u00DFen");
-		cancelButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				release();
-			}
-		});
+		cancelButton.addActionListener(controller);
+
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
 	}
 	
-	private void initJTable() {	
+	protected void initJTable() {	
 		trainingsTabelle = new JTable();
 		trainingsTabelle.setModel(new DefaultTableModel(
 			controller.berechneTrainingsBereiche(),
@@ -214,7 +179,7 @@ public class TrainingsbereichDialog extends JDialog {
 		contentPanel.add(separator);		
 	}
 
-	private void initJTableProfiliert() {	
+	protected void initJTableProfiliert() {	
 		trainingsTabelle = new JTable();
 		int rundenZahl = slider.getValue();
 		trainingsTabelle.setModel(new DefaultTableModel(
@@ -244,8 +209,9 @@ public class TrainingsbereichDialog extends JDialog {
 	    lblRundenanzahl.setVisible(true);
 	}
 	
-	private void release(){
-		// TODO: model.deleteObserver(this);
+	protected void release(){
+		// ggf.: model.deleteObserver(this);
+		// ggf.: model = null;
 		controller.release();
 		controller = null;
 		setVisible(false);

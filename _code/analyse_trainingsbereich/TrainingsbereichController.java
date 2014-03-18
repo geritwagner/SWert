@@ -1,11 +1,14 @@
 package analyse_trainingsbereich;
 
+import java.awt.event.*;
 import java.text.*;
+import javax.swing.JSlider;
+import javax.swing.event.*;
 
 import globale_helper.*;
 import model.*;
 
-public class TrainingsbereichController {
+public class TrainingsbereichController implements ChangeListener, ActionListener {
 
 	private static final double WINZERER_AUFSCHLAG = 1.03;
 	private static final double WINZERER_RUNDEN_LÄNGE = 3.409;
@@ -13,8 +16,8 @@ public class TrainingsbereichController {
 	private static final int OBERE_SCHRANKE_TRAININGSBEREICHE = 110;
 	private static final int SCHRITT_TRAININGSBEREICH = 5;
 		
-	Athlet athlet;
-	TrainingsbereichDialog view;
+	private Athlet athlet;
+	private TrainingsbereichDialog view;
 	
 	protected TrainingsbereichController(Athlet athlet, TrainingsbereichDialog view){
 		this.athlet = athlet;
@@ -108,5 +111,30 @@ public class TrainingsbereichController {
 			} catch (Exception e) {
 			}
 		}		
+	}
+
+	public void stateChanged(ChangeEvent arg0) {
+        JSlider slider = (JSlider) arg0.getSource();
+        if (!slider.getValueIsAdjusting()) {
+      	int rundenZahl = slider.getValue();
+          updateRundenzeit(rundenZahl);	            
+        }		
+	}
+
+	public void actionPerformed(ActionEvent arg0) {
+		String command = arg0.getActionCommand();
+		switch (command){
+		case "RWH": 				
+			view.initJTableProfiliert();
+			break;
+		case "flache Strecke": 						
+		    view.initJTable();		      
+		    view.slider.setVisible(false);
+		    view.lblRundenanzahl.setVisible(false);
+		    break;
+		case "Cancel":
+			view.release();
+			break;
+		}
 	}
 }
