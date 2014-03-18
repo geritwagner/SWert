@@ -1,39 +1,37 @@
 package analyse_bestzeiten;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import javax.swing.table.*;
-
 import globale_helper.*;
 import model.*;
 
 /**
- * Dialog zum Anzeigen der möglichen Bestzeiten des Athleten über eine wählbare Strecke
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 public class BestzeitenDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel = new JPanel();
-	private Dimension d = this.getToolkit().getScreenSize();
+	private Dimension d = getToolkit().getScreenSize();
+	protected JTable trainingsTabelle;
+	protected JTextField txtFieldZeit;
+	protected JTextField txtFieldStrecke;
 	
-	private JTable trainingsTabelle;
-	private JTextField txtFieldZeit;
-	private JTextField txtFieldStrecke;
+	private BestzeitenDialogController controller;
+	private Athlet athlet;
 	
-	BestzeitenDialogController controller;
-	
-	public BestzeitenDialog(Athlet inputAthlet) {	
+	public BestzeitenDialog(Athlet inputAthlet) {
 		if ("set" == inputAthlet.getSlopeFaktorStatus()){
-			controller = new BestzeitenDialogController(inputAthlet, this);
+			this.athlet = inputAthlet;
+			// athlet.addObserver(this) - (noch) nicht notwendig
+			controller = new BestzeitenDialogController(athlet, this);
 			initProperties();
 			Object[][] bestzeiten = controller.generateBestzeitenTableFormat();
 			initComponents(bestzeiten);
 			setModal(true);
-			setVisible(true);		
+			setVisible(true);
 		}
 	}	
 
@@ -92,7 +90,7 @@ public class BestzeitenDialog extends JDialog {
 		txtFieldStrecke.setToolTipText("Geben Sie hier die Strecke ein, f\u00FCr die Sie die m\u00F6gliche Bestzeit erfahren m\u00F6chten");
 		txtFieldStrecke.setBounds(111, 277, 68, 20);
 		txtFieldStrecke.setDocument(new IntegerDocument());
-		txtFieldStrecke.getDocument().addDocumentListener(new IntegerDocumentListener());
+		txtFieldStrecke.getDocument().addDocumentListener(controller);
 		contentPanel.add(txtFieldStrecke);
 		
 		JLabel lblM = new JLabel("m");
@@ -106,12 +104,7 @@ public class BestzeitenDialog extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 		
 		JButton cancelButton = new JButton("Schlie\u00DFen");
-		cancelButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				release();
-			}
-		});
+		cancelButton.addActionListener(controller);
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
 	}
@@ -125,7 +118,6 @@ public class BestzeitenDialog extends JDialog {
 		contentPanel.add(scrollPane);
 		
 		trainingsTabelle = new JTable();
-		//TODO
 		trainingsTabelle.setModel(new DefaultTableModel(
 				bestzeiten,
 				new String[] {
@@ -140,35 +132,12 @@ public class BestzeitenDialog extends JDialog {
 		scrollPane.setViewportView(trainingsTabelle);
 	}
 	
-	private void release(){
-		// TODO: model.deleteObserver(this);
+	protected void release(){
+		// ggf. athlet.deleteObserver(this);
+		athlet = null;
 		controller.release();
 		controller = null;
 		setVisible(false);
 		dispose();
 	}
-
-	/**
-	 * Erweiterung zum DocumentListener
-	 * Echtzeitverarbeitung von Integerwerten 
-	 */
-	private class IntegerDocumentListener implements DocumentListener {    
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			String berechneteBestzeit =  controller.berechneBestzeit(txtFieldStrecke.getText());
-			txtFieldZeit.setText(berechneteBestzeit);
-		}
-		
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			String berechneteBestzeit =  controller.berechneBestzeit(txtFieldStrecke.getText());
-			txtFieldZeit.setText(berechneteBestzeit);
-		}
-		
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			String berechneteBestzeit =  controller.berechneBestzeit(txtFieldStrecke.getText());
-			txtFieldZeit.setText(berechneteBestzeit);
-		}
-	}
-}
+}	
