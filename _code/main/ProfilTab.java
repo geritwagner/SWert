@@ -8,6 +8,9 @@ import javax.swing.*;
 import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
+import datei_operationen.NoFileChosenException;
+import datei_operationen.SyntaxException;
 import net.miginfocom.swing.MigLayout;
 import globale_helper.*;
 import model.*;
@@ -111,6 +114,13 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			JOptionPane.showMessageDialog(this, 
 				"Es ist ein Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 
 				"Fehler beim Speichern", JOptionPane.ERROR_MESSAGE);
+		} catch (NoFileChosenException e) {
+			// TODO sinnvoller Fall?
+			e.printStackTrace();
+		} catch (SyntaxException e) {
+			JOptionPane.showMessageDialog(this, 
+					"Es ist ein Syntax-Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 
+					"Fehler beim Speichern", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 		

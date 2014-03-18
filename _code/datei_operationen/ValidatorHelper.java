@@ -1,8 +1,6 @@
 package datei_operationen;
 
-import java.io.FileReader;
-import java.io.IOException;
-
+import java.io.*;
 import au.com.bytecode.opencsv.CSVReader;
 
 public abstract class ValidatorHelper {

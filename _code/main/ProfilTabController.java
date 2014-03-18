@@ -2,6 +2,8 @@ package main;
 
 import java.io.IOException;
 import datei_operationen.DateiSpeichern;
+import datei_operationen.NoFileChosenException;
+import datei_operationen.SyntaxException;
 import analyse_bestzeiten.BestzeitenDialog;
 import analyse_diagramm.DiagrammFrame;
 import analyse_trainingsbereich.TrainingsbereichDialog;
@@ -68,7 +70,7 @@ public class ProfilTabController {
 		athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();		
 	}
 	
-	protected void speichern(boolean forceSpeichernUnter) throws IOException{
+	protected void speichern(boolean forceSpeichernUnter) throws IOException, NoFileChosenException, SyntaxException{
 		if (speicher == null)
 			speicher = new DateiSpeichern(athlet);
 		speicher.speichern(forceSpeichernUnter);
