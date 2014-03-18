@@ -1,23 +1,22 @@
 package analyse_diagramm;
 
-import globale_helper.UnitsHelper;
 import org.jfree.data.xy.XYSeries;
+import java.awt.event.*;
 import java.util.*;
+import globale_helper.*;
 import model.*;
 
-
 /**
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
-public class DiagrammController {
+public class DiagrammController implements WindowListener {
 	
 	private DiagrammFrame view;
 	private AthletenListe athletenListe;
 	
-	public DiagrammController(DiagrammFrame view, AthletenListe athletenListe) {
+	protected DiagrammController(DiagrammFrame view, AthletenListe athletenListe) {
 		this.view = view;
 		this.athletenListe = athletenListe;
-		openAllAthletes();
 	}
 	
 	protected void release(){
@@ -25,7 +24,7 @@ public class DiagrammController {
 		athletenListe = null;
 	}
 
-	private void openAllAthletes(){
+	protected void openAllAthletes(){
 		for (Athlet aktuellerAthlet : athletenListe.getAlleAthleten()){
 			try {
 				plotLeistungen(aktuellerAthlet);	
@@ -69,5 +68,33 @@ public class DiagrammController {
 			athletenSerie.add(strecke, zeit);
 		}
 		view.addBerechneteBestzeitenUndTrendlinie(athletenSerie);
+	}
+
+	public void windowActivated(WindowEvent arg0) {
+		// Auto-generated method stub
+	}
+
+	public void windowClosed(WindowEvent arg0) {
+		// Auto-generated method stub
+	}
+
+	public void windowClosing(WindowEvent arg0) {
+		view.release();		
+	}
+
+	public void windowDeactivated(WindowEvent arg0) {
+		// Auto-generated method stub
+	}
+
+	public void windowDeiconified(WindowEvent arg0) {
+		// Auto-generated method stub		
+	}
+
+	public void windowIconified(WindowEvent arg0) {
+		// Auto-generated method stub
+	}
+
+	public void windowOpened(WindowEvent arg0) {
+		// Auto-generated method stub
 	}
 }

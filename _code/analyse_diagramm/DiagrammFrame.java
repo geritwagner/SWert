@@ -1,13 +1,10 @@
 package analyse_diagramm;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
-
-import model.AthletenListe;
 
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
@@ -16,9 +13,10 @@ import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.xy.*;
 
+import model.*;
+
 /**
- * Frame zum Anzeigen der Leistungskurven
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 public class DiagrammFrame extends JFrame {
 
@@ -41,26 +39,16 @@ public class DiagrammFrame extends JFrame {
 	
 	public DiagrammFrame(AthletenListe athletenliste) {
 		this.athletenliste = athletenliste;
-		initWindowProperties();
-		
+		// ggf. athletenliste.addObserver(this)
+		controller = new DiagrammController(this, athletenliste);		
+
+        initWindowProperties();
 		datenSammlungLeistungen = datenLeistungen;
 		datenSammlungBestzeiten = datenBestzeiten;
-		
 		JFreeChart chart = initChart();
-		
-        initDotRenderer();
-        initSplineRenderer();
-        
-        TickUnitSource ticks = NumberAxis.createIntegerTickUnits();
-        NumberAxis range = (NumberAxis) elternPlot.getRangeAxis();
-        range.setStandardTickUnits(ticks);
-        
-        ChartPanel cp = new ChartPanel(chart);
-        contentPane.add(cp);
-        pack();
-        
-        controller = new DiagrammController(this, athletenliste);
-        
+		loadChart(chart);
+        controller.openAllAthletes();
+
     	setEnabled(true);
 		setVisible(true);
 	}
@@ -91,7 +79,23 @@ public class DiagrammFrame extends JFrame {
         return chart;
 	}
 	
-	private void closeWindowClicked(){
+	private void loadChart(JFreeChart chart){
+		initDotRenderer();
+        initSplineRenderer();
+        
+        TickUnitSource ticks = NumberAxis.createIntegerTickUnits();
+        NumberAxis range = (NumberAxis) elternPlot.getRangeAxis();
+        range.setStandardTickUnits(ticks);
+        
+        ChartPanel cp = new ChartPanel(chart);
+        contentPane.add(cp);
+        pack();		
+	}
+	protected void release(){
+		// ggf. athletenliste.deleteObserver(this);
+		athletenliste = null;
+		controller.release();
+		controller = null;
 		setEnabled(false);
 		dispose();
 	}
@@ -120,12 +124,8 @@ public class DiagrammFrame extends JFrame {
 	private void initWindowProperties() {
 		setTitle("Leistungkurven");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(DiagrammFrame.class.getResource("/bilder/Diagramm_24x24.png")));
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent arg0) {
-				closeWindowClicked();
-			}
-		});
+		addWindowListener(controller);
+
 		setBounds(100, 100, 700, 432);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
