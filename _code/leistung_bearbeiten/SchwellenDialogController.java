@@ -1,16 +1,19 @@
 package leistung_bearbeiten;
 
-import java.text.DateFormat;
-import java.util.Date;
+import java.awt.event.*;
+import java.text.*;
+import java.util.*;
+import model.*;
 
-import model.Athlet;
-import model.Leistung;
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
-public class SchwellenDialogController {
+public class SchwellenDialogController implements ActionListener {
 
-	Athlet athlet;
-	Leistung leistung;
-	SchwellenDialog view;
+	private Athlet athlet;
+	private Leistung leistung;
+	private SchwellenDialog view;
 	
 	protected SchwellenDialogController(Athlet athlet, Leistung leistung, SchwellenDialog view){
 		this.athlet = athlet;
@@ -21,9 +24,10 @@ public class SchwellenDialogController {
 	protected void release(){
 		view = null;
 		athlet = null;
+		leistung = null;
 	}
 	
-	protected boolean leistungÄndern(){
+	private boolean leistungÄndern(){
 		if(true == view.validateInput()) {
 			änderungenDurchführen();
 			return true;
@@ -45,6 +49,22 @@ public class SchwellenDialogController {
 		} else {
 			long leistung_id = leistung.getId();
 			athlet.updateLeistung(leistung_id, id_strecke, bezeichnungString, datumString, view.getGeschwindigkeit());				
+		}
+	}
+
+	public void actionPerformed(ActionEvent arg0) {
+		String command = arg0.getActionCommand();
+		switch (command){
+		case "Bestätigen":
+			if(leistungÄndern()){		
+				view.release();
+			} else {
+				view.showErrorNichtErstellt();
+			}
+			break;
+		case "Cancel":
+			view.release();
+			break;
 		}
 	}
 }

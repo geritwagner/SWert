@@ -8,22 +8,18 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-
 import globale_helper.*;
 import model.*;
 
 /**
- * Dialog zum Anlegen einer neuen Leistung durch
- * direkte Eingabe einer Schwelle
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class SchwellenDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize(); 
-	
 	
 	private JRadioButton rdbtnStrecke;
 	private JFormattedTextField textFieldStrecke;
@@ -34,33 +30,30 @@ public class SchwellenDialog extends JDialog {
 	private JTextField textFieldMs;
 	private JRadioButton rdbtnminkm;
 	private JFormattedTextField textFieldminKm;
-	
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JLabel lblKmhError;
 	private JLabel lblMsError;
 	private JLabel lblMinKmError;
 
-	private double geschwindigkeit; //Enthält immer die aktuelle, berechnete Geschwindigkeits
-
 	@SuppressWarnings("unused")
 	private Leistung leistung;
 	@SuppressWarnings("unused")
 	private Athlet athlet;
-
-	SchwellenDialogController controller;
+	private double geschwindigkeit; //Enthält immer die aktuelle, berechnete Geschwindigkeits
+	private SchwellenDialogController controller;
+	private boolean neueLeistung;
 	
 	public SchwellenDialog(Athlet athlet, Leistung leistung) {
 		this.leistung = leistung;
 		this.athlet = athlet;
 		controller = new SchwellenDialogController(athlet, leistung, this);
-		boolean neueLeistung = (leistung == null);
-		initProperties(neueLeistung);
+		neueLeistung = (leistung == null);
+		initProperties();
 		initAllComponents();
 		if (leistung != null){
 			setTitle("Schwelle bearbeiten");
 			initWerte(leistung);			
 		}
-		clearWarnings();		
 		setVisible(true);
 	}
 	
@@ -72,7 +65,7 @@ public class SchwellenDialog extends JDialog {
 		setzeMinKm(geschwindigkeit);
 	}
 
-	private void initProperties(boolean neueLeistung) {
+	private void initProperties() {
 		if (neueLeistung){
 			setIconImage(Toolkit.getDefaultToolkit().getImage(SchwellenDialog.class.getResource("/bilder/NeueLeistung_16x16.png")));			
 		} else {
@@ -155,22 +148,12 @@ public class SchwellenDialog extends JDialog {
 		
 		JButton okButton = new JButton("Best\u00E4tigen");
 		okButton.setToolTipText("Anlegen der Schwelle");
-		okButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				bestaetigenClicked();
-			}
-		});
+		okButton.addActionListener(controller);
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 		
 		JButton cancelButton = new JButton("Abbrechen");
-		cancelButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				release();
-			}
-		});
+		cancelButton.addActionListener(controller);
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
 	}
@@ -589,29 +572,20 @@ public class SchwellenDialog extends JDialog {
 		return validInput;
 	}
 	
-	private void bestaetigenClicked(){
-		if(controller.leistungÄndern()) {
-			release();					
-		} else {
-			JOptionPane.showMessageDialog(contentPanel,
-					"Leistung wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
-				    "Fehler",
-				    JOptionPane.ERROR_MESSAGE);
-		}
+	protected void showErrorNichtErstellt(){
+		JOptionPane.showMessageDialog(contentPanel,
+				"Leistung wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
+			    "Fehler", JOptionPane.ERROR_MESSAGE);	
 	}
 	
 	protected double getGeschwindigkeit() {
 		return geschwindigkeit;
 	}
-	
-	private void clearWarnings() {
-		lblStreckeError.setText("");
-		lblMsError.setText("");
-		lblMinKmError.setText("");
-	}
-	
-	private void release(){
-		// TODO: model.deleteObserver(this);
+		
+	protected void release(){
+		// ggf.: model.deleteObserver(this);
+		leistung = null;
+		athlet = null;
 		controller.release();
 		controller = null;
 		setVisible(false);

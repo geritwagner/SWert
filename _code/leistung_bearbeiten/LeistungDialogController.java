@@ -55,11 +55,11 @@ public class LeistungDialogController implements ActionListener, WindowListener 
 
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
-		System.out.println(command);
 		switch (command){
-		case "Aerob/Anaerobe Schwelle direkt eingeben": 		
+		case "Aerob/Anaerobe Schwelle direkt eingeben":
+			Athlet zuUebergebenderAthlet = athlet;
 			view.release();
-			new SchwellenDialog(athlet, null);
+			new SchwellenDialog(zuUebergebenderAthlet, null);
 			break;
 		case "Bestätigen":
 			if(leistungÄndern()){		
