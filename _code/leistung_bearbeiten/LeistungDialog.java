@@ -5,20 +5,16 @@ import java.awt.event.*;
 import java.beans.*;
 import java.text.*;
 import java.util.*;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.text.*;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
-
 import globale_helper.*;
 import model.*;
 
 /**
- * Dialog zum Anlegen einer neuen Leistung oder
- * Bearbeiten einer vorhandenen Leistung
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 public class LeistungDialog extends JDialog {
 
@@ -54,11 +50,12 @@ public class LeistungDialog extends JDialog {
 
 	@SuppressWarnings("unused")
 	private Leistung leistung;
+	@SuppressWarnings("unused")
 	private Athlet athlet;
+	private LeistungDialogController controller;
+	private boolean leistungbearbeiten;
 	
-	LeistungDialogController controller;
-	
-	// todo: funtionalität in den Controller ausgliedern
+	// TODO: ggf. weitere Listener in den Controller auslagern
 
 	public LeistungDialog(Athlet athlet, Leistung leistung) {
 		if (leistung != null && leistung.getId_strecke() == -1) {
@@ -67,30 +64,24 @@ public class LeistungDialog extends JDialog {
 		this.athlet = athlet;
 		this.leistung = leistung;
 		controller = new LeistungDialogController(athlet, leistung, this);
-		boolean leistungbearbeiten = (leistung != null);
+		leistungbearbeiten = (leistung != null);
+		
 		initProperties(leistungbearbeiten);
 		initComponents();
 		if (leistungbearbeiten)
 			initWerte(leistung);
-		setFocus();
-		clearWarnings();
+		addWindowListener(controller);
 		setVisible(true);
 		}
 	}
 	
-	private void bestaetigenClicked(){
-		if(controller.leistungÄndern()) {
-			release();				
-		} else {
-			JOptionPane.showMessageDialog(contentPanel,
-					"Leistung wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
-				    "Fehler",
-				    JOptionPane.ERROR_MESSAGE);
-		}
+	protected void showErrorNichtErstellt(){
+		JOptionPane.showMessageDialog(contentPanel,
+				"Leistung wurde nicht erstellt. Bitte überprüfen Sie ihre Eingaben.",
+			    "Fehler",
+			    JOptionPane.ERROR_MESSAGE);		
 	}
 	
-	
-
 	protected boolean validateInput(){
 		boolean validInput = true;
 		String bezeichnungString = textFieldBezeichnung.getText();
@@ -143,7 +134,7 @@ public class LeistungDialog extends JDialog {
 	}
 	
 	private boolean isValidBezeichnung(String bezeichnung) {
-		if (bezeichnung.equals("")) {
+		if (bezeichnung.equals("") && !bezeichnung.contains(";")) {
 			lblBezeichnungError.setText("Bitte geben Sie eine Bezeichnung ein.");
 			return false;
 		} else {
@@ -330,8 +321,6 @@ public class LeistungDialog extends JDialog {
 		textFieldZeit.setValue(lHelper.parseSecInZeitstring(sec));
 	}
 	
-
-	
 	// ---------------------------------- initialize view -------------------------------------
 
 	private void initWerte(Leistung leistung) {
@@ -473,40 +462,24 @@ public class LeistungDialog extends JDialog {
 		btnAnaerobeSchwelleDirekt = new JButton("Aerob/Anaerobe Schwelle direkt eingeben");
 		buttonPanel.add(btnAnaerobeSchwelleDirekt, "cell 0 0,grow");
 		btnAnaerobeSchwelleDirekt.setToolTipText("Direktes Eingeben einer Strecke oder Geschwindigkeit als Aerob/Anaerobe Schwelle");
-		btnAnaerobeSchwelleDirekt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				release();
-				@SuppressWarnings("unused")
-				SchwellenDialog dialog = new SchwellenDialog(athlet, null);
-			}
-		});
+		btnAnaerobeSchwelleDirekt.addActionListener(controller);
 		
 		JButton okButton = new JButton("Best\u00E4tigen");
 		buttonPanel.add(okButton, "cell 2 0,grow");
 		okButton.setToolTipText("Pr\u00FCfen der Eingabe und Anlegen der Leistung");
-		okButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-					bestaetigenClicked();
-			}
-		});
+		okButton.addActionListener(controller);
 		
 		JButton cancelButton = new JButton("Abbrechen");
 		buttonPanel.add(cancelButton, "cell 3 0,grow");
-		cancelButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				release();
-			}
-		});
+		cancelButton.addActionListener(controller);
 		cancelButton.setActionCommand("Cancel");
 	}
 	
 	private void initTextFieldBezeichnung() {
 		textFieldBezeichnung = new JTextField();
 		textFieldBezeichnung.setToolTipText("Bezeichnung der Leistung");
-		textFieldBezeichnung.addFocusListener(new FocusAdapter() {
+		textFieldBezeichnung.addFocusListener(
+				new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
 				isValidBezeichnung(textFieldBezeichnung.getText());
@@ -787,26 +760,10 @@ public class LeistungDialog extends JDialog {
 		contentPanel.add(textFieldminKm);
 	}
 	
-	private void setFocus(){
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent arg0) {
-				textFieldBezeichnung.requestFocus();
-			}
-		});
-	}
-	
-	private void clearWarnings() {
-		lblBezeichnungError.setText("");
-		lblCalendarError.setText("");
-		lblZeitError.setText("");
-		lblKmhError.setText("");
-		lblMsError.setText("");
-		lblMinKmError.setText("");
-	}
-	
-	private void release(){
-		// TODO: model.deleteObserver(this);
+	protected void release(){
+		// ggf.: model.deleteObserver(this);
+		leistung = null;
+		athlet = null;
 		controller.release();
 		controller = null;
 		setVisible(false);

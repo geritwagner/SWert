@@ -1,15 +1,19 @@
 package leistung_bearbeiten;
 
+import java.awt.event.*;
 import java.text.*;
 import java.util.*;
-
 import model.*;
 
-public class LeistungDialogController {
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
-	Athlet athlet;
-	Leistung leistung;
-	LeistungDialog view;
+public class LeistungDialogController implements ActionListener, WindowListener {
+
+	private Athlet athlet;
+	private Leistung leistung;
+	private LeistungDialog view;
 	
 	protected LeistungDialogController(Athlet athlet, Leistung leistung, LeistungDialog view){
 		this.athlet = athlet;
@@ -20,6 +24,7 @@ public class LeistungDialogController {
 	protected void release(){
 		view = null;
 		athlet = null;
+		leistung = null;
 	}
 
 	protected boolean leistungÄndern () {
@@ -46,8 +51,55 @@ public class LeistungDialogController {
 			long leistung_id = leistung.getId();
 			athlet.updateLeistung(leistung_id, id_strecke, bezeichnungString, datumString, view.getGeschwindigkeit());				
 		}
-		// TODO: 
-		// setSpeicherStatus(false);
 	}
-	
+
+	public void actionPerformed(ActionEvent e) {
+		String command = e.getActionCommand();
+		System.out.println(command);
+		switch (command){
+		case "Aerob/Anaerobe Schwelle direkt eingeben": 		
+			view.release();
+			new SchwellenDialog(athlet, null);
+			break;
+		case "Bestätigen":
+			if(leistungÄndern()){		
+				view.release();
+			} else {
+				view.showErrorNichtErstellt();
+			}
+			break;
+		case "Cancel":
+			view.release();
+			break;
+		}
+		
+	}
+
+	public void windowActivated(WindowEvent arg0) {
+		// Auto-generated method stub		
+	}
+
+	public void windowClosed(WindowEvent arg0) {
+		// Auto-generated method stub		
+	}
+
+	public void windowClosing(WindowEvent arg0) {
+		// Auto-generated method stub		
+	}
+
+	public void windowDeactivated(WindowEvent arg0) {
+		// Auto-generated method stub		
+	}
+
+	public void windowDeiconified(WindowEvent arg0) {
+		// Auto-generated method stub
+	}
+
+	public void windowIconified(WindowEvent arg0) {
+		// Auto-generated method stub
+	}
+
+	public void windowOpened(WindowEvent arg0) {
+		view.textFieldBezeichnung.requestFocus();
+	}
 }
