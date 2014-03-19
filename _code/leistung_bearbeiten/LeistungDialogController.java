@@ -72,7 +72,6 @@ public class LeistungDialogController implements ActionListener, WindowListener 
 			view.release();
 			break;
 		}
-		
 	}
 
 	public void windowActivated(WindowEvent arg0) {

@@ -71,6 +71,7 @@ public class LeistungDialog extends JDialog {
 		if (leistungbearbeiten)
 			initWerte(leistung);
 		addWindowListener(controller);
+		clearWarnings();
 		setVisible(true);
 		}
 	}
@@ -758,6 +759,15 @@ public class LeistungDialog extends JDialog {
 		} catch (ParseException e) {
 		}
 		contentPanel.add(textFieldminKm);
+	}
+	
+	private void clearWarnings() {
+		lblBezeichnungError.setText("");
+		lblCalendarError.setText("");
+		lblZeitError.setText("");
+		lblKmhError.setText("");
+		lblMsError.setText("");
+		lblMinKmError.setText("");
 	}
 	
 	protected void release(){

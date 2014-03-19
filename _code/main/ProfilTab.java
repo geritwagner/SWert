@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.event.*;
 import java.awt.Font;
 import java.io.IOException;
 import java.util.*;
@@ -30,7 +29,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private JTextField textFieldSchwelle;
 	private JCheckBox chckbxLeistungenAuswahl;
 	private JTable leistungenTabelle;
-	public TableRowSorter<TableModel> sorter;
+	private TableRowSorter<TableModel> sorter;
 	private JButton btnLeistungBearbeiten;
 	private JButton btnLeistungLöschen;
 	private JButton btnTabSchlieen;
@@ -46,28 +45,57 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		this.athletenListe = athletenliste;
 		this.athlet = athlet;
 		controller = new ProfilTabController(athletenliste, athlet, this);
-		initLayout(athlet.getName());
-		setAnalysenVerfügbar(false);
-		initJTable();
-		setAlleLeistungen();
+		initTab();
 		athlet.addObserver(this);
-		try {
-			controller.automatischAuswählen();
-			chckbxLeistungenAuswahl.setSelected(true);
-		} catch (Exception e) {
-		}
-		setLeistungBearbeitenAvailable(false);
 	}
 		
-	public Athlet getAthlet(){
+	protected Athlet getAthlet(){
 		return athlet;
 	}
 	
-	protected boolean getSpeicherStatus() {	
-		return gespeichert;
+	private void setAlleLeistungen(){
+		// TODO: ggf. nicht alles löschen & neu eintragen... - über observing Leistung arbeiten?!!?
+		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
+		if (model.getRowCount() > 0) {
+		    for (int i = model.getRowCount() - 1; i > -1; i--) {
+		    	model.removeRow(i);
+		    }
+		}
+		for (Leistung aktuelleLeistung: athlet.getLeistungen()){
+			model.addRow(aktuelleLeistung.getObjectDataForTable());
+		}			
 	}
-
-	public void triggerTableChanged(int zeileView, int spalte, Object data){
+	
+	public void update(Observable arg0, Object speicherStatusChanged) {
+		// TODO: Info, wenn Schwelle auf grund eines zu guten/zu schlechten Slope-Faktors nicht gesetzt wird
+		if (athlet.getSlopeFaktorStatus() == "set"){
+			LeistungHelper l = new LeistungHelper();
+			try {
+				textFieldSchwelle.setText(l.parseSecInMinutenstring(athlet.getAnaerobeSchwelle()));
+			} catch (Exception e) {
+			}			
+			setAnalysenVerfügbar(true);
+		} else {
+			textFieldSchwelle.setText("-");
+			setAnalysenVerfügbar(false);
+		}
+		setAlleLeistungen();
+		
+		if ((boolean)speicherStatusChanged)
+			setSpeicherStatus(false);
+	}
+	
+	protected void release(){
+		athlet.deleteObserver(this);
+		athlet = null;
+		athletenListe = null;
+		controller.release();
+		controller = null;
+	}
+	
+	// ---------------------------------- Button-Pressed and Status METHODS ----------------------------
+	
+	private void triggerTableChanged(int zeileView, int spalte, Object data){
 		// automatischeVerarbeitung: bricht den Methodenaufruf hier ab.
 		if (automatischeVerarbeitung)
         	return;
@@ -95,7 +123,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	automatischeVerarbeitung = false;
 	}
 	
-	private void checkboxLeistungenAutomatischWählenClicked() {
+	protected void checkboxLeistungenAutomatischWählenClicked() {
 		try{
 			if (chckbxLeistungenAuswahl.isSelected()){
 				controller.automatischAuswählen();
@@ -117,7 +145,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 				"Es ist ein Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 
 				"Fehler beim Speichern", JOptionPane.ERROR_MESSAGE);
 		} catch (NoFileChosenException e) {
-			// TODO sinnvoller Fall?
 			e.printStackTrace();
 		} catch (SyntaxException e) {
 			JOptionPane.showMessageDialog(this, 
@@ -137,20 +164,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         	athletenListe.removeAthlet(athlet);
 	}
 	
-	private void setAlleLeistungen(){
-		// TODO: ggf. nicht alles löschen & neu eintragen... - über observing Leistung arbeiten?!!?
-		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
-		if (model.getRowCount() > 0) {
-		    for (int i = model.getRowCount() - 1; i > -1; i--) {
-		    	model.removeRow(i);
-		    }
-		}
-		for (Leistung aktuelleLeistung: athlet.getLeistungen()){
-			model.addRow(aktuelleLeistung.getObjectDataForTable());
-		}			
-	}
-	
-	protected void deleteZeileButtonPressed() {
+	protected void leistungLoeschenPressed() {
 		if (JOptionPane.showConfirmDialog(this, "Wollen Sie die Leistung wirklich löschen?", "Leistung löschen", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 			int rowToDelete = leistungenTabelle.getSelectedRow();
 			Leistung leistungToRemove = getLeistungInZeile(rowToDelete);
@@ -159,16 +173,19 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}
 	
 	protected void leistungBearbeitenPressed(){
-		Leistung leistung = getLeistungInZeile(leistungenTabelle.getSelectedRow());
-		controller.leistungBearbeitenPressed(leistung);
+		controller.leistungBearbeitenPressed();
 	}
 	
-	public void setSpeicherStatus (boolean gespeichert) {
+	protected void setSpeicherStatus (boolean gespeichert) {
 		this.gespeichert = gespeichert;
 		mainFrame.setSpeicherStatus(athlet, gespeichert);
 	}
+	
+	protected boolean getSpeicherStatus() {	
+		return gespeichert;
+	}
 
-	public void setLeistungBearbeitenAvailable(boolean editable){
+	protected void setLeistungBearbeitenAvailable(boolean editable){
 		if (editable){
 			mainFrame.setLeistungenMenüVerfügbar(true);
 			setLeistungButtonsVerfügbar(true);
@@ -194,35 +211,17 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			btnLeistungskurve.setEnabled(false);
 			btnTrainingsbereich.setEnabled(false);										
 		}
-	}	
-
-	public void update(Observable arg0, Object speicherStatusChanged) {
-		// TODO: Info, wenn Schwelle auf grund eines zu guten/zu schlechten Slope-Faktors nicht gesetzt wird
-		if (athlet.getSlopeFaktorStatus() == "set"){
-			LeistungHelper l = new LeistungHelper();
-			try {
-				textFieldSchwelle.setText(l.parseSecInMinutenstring(athlet.getAnaerobeSchwelle()));
-			} catch (Exception e) {
-			}			
-			setAnalysenVerfügbar(true);
-		} else {
-			textFieldSchwelle.setText("-");
-			setAnalysenVerfügbar(false);
-		}
-		setAlleLeistungen();
-		
-		if ((boolean)speicherStatusChanged)
-			setSpeicherStatus(false);
-	}
-	
-	protected void release(){
-		controller.release();
-		controller = null;
-		athlet.deleteObserver(this);
-		athlet = null;
 	}
 	
 	// ---------------------------------- TABLE-METHODS ----------------------------
+	
+	protected int getSelectedRow(){
+		return leistungenTabelle.getSelectedRow();
+	}
+	
+	protected boolean isSelectedLeistung(){
+		return leistungenTabelle.getSelectedRow() > -1;
+	}
 	
 	@Override
 	public void tableChanged(TableModelEvent e) {
@@ -239,7 +238,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         triggerTableChanged(zeileModel, spalte, data);
     }
 	
-	private Leistung getLeistungInZeile(int zeile) {
+	protected Leistung getLeistungInZeile(int zeile) {
 		zeile = leistungenTabelle.convertRowIndexToModel(zeile);
 		String datum = getStringAt(zeile, 0);
 		String streckenlaenge = getStringAt(zeile, 1);
@@ -266,6 +265,23 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		
 	//----------------------- view darstellung -----------------------
 
+	private void initTab() {
+		initLayout(athlet.getName());
+		initJTable();
+		setAlleLeistungen();
+		setAnalysenVerfügbar(false);
+		setLeistungBearbeitenAvailable(false);
+		tryAutomatischeAuswahl();
+	}
+	
+	private void tryAutomatischeAuswahl(){
+		try {
+			controller.automatischAuswählen();
+			chckbxLeistungenAuswahl.setSelected(true);
+		} catch (Exception e) {
+		}
+	}
+	
 	private void initLayout(String Athletenname) {
 		setLayout(new MigLayout("", "[grow]", "[grow][][][grow]"));
 		
@@ -280,11 +296,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		btnTabSchlieen = new JButton("");
 		btnTabSchlieen.setToolTipText("Tab schlie\u00DFen");
 		btnTabSchlieen.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Abbrechen_16x16.png")));
-		btnTabSchlieen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				tabSchließenClicked();
-			}
-		});
+		btnTabSchlieen.addActionListener(controller);
 		panel.add(btnTabSchlieen, "cell 4 0,alignx right");
 		
 		lblAthletName = new JLabel("<html><u>"+Athletenname+"</u></<html>");
@@ -301,12 +313,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		
 		chckbxLeistungenAuswahl = new JCheckBox("Leistungen automatisch w\u00E4hlen");
 		chckbxLeistungenAuswahl.setSelected(false);
-		chckbxLeistungenAuswahl.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) { 
-            	checkboxLeistungenAutomatischWählenClicked();            	
-            }
-        });
+		chckbxLeistungenAuswahl.addActionListener(controller);
 		panel.add(chckbxLeistungenAuswahl, "cell 2 2");
 		
 		JSeparator separator = new JSeparator();
@@ -314,32 +321,17 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		
 		btnBestzeiten = new JButton("Mögliche Bestzeiten");
 		btnBestzeiten.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Pokal_24x24.png")));
-		btnBestzeiten.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.bestzeitenButtonPressed();				
-			}
-		});
+		btnBestzeiten.addActionListener(controller);
 		panel.add(btnBestzeiten, "cell 0 5,alignx right");
 		
 		btnTrainingsbereich = new JButton("Trainingsbereiche");
 		btnTrainingsbereich.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Berechnen_24x24.png")));
-		btnTrainingsbereich.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.trainingsBereichButtonPressed();
-			}
-		});
+		btnTrainingsbereich.addActionListener(controller);
 		panel.add(btnTrainingsbereich, "cell 1 5");
 		
 		btnLeistungskurve = new JButton("Leistungskurve als Grafik");
 		btnLeistungskurve.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Diagramm_24x24.png")));
-		btnLeistungskurve.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.leistungskurveButtonPressed();
-			}
-		});
+		btnLeistungskurve.addActionListener(controller);
 		panel.add(btnLeistungskurve, "cell 2 5,alignx left");
 
 		scrollPane = new JScrollPane();
@@ -353,32 +345,17 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		JButton btnLeistungHinzufügen = new JButton("Leistung hinzuf\u00FCgen");
 		btnLeistungHinzufügen.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/NeueLeistung_24x24.png")));
 		add(btnLeistungHinzufügen, "flowx,cell 0 2");
-		btnLeistungHinzufügen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.neueLeistungButtonPressed();
-			}
-		});
+		btnLeistungHinzufügen.addActionListener(controller);
 		
 		btnLeistungBearbeiten = new JButton("Leistung bearbeiten");
 		btnLeistungBearbeiten.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/EditLeistung_24x24.png")));
 		add(btnLeistungBearbeiten, "cell 0 2");
-		btnLeistungBearbeiten.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				leistungBearbeitenPressed();
-			}
-		});
-		
+		btnLeistungBearbeiten.addActionListener(controller);
+
 		btnLeistungLöschen = new JButton("Leistung l\u00F6schen");
 		btnLeistungLöschen.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/LeistungLoeschen_24x24.png")));
 		add(btnLeistungLöschen, "cell 0 2");
-		btnLeistungLöschen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				deleteZeileButtonPressed();
-			}
-		});
+		btnLeistungLöschen.addActionListener(controller);
 	}
 	
 	// hier wird null übergeben, den parameter könnte man folglich löschen, er stellt jedoch die Aufruf-Reihenfolge der Methoden sicher...
@@ -428,7 +405,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         };        
         //Listener und Sortierung definieren
         leistungenTabelle.getModel().addTableModelListener(this);
-        leistungenTabelle.getSelectionModel().addListSelectionListener(new TabelleLeistungsListener(leistungenTabelle,this));        
+        leistungenTabelle.getSelectionModel().addListSelectionListener(controller);        
         leistungenTabelle.setSelectionMode(0);
 		leistungenTabelle.setFillsViewportHeight(true);		
 		leistungenTabelle.getTableHeader().setReorderingAllowed(false);

@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.event.*;
+
 import javax.swing.event.*;
 import leistung_bearbeiten.LeistungDialog;
 import model.*;
@@ -48,7 +49,7 @@ public class HauptfensterController extends WindowAdapter implements ActionListe
 				tab.leistungBearbeitenPressed();
 				break;
 			case "Leistung löschen":							
-				tab.deleteZeileButtonPressed();
+				tab.leistungLoeschenPressed();
 				break;
 		}
 	}
@@ -66,7 +67,12 @@ public class HauptfensterController extends WindowAdapter implements ActionListe
 		int alleTabs = view.getAnzahlTabs();
 		int selectedTab = view.getIndexSelectedTab();
 		if(selectedTab != alleTabs-1) {
-			// TODO hier müsste noch setLeistungenMenüVerfügbar auf true oder false gesetzt werden!!
+			ProfilTab tab = view.getAktivesTab();
+			if (tab.isSelectedLeistung()){
+				tab.setLeistungBearbeitenAvailable(true);
+			} else {
+				tab.setLeistungBearbeitenAvailable(false);
+			}
 			view.athletenMenüVerfügbar(true);
 		} else {
 			view.setLeistungenMenüVerfügbar(false);

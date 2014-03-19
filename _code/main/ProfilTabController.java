@@ -1,6 +1,8 @@
 package main;
 
+import java.awt.event.*;
 import java.io.IOException;
+import javax.swing.event.*;
 import datei_operationen.*;
 import analyse_bestzeiten.BestzeitenDialog;
 import analyse_diagramm.DiagrammFrame;
@@ -12,12 +14,12 @@ import model.*;
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 
-public class ProfilTabController {
+public class ProfilTabController implements ActionListener, ListSelectionListener{
 	
-	Athlet athlet;
-	ProfilTab view;
-	DateiSpeichern speicher;
-	AthletenListe athletenliste;
+	private Athlet athlet;
+	private ProfilTab view;
+	private DateiSpeichern speicher;
+	private AthletenListe athletenliste;
 	
 	protected ProfilTabController(AthletenListe athletenliste, Athlet athlet, ProfilTab view){
 		this.athlet = athlet;
@@ -28,35 +30,16 @@ public class ProfilTabController {
 	protected void release(){
 		view = null;
 		athlet = null;
+		athletenliste = null;
+		speicher = null;
 	}
 	
-	//TODO: Button-Pressed Methoden über Action-Listener lösen
-	// da für das Hauptfenster schon ein Listener hinzugefügt wurde müsste man hier evtl. mit einem container!?!? arbeiten
-	// ein "weiterleiten" vom HauptfensterController zum ProfilTabController wäre vermutlich zu aufwendig...
-	
-	public void bestzeitenButtonPressed(){
-		new BestzeitenDialog(athlet);
-	}
-
-	public void leistungskurveButtonPressed(){
-		new DiagrammFrame(athletenliste);
+	protected void leistungBearbeitenPressed(){
+		Leistung leistung = view.getLeistungInZeile(view.getSelectedRow());
+		new LeistungDialog(athlet, leistung);		
 	}
 	
-	public void trainingsBereichButtonPressed(){
-		new TrainingsbereichDialog(athlet);
-	}
-	
-	public void leistungBearbeitenPressed(Leistung leistung) {
-		new LeistungDialog(athlet, leistung);
-	}
-
-	
-	public void neueLeistungButtonPressed(){
-		view.setLeistungBearbeitenAvailable(false);
-		new LeistungDialog(athlet, null);		
-	}
-	
-	public void leistungLöschen(Leistung leistung){
+	protected void leistungLöschen(Leistung leistung){
 		athlet.removeLeistung(leistung);
 	}
 
@@ -77,5 +60,43 @@ public class ProfilTabController {
 			speicher = new DateiSpeichern(athlet);
 		speicher.speichern(forceSpeichernUnter);
 		view.setSpeicherStatus(true);				
-	}	
+	}
+
+	public void actionPerformed(ActionEvent arg0) {
+		String command = arg0.getActionCommand();
+		switch (command){
+		case "Leistung hinzufügen":
+			view.setLeistungBearbeitenAvailable(false);
+			new LeistungDialog(athlet, null);
+			break;
+		case "Leistung bearbeiten":
+			view.leistungBearbeitenPressed();
+			break;	
+		case "Leistung löschen":
+			view.leistungLoeschenPressed();
+			break;
+		case "Tab schließen":
+			view.tabSchließenClicked();
+			break;
+		case "Leistungen automatisch wählen":
+			view.checkboxLeistungenAutomatischWählenClicked();
+			break;
+		case "Mögliche Bestzeiten":
+			new BestzeitenDialog(athlet);
+			break;
+		case "Trainingsbereiche":
+			new TrainingsbereichDialog(athlet);
+			break;
+		case "Leistungskurve als Grafik":
+			new DiagrammFrame(athletenliste);
+			break;
+		}
+	}
+
+	public void valueChanged(ListSelectionEvent arg0) {
+    	if (arg0.getValueIsAdjusting()) {
+    		return;
+        }
+        view.setLeistungBearbeitenAvailable(true);
+    }
 }

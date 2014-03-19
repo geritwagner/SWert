@@ -27,8 +27,8 @@ public class Hauptfenster extends JFrame implements Observer {
 	private JMenuItem mntmSpeicherUnter;
 	
 	public static Hauptfenster aktuellesHauptfenster;	
-	public HauptfensterController controller;
-	public static AthletenListe athletenListe;
+	private HauptfensterController controller;
+	private static AthletenListe athletenListe;
 	
 	public static void main (String args[]) {
 		EventQueue.invokeLater(new Runnable() {
@@ -142,7 +142,7 @@ public class Hauptfenster extends JFrame implements Observer {
 		getContentPane().add(tabbedPane);
 	}
 	
-	protected void initDummyPane(){
+	private void initDummyPane(){
 		JPanel dummyTab = new JPanel();
 		tabbedPane.addTab("Start", new ImageIcon(Hauptfenster.class.getResource("/bilder/Logo_16x16.png")), dummyTab, null);
 		dummyTab.setLayout(new MigLayout("", "[grow][205px][grow]", "[5:50:200][14px][2px][23px][20px][][][][2px][23px]"));

@@ -54,6 +54,7 @@ public class SchwellenDialog extends JDialog {
 			setTitle("Schwelle bearbeiten");
 			initWerte(leistung);			
 		}
+		clearWarnings();
 		setVisible(true);
 	}
 	
@@ -580,6 +581,12 @@ public class SchwellenDialog extends JDialog {
 	
 	protected double getGeschwindigkeit() {
 		return geschwindigkeit;
+	}
+	
+	private void clearWarnings() {
+		lblStreckeError.setText("");
+		lblMsError.setText("");
+		lblMinKmError.setText("");
 	}
 		
 	protected void release(){
