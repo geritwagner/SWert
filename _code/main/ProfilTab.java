@@ -8,12 +8,14 @@ import javax.swing.*;
 import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-
-import datei_operationen.NoFileChosenException;
-import datei_operationen.SyntaxException;
+import datei_operationen.*;
 import net.miginfocom.swing.MigLayout;
 import globale_helper.*;
 import model.*;
+
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
 public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	
@@ -125,8 +127,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}
 		
 	protected void tabSchließenClicked() {
-        int tabNumber = mainFrame.tabbedPane.getSelectedIndex();
-        if (tabNumber != -1) {
         	if ( ! gespeichert){
         		int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+
         				athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
@@ -135,7 +135,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         		} 
         	}
         	athletenListe.removeAthlet(athlet);
-        }
 	}
 	
 	private void setAlleLeistungen(){
@@ -166,12 +165,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	
 	public void setSpeicherStatus (boolean gespeichert) {
 		this.gespeichert = gespeichert;
-		int tabStelle = mainFrame.tabbedPane.getSelectedIndex();
-		if (gespeichert) {
-			mainFrame.tabbedPane.setTitleAt(tabStelle, athlet.getName());
-		} else {
-			mainFrame.tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
-		}
+		mainFrame.setSpeicherStatus(athlet, gespeichert);
 	}
 
 	public void setLeistungBearbeitenAvailable(boolean editable){

@@ -3,19 +3,22 @@ package main;
 import java.awt.event.*;
 import javax.swing.event.*;
 import leistung_bearbeiten.LeistungDialog;
-import model.AthletenListe;
+import model.*;
+
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
 public class HauptfensterController extends WindowAdapter implements ActionListener, ChangeListener{
 
 	private AthletenListe athletenListe;
-	protected Hauptfenster view;
+	private Hauptfenster view;
 	
-	public HauptfensterController (AthletenListe athletenListe, Hauptfenster main){
+	protected HauptfensterController (AthletenListe athletenListe, Hauptfenster main){
 		this.athletenListe = athletenListe;
 		this.view = main;
 	}
 	
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		ProfilTab tab = view.getAktivesTab();
@@ -36,7 +39,7 @@ public class HauptfensterController extends WindowAdapter implements ActionListe
 				tab.speichernClicked(true);
 				break;
 			case "S-Wert schließen":							
-				view.release();
+				view.fensterSchließen();
 				break;
 			case "Leistung hinzufügen":							
 				new LeistungDialog(tab.getAthlet(), null);
@@ -45,22 +48,25 @@ public class HauptfensterController extends WindowAdapter implements ActionListe
 				tab.leistungBearbeitenPressed();
 				break;
 			case "Leistung löschen":							
-				tab.deleteZeileButtonPressed(); // Exception: bitte ein Tab wählen!??!
+				tab.deleteZeileButtonPressed();
 				break;
 		}
 	}
 
     public void windowClosing(WindowEvent we) {
-    	//TODO: is called twice on windowsClosing?!?!
-        view.release();
+        view.fensterSchließen();
+    }
+    
+    protected void release(){
+    	athletenListe = null;
+    	view = null;
     }
 
-	@Override
 	public void stateChanged(ChangeEvent arg0) {
-		int alleTabs = view.tabbedPane.getTabCount();
-		int selectedTab = view.tabbedPane.getSelectedIndex();
+		int alleTabs = view.getAnzahlTabs();
+		int selectedTab = view.getIndexSelectedTab();
 		if(selectedTab != alleTabs-1) {
-			view.selectedIndex = selectedTab;
+			// TODO hier müsste noch setLeistungenMenüVerfügbar auf true oder false gesetzt werden!!
 			view.athletenMenüVerfügbar(true);
 		} else {
 			view.setLeistungenMenüVerfügbar(false);

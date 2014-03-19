@@ -62,7 +62,7 @@ public class DateiSpeichern {
 	     writer.writeNext(entries);	     
 	     schreibeLeistungen(writer,athlet.getLeistungen());
 	     writer.close();
-	     if (ValidatorHelper.isSyntacticallyCorrect(pfad)) {	    	 
+	     if ( ! ValidatorHelper.isSyntacticallyCorrect(pfad)) {	    	 
 	    	 throw new SyntaxException();
 	     }		    
 	}	

@@ -4,8 +4,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-
 import model.*;
+
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
 public class NeuerAthletDialog extends JDialog{
 
@@ -16,7 +19,7 @@ public class NeuerAthletDialog extends JDialog{
 
 	private AthletenListe athletenListe;
 	
-	public NeuerAthletDialog(AthletenListe athletenListe) {
+	protected NeuerAthletDialog(AthletenListe athletenListe) {
 		this.athletenListe = athletenListe;
 		initProperties();
 		initLayout();
@@ -99,10 +102,9 @@ public class NeuerAthletDialog extends JDialog{
 	private void inputValidieren() {
 		String name = textFieldName.getText();
 		if(isValid(name)) {
-			setVisible(false);
-			dispose();
 			Athlet neuerAthlet = new Athlet(name, null);
 			athletenListe.addAthlet(neuerAthlet);
+			release();
 		}
 		else {
 			JOptionPane.showMessageDialog(NeuerAthletDialog.this,
@@ -113,10 +115,15 @@ public class NeuerAthletDialog extends JDialog{
 	}
 	
 	private boolean isValid(String name) {
-		// TODO: name sollte kein ";" enthalten!
-		if (name.toCharArray().length > 0) {
+		if (name.toCharArray().length > 0 && ! name.contains(";")) {
 			return true;
 		}
 		return false;
+	}
+	
+	private void release(){
+		athletenListe = null;
+		setVisible(false);
+		dispose();
 	}
 }

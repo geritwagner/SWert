@@ -1,14 +1,16 @@
 package main;
 
 import java.io.IOException;
-import datei_operationen.DateiSpeichern;
-import datei_operationen.NoFileChosenException;
-import datei_operationen.SyntaxException;
+import datei_operationen.*;
 import analyse_bestzeiten.BestzeitenDialog;
 import analyse_diagramm.DiagrammFrame;
 import analyse_trainingsbereich.TrainingsbereichDialog;
 import leistung_bearbeiten.LeistungDialog;
 import model.*;
+
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
 public class ProfilTabController {
 	

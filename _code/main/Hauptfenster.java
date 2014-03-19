@@ -9,11 +9,15 @@ import net.miginfocom.swing.MigLayout;
 import datei_operationen.*;
 import model.*;
 
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
+
 public class Hauptfenster extends JFrame implements Observer {
 
 	private static final long serialVersionUID = 1L;
-	public JTabbedPane tabbedPane;
-	public LinkedList<ProfilTab> tabList = new LinkedList<ProfilTab>();
+	private JTabbedPane tabbedPane;
+	private LinkedList<ProfilTab> tabList = new LinkedList<ProfilTab>();
 	
 	private JMenuItem mntmAthletenprofilSchliessen;
 	private JMenu mnBearbeiten;
@@ -22,7 +26,6 @@ public class Hauptfenster extends JFrame implements Observer {
 	private JMenuItem mntmSpeichern;
 	private JMenuItem mntmSpeicherUnter;
 	
-	protected int selectedIndex;
 	public static Hauptfenster aktuellesHauptfenster;	
 	public HauptfensterController controller;
 	public static AthletenListe athletenListe;
@@ -45,21 +48,24 @@ public class Hauptfenster extends JFrame implements Observer {
 		athletenListe = new AthletenListe();
 		athletenListe.addObserver(this);
 		controller = new HauptfensterController(athletenListe, this);
+		initHauptfenster();
+	}
+	
+	private void initHauptfenster(){
 		initializeFrame();
 		initDummyPane();
 		athletenMenüVerfügbar(false);
 		addWindowListener(controller);
-		setVisible(true);
+		setVisible(true);		
 	}
 	
 	private void initializeFrame() {		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Hauptfenster.class.getResource("/bilder/Logo_32x32.png")));
-		addWindowListener(controller);
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setTitle("S-Wert 3.0");
 		setBounds(100, 100, 950, 500);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		Dimension d = getToolkit().getScreenSize();
 		setLocation((int) ((d.getWidth() - getWidth()) / 2), (int) ((d.getHeight() - getHeight()) / 2));
 		setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -170,8 +176,7 @@ public class Hauptfenster extends JFrame implements Observer {
 		dummyTab.add(btnAthletenprofilffnen, "cell 1 7,growx,aligny top");
 	}
 	
-	protected void release() {
-		
+	protected void fensterSchließen() {
 		Iterator<ProfilTab> iterator = tabList.iterator();
 		boolean gespeichert = true;
 		while (iterator.hasNext()) {
@@ -181,30 +186,46 @@ public class Hauptfenster extends JFrame implements Observer {
 			}
 		}
 		if(!gespeichert) {
-			// TODO: ggf. YES_NO_CANCEL_OPTION
-			int art = JOptionPane.showConfirmDialog(getContentPane(),
+			int auswahl = JOptionPane.showConfirmDialog(getContentPane(),
 				"S-Wert wird geschlossen.\nWollen Sie Ihre Änderungen speichern?", 
-				"Achtung!", JOptionPane.YES_NO_OPTION);
-    		if (art == 1) {
-    			setEnabled(false);
-    			dispose();
-    		} else if (art== 0) {
+				"Schließen", JOptionPane.YES_NO_CANCEL_OPTION);
+    		if (auswahl == JOptionPane.NO_OPTION) {
+    			release();
+    		} else if (auswahl== JOptionPane.YES_OPTION) {
     			iterator = tabList.iterator();
     			while(iterator.hasNext()) {
     				ProfilTab tab = iterator.next();
     				if (tab.getSpeicherStatus() == true) {
     					iterator.remove();
     					tabbedPane.setSelectedComponent(tab);
-    					tabbedPane.remove(tabbedPane.getSelectedIndex());
+    					tabbedPane.remove(getIndexSelectedTab());
     				} else {
     					tab.speichernClicked(false);
     				}
     				iterator = tabList.iterator();
     			}
-    			System.exit(0);
+   			release();
     		}
 		} else {
-			System.exit(0);
+			release();			
+		}
+	}
+	
+	private void release(){
+		athletenListe.deleteObserver(this);
+		athletenListe = null;
+		controller.release();
+		controller = null;
+		setEnabled(false);
+		dispose();
+	}
+	
+	protected void setSpeicherStatus (Athlet athlet, boolean gespeichert) {	
+		int tabStelle = getIndexSelectedTab();
+		if (gespeichert) {
+			tabbedPane.setTitleAt(tabStelle, athlet.getName());
+		} else {
+			tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
 		}
 	}
 	
@@ -249,13 +270,21 @@ public class Hauptfenster extends JFrame implements Observer {
 		return false;
 	}
 	
-	public ProfilTab getAktivesTab() {		
+	protected ProfilTab getAktivesTab() {
 		for (int i = 0; i < tabList.size(); i++) {
 			if (tabList.get(i).isShowing() == true) {
 				return  tabList.get(i);
 			}
 		}
 		return null;		
+	}
+	
+	protected int getAnzahlTabs(){
+		return tabbedPane.getTabCount();
+	}
+	
+	protected int getIndexSelectedTab(){
+		return tabbedPane.getSelectedIndex();	
 	}
 	
 	protected void athletenMenüVerfügbar(boolean setTo){
@@ -275,19 +304,27 @@ public class Hauptfenster extends JFrame implements Observer {
 		int anzahlAngelegteAthleten = athletenListe.getAlleAthleten().size();
 		
 		if (anzahlGeoffneteAthleten < anzahlAngelegteAthleten){
-			Athlet letzterGeoeffneterAthlet = athletenListe.getLetzterGeoeffneterAthlet();
-			createTab(letzterGeoeffneterAthlet);
-			if (letzterGeoeffneterAthlet.isSetSpeicherpfad()){
-				getAktivesTab().setSpeicherStatus(true);				
-			} else {
-				getAktivesTab().setSpeicherStatus(false);								
-			}
+			athletenOeffnen();
 		}
 		if (anzahlGeoffneteAthleten > anzahlAngelegteAthleten){
-			getAktivesTab().release();			
-	        int i = tabbedPane.getSelectedIndex();
-			tabbedPane.remove(i); 
-			tabList.remove(i);
+			athletenSchliessen();
 		}
+	}
+	
+	private void athletenOeffnen(){
+		Athlet letzterGeoeffneterAthlet = athletenListe.getLetzterGeoeffneterAthlet();
+		createTab(letzterGeoeffneterAthlet);
+		if (letzterGeoeffneterAthlet.isSetSpeicherpfad()){
+			getAktivesTab().setSpeicherStatus(true);				
+		} else {
+			getAktivesTab().setSpeicherStatus(false);								
+		}
+	}
+	
+	private void athletenSchliessen(){
+		getAktivesTab().release();			
+        int i = getIndexSelectedTab();
+		tabbedPane.remove(i); 
+		tabList.remove(i);
 	}
 }
