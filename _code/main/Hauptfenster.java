@@ -74,21 +74,24 @@ public class Hauptfenster extends JFrame implements Observer {
 		setJMenuBar(menuBar);
 		
 		JMenu mnDatei = new JMenu("Datei");
+		mnDatei.setMnemonic('D');
 		menuBar.add(mnDatei);
 		
 			JMenuItem mntmNeuesProfilAnlegen = new JMenuItem("Neues Athletenprofil anlegen");
 			mntmNeuesProfilAnlegen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeuerAthlet_16x16.png")));
 			mntmNeuesProfilAnlegen.addActionListener(controller);
+			mntmNeuesProfilAnlegen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 			mnDatei.add(mntmNeuesProfilAnlegen);
 			
 			JMenuItem mntmProfilffnen = new JMenuItem("Athletenprofil \u00F6ffnen");		
 			mntmProfilffnen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditAthlet_16x16.png")));
+			mntmProfilffnen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 			mnDatei.add(mntmProfilffnen);
 			mntmProfilffnen.addActionListener(controller);
 			
 			mntmAthletenprofilSchliessen = new JMenuItem("Athletenprofil schlie\u00DFen");
 			mntmAthletenprofilSchliessen.addActionListener(controller);
-			mntmAthletenprofilSchliessen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
+			mntmAthletenprofilSchliessen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 			mnDatei.add(mntmAthletenprofilSchliessen);
 			
 			JSeparator separator = new JSeparator();
@@ -102,6 +105,7 @@ public class Hauptfenster extends JFrame implements Observer {
 			
 			mntmSpeicherUnter = new JMenuItem("Speichern unter...");
 			mntmSpeicherUnter.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/SpeichernUnter_16x16.png")));
+			mntmSpeicherUnter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 			mnDatei.add(mntmSpeicherUnter);
 			mntmSpeicherUnter.addActionListener(controller);
 			
@@ -110,9 +114,11 @@ public class Hauptfenster extends JFrame implements Observer {
 			
 			JMenuItem mntmSwertSchlieen = new JMenuItem("S-Wert schlie\u00DFen");
 			mntmSwertSchlieen.addActionListener(controller);
+			mntmSwertSchlieen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 			mnDatei.add(mntmSwertSchlieen);
 			
 			mnBearbeiten = new JMenu("Bearbeiten");
+			mnBearbeiten.setMnemonic('B');
 			mnBearbeiten.setEnabled(false);
 			menuBar.add(mnBearbeiten);
 		
