@@ -2,13 +2,21 @@ package model;
 
 import java.util.*;
 
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ */
+
 public class AthletenListe extends Observable {
 
-	LinkedList<Athlet> alleAthleten;
-	Athlet letzterGeoeffneterAthlet;
-	Athlet letzterGeschlossenerAthlet;
-	
-	//TODO: attributes to manage: active (tab), saved (status), editable (~Leistung ausgewählt)
+	private LinkedList<Athlet> alleAthleten;
+	private Athlet letzterGeoeffneterAthlet;
+	private Athlet letzterGeschlossenerAthlet;
+
+	public AthletenListe(){
+		alleAthleten = new LinkedList<>();
+		setChanged();
+		notifyObservers();
+	}
 	
 	public Athlet getLetzterGeoeffneterAthlet() {
 		Athlet aktuellerAthlet = letzterGeoeffneterAthlet;
@@ -22,11 +30,6 @@ public class AthletenListe extends Observable {
 		return aktuellerAthlet;
 	}
 
-	public AthletenListe(){
-		alleAthleten = new LinkedList<>();
-		setChanged();
-		notifyObservers();
-	}
 	
 	public LinkedList<Athlet> getAlleAthleten(){
 		return alleAthleten;

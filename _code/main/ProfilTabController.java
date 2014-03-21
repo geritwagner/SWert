@@ -20,6 +20,7 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 	private ProfilTab view;
 	private DateiSpeichern speicher;
 	private AthletenListe athletenliste;
+	private Hauptfenster mainframe = Hauptfenster.aktuellesHauptfenster;
 	
 	protected ProfilTabController(AthletenListe athletenliste, Athlet athlet, ProfilTab view){
 		this.athlet = athlet;
@@ -59,7 +60,7 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 		if (speicher == null)
 			speicher = new DateiSpeichern(athlet);
 		speicher.speichern(forceSpeichernUnter);
-		view.setSpeicherStatus(true);				
+		mainframe.setSpeicherStatus();		
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
@@ -75,7 +76,7 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 		case "Leistung löschen":
 			view.leistungLoeschenPressed();
 			break;
-		case "Tab schließen":
+		case "":
 			view.tabSchließenClicked();
 			break;
 		case "Leistungen automatisch wählen":

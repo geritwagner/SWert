@@ -3,7 +3,6 @@ package main;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.awt.EventQueue;
 import javax.swing.*;
 import net.miginfocom.swing.MigLayout;
 import datei_operationen.*;
@@ -51,41 +50,6 @@ public class Hauptfenster extends JFrame implements Observer {
 		initHauptfenster();
 	}
 	
-	protected void fensterSchließen() {
-		Iterator<ProfilTab> iterator = tabList.iterator();
-		boolean gespeichert = true;
-		while (iterator.hasNext()) {
-			ProfilTab tab = iterator.next();
-			if (!tab.getSpeicherStatus()) {
-				gespeichert = false;
-			}
-		}
-		if(!gespeichert) {
-			int auswahl = JOptionPane.showConfirmDialog(getContentPane(),
-				"S-Wert wird geschlossen.\nWollen Sie Ihre Änderungen speichern?", 
-				"Schließen", JOptionPane.YES_NO_CANCEL_OPTION);
-    		if (auswahl == JOptionPane.NO_OPTION) {
-    			release();
-    		} else if (auswahl== JOptionPane.YES_OPTION) {
-    			iterator = tabList.iterator();
-    			while(iterator.hasNext()) {
-    				ProfilTab tab = iterator.next();
-    				if (tab.getSpeicherStatus() == true) {
-    					iterator.remove();
-    					tabbedPane.setSelectedComponent(tab);
-    					tabbedPane.remove(getIndexSelectedTab());
-    				} else {
-    					tab.speichernClicked(false);
-    				}
-    				iterator = tabList.iterator();
-    			}
-   			release();
-    		}
-		} else {
-			release();			
-		}
-	}
-	
 	private void release(){
 		athletenListe.deleteObserver(this);
 		athletenListe = null;
@@ -95,18 +59,37 @@ public class Hauptfenster extends JFrame implements Observer {
 		dispose();
 	}
 	
-	protected void setSpeicherStatus (Athlet athlet, boolean gespeichert) {	
-		int tabStelle = getIndexSelectedTab();
-		if (gespeichert) {
-			tabbedPane.setTitleAt(tabStelle, athlet.getName());
+	protected void fensterSchließen() {
+		while (getAnzahlTabs() > 1) {
+			getAktivesTab().tabSchließenClicked();
+		}
+		release();
+	}
+	
+	protected boolean isAktuellerAthletGespeichert(){
+		return controller.isAktuellerAthletGespeichert();
+	}
+	
+	protected void setSpeicherStatus () {
+		if (isAktuellerAthletGespeichert()){
+			tabbedPane.setTitleAt(getIndexSelectedTab(), getAktivesTab().getAthlet().getName());			
 		} else {
-			tabbedPane.setTitleAt(tabStelle, "* "+athlet.getName());
+			tabbedPane.setTitleAt(getIndexSelectedTab(), "* "+getAktivesTab().getAthlet().getName());
 		}
 	}
 	
 	protected void dateiOeffnenClicked(){
 		try {
-			new DateiOeffnen(athletenListe);
+			DateiOeffnen dateiOeffnen = new DateiOeffnen();
+			dateiOeffnen.getCSVPfadFromUserDialog();
+			Athlet gelesenerAthlet = dateiOeffnen.getAthlet();
+			if (checkAthletGeöffnet(gelesenerAthlet.getName(), gelesenerAthlet.getId())){
+				JOptionPane.showMessageDialog(this,
+		    			"Das ausgewählte Athletenprofil ist bereit geöffnet!",
+		    			"Athletenprofil bereits geöffnet", JOptionPane.WARNING_MESSAGE);	
+			} else {
+				athletenListe.addAthlet(gelesenerAthlet);	
+			}
 		}catch(java.io.FileNotFoundException e) {
 			JOptionPane.showMessageDialog(this,
 				"Die Datei wurde nicht gefunden, bitte probieren Sie es noch einmal.",
@@ -117,12 +100,8 @@ public class Hauptfenster extends JFrame implements Observer {
 				"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);
 		} catch (SyntaxException  e){
 			JOptionPane.showMessageDialog(this,
-					"Es ist ein Fehler beim Öffnen der Datei aufgetreten (Format/Syntax), bitte überprüfen sie die Datei.",
-					"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);			
-		} catch (AlreadyOpenException  e){
-		JOptionPane.showMessageDialog(this,
-				"Die Datei ist schon geöffnet.",
-				"Datei schon geöffnet", JOptionPane.ERROR_MESSAGE);			
+				"Es ist ein Fehler beim Öffnen der Datei aufgetreten (Format/Syntax), bitte überprüfen sie die Datei.",
+				"Fehler beim Öffnen der Datei", JOptionPane.ERROR_MESSAGE);			
 		}
 	}
 		
@@ -190,11 +169,7 @@ public class Hauptfenster extends JFrame implements Observer {
 		Athlet letzterGeoeffneterAthlet = athletenListe.getLetzterGeoeffneterAthlet();
 		createTab(letzterGeoeffneterAthlet);
 		getAktivesTab().checkboxLeistungenAutomatischWählenClicked();
-		if (letzterGeoeffneterAthlet.isSetSpeicherpfad()){
-			getAktivesTab().setSpeicherStatus(true);				
-		} else {
-			getAktivesTab().setSpeicherStatus(false);								
-		}
+		setSpeicherStatus();
 	}
 	
 	private void athletenSchliessen(){

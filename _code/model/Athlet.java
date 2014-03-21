@@ -8,6 +8,7 @@ import java.util.prefs.*;
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
  */
+
 public class Athlet extends Observable implements AthletInterface {
 
 	private static final int ANZAHL_LEISTUNGEN_FÜR_BERECHNUNG_DES_SLOPE_FAKTORS = 2;
@@ -72,7 +73,7 @@ public class Athlet extends Observable implements AthletInterface {
 	public boolean addLeistung(Leistung leistung) {
 		alleLeistungen.add(leistung);
 		setChanged();
-		notifyObservers(true);
+		notifyObservers(this);
 		return true;
 	}
 	
@@ -82,7 +83,7 @@ public class Athlet extends Observable implements AthletInterface {
 			if(aktuelleLeistung.equals(leistungToRemove)){
 				alleLeistungen.remove(i);
 				setChanged();
-				notifyObservers(true);
+				notifyObservers(this);
 				return true;
 			}
 		}
@@ -102,7 +103,7 @@ public class Athlet extends Observable implements AthletInterface {
 		Leistung zuÄnderndeLeistung = getLeistungById(id_leistung);
 		zuÄnderndeLeistung.updateLeistung(id_strecke, bezeichnung, datum, geschwindigkeit);
 		setChanged();
-		notifyObservers(true);
+		notifyObservers(this);
 	}
 
 	public String getSpeicherpfad() {
@@ -111,6 +112,24 @@ public class Athlet extends Observable implements AthletInterface {
 
 	public void setSpeicherpfad(String speicherpfad) {
 		this.speicherpfad = speicherpfad;
+	}
+	
+	public boolean equalsWithoutID (Athlet andererAthlet){
+		if ( name.equals(andererAthlet.getName())){
+			try {
+				for (int i = 0; i< alleLeistungen.size(); i++){
+					Leistung aktuelleLeistung = alleLeistungen.get(i);
+					Leistung andereLeistung = andererAthlet.getLeistungen().get(i);
+					if (! aktuelleLeistung.equalsWithoutIDs(andereLeistung)){
+						return false;
+					}
+				}
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return false;
 	}
 	
 	public boolean isSetSpeicherpfad(){
@@ -124,11 +143,9 @@ public class Athlet extends Observable implements AthletInterface {
 		if(!inAlleLeistungenEnthalten(ausgewaehlteLeistung)){
 			return;
 		}
-		// Es dürfen nicht mehr als zwei Leistungen ausgewählt werden.
 		if (getLeistungAuswahlForSlopeFaktor()[1] != null){
 			throw new ThreeLeistungenForSlopeFaktorException();
 		}
-		// Keine gleichen Strecken akzeptieren!
 		if (getLeistungAuswahlForSlopeFaktor()[0] != null && 
 				getLeistungAuswahlForSlopeFaktor()[0].getStrecke() == ausgewaehlteLeistung.getStrecke()){
 			throw new GleicheStreckeException();
@@ -137,7 +154,7 @@ public class Athlet extends Observable implements AthletInterface {
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(true);
 				setChanged();
-				notifyObservers(false);
+				notifyObservers(this);
 			}
 		}
 	}
@@ -150,7 +167,7 @@ public class Athlet extends Observable implements AthletInterface {
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
 				aktuelleLeistung.setIsUsedForSlopeFaktor(false);
 				setChanged();
-				notifyObservers(false);
+				notifyObservers(this);
 			}
 		}
 	}
@@ -172,7 +189,7 @@ public class Athlet extends Observable implements AthletInterface {
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			aktuelleLeistung.setIsUsedForSlopeFaktor(false);
 			setChanged();
-			notifyObservers(false);
+			notifyObservers(this);
 		}
 	}
 	
@@ -196,7 +213,7 @@ public class Athlet extends Observable implements AthletInterface {
 		setLeistungToAuswahlForSlopeFaktor(kürzereStreckenLeistung);
 		setLeistungToAuswahlForSlopeFaktor(längereStreckenLeistung);
 		setChanged();
-		notifyObservers(false);
+		notifyObservers(this);
 	}
 	
 	public boolean isSetSlopeFaktor(){

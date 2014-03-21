@@ -1,12 +1,15 @@
 package model;
 
 import static org.junit.Assert.*;
-
 import org.junit.*;
+
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
 public class LeistungTest {
 
-	Leistung testLeistung;
+	private Leistung testLeistung;
 	
 	@Test
 	public void testConstructorAndDataMethods(){
@@ -87,8 +90,8 @@ public class LeistungTest {
 		testLeistung = new Leistung(-1, 12, "Test-Leistung", "01-01-2014", 183.125);
 		
 		// Schwelle: 180s/km müssten 20km entsprechen.
-	testLeistung = new Leistung(-1, 12, "Schwellen-Leistung", "01-01-2014", 180);
-	data = testLeistung.getObjectDataForTable();
-	assertEquals("20.000m", data[1]);
+		testLeistung = new Leistung(-1, 12, "Schwellen-Leistung", "01-01-2014", 180);
+		data = testLeistung.getObjectDataForTable();
+		assertEquals("20.000m", data[1]);
 	}
 }

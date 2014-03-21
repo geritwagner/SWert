@@ -106,8 +106,19 @@ public class Leistung implements LeistungInterface{
 		if (this.id_strecke 		== andereLeistung.getId_strecke() &&
 			this.id_athlet 			== andereLeistung.getId_athlet() &&
 			this.geschwindigkeit 	== andereLeistung.getGeschwindigkeit() &&
-			this.bezeichnung 		== andereLeistung.getBezeichnung() &&
-			this.datum 				== andereLeistung.getDatum()) {
+			this.bezeichnung.equals(andereLeistung.getBezeichnung()) &&
+			this.datum.equals(andereLeistung.getDatum())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean equalsWithoutIDs (Leistung andereLeistung){
+		if (this.id_strecke 		== andereLeistung.getId_strecke() &&
+			this.geschwindigkeit 	== andereLeistung.getGeschwindigkeit() &&
+			this.bezeichnung.equals(andereLeistung.getBezeichnung()) &&
+			this.datum.equals(andereLeistung.getDatum())) {
 			return true;
 		} else {
 			return false;

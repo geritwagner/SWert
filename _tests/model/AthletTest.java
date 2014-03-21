@@ -1,23 +1,22 @@
 package model;
 
 import static org.junit.Assert.*;
+import java.util.*;
+import org.junit.*;
+import org.junit.rules.*;
 
-import java.util.LinkedList;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
 public class AthletTest {
 
 	// ECLEMMA: Bug expectedException - http://www.eclemma.org/faq.html#trouble05
 	
-	Athlet testAthlet;
+	private Athlet testAthlet;
 	
     @Rule
     public ExpectedException thrown= ExpectedException.none();
-
 	
 	@Test
 	public void testConstructorAndDataMethods(){
@@ -64,7 +63,6 @@ public class AthletTest {
 	
 	@Test
 	public void testSlopeFaktorLogik() throws Exception {
-//		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
 		
 		// testen, ob ein "zu guter" Slope-Faktor erkannt & nicht verwendet wird.
 		Leistung leistung1 = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
@@ -124,7 +122,6 @@ public class AthletTest {
 
 		// zu schlechte Slope-Faktoren sollten nicht akzeptiert werden
 		testAthlet.removeLeistung(leistung1);
-//		leistung1 = new Leistung(7, 12, 188432, "10.000m-Leistung (langsam)", "01-01-2014");
 		leistung1 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 18843.2);
 		testAthlet.addLeistung(leistung1);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
@@ -147,9 +144,6 @@ public class AthletTest {
 		assertTrue(exceptionThrown);
 		
 		// Auswahl einer 3. Leistung für die Berechnung des Slope-Faktors sollte nicht möglich sein.
-//		Leistung leistung1 = new Leistung(7, 12, 2615.3000000000003, "10.000m-Leistung", "01-01-2014");
-//		Leistung leistung2 = new Leistung(1, 12, 146.5, "800m-Leistung", "01-01-2014");
-//		Leistung leistung3 = new Leistung (6, 12, 1315, "5.000m-Leistung", "11-01-2014");
 		Leistung leistung1 = new Leistung(7, 12, "10.000m-Leistung", "01-01-2014", 261.53);
 		Leistung leistung2 = new Leistung(1, 12, "800m-Leistung", "01-01-2014", 183.125);
 		Leistung leistung3 = new Leistung (6, 12, "5.000m-Leistung", "11-01-2014", 263);

@@ -14,6 +14,7 @@ interface LeistungInterface {
 //	void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor);
 	public String toString();
 	public boolean equals(Leistung andereLeistung);
+	public boolean equalsWithoutIDs (Leistung andereLeistung);
 	
 	// TODO: update-Methode im Controller verwenden!
 	public void updateLeistung(int id_strecke, String bezeichnung, String datum, double geschwindigkeit);

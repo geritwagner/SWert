@@ -13,6 +13,7 @@ interface AthletInterface {
 	public void updateLeistung(long id_leistung, int id_strecke, String bezeichnung, String datum, double geschwindigkeit);
 	public String getSpeicherpfad();
 	public void setSpeicherpfad(String speicherpfad);
+	public boolean equalsWithoutID (Athlet andererAthlet);
 	
 	// Leistungen für Slope-Faktor bearbeiten
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception;

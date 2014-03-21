@@ -1,8 +1,8 @@
 package main;
 
 import java.awt.event.*;
-
 import javax.swing.event.*;
+import datei_operationen.DateiOeffnen;
 import leistung_bearbeiten.LeistungDialog;
 import model.*;
 
@@ -52,6 +52,20 @@ public class HauptfensterController extends WindowAdapter implements ActionListe
 				tab.leistungLoeschenPressed();
 				break;
 		}
+	}
+	
+	protected boolean isAktuellerAthletGespeichert (){
+		Athlet aktuellerAthlet = view.getAktivesTab().getAthlet();
+		DateiOeffnen dateiOeffnen = new DateiOeffnen();
+		try {
+			dateiOeffnen.setCSVPfad(aktuellerAthlet.getSpeicherpfad());
+			Athlet gespeicherterAthlet = dateiOeffnen.getAthlet();
+			if (aktuellerAthlet.equalsWithoutID(gespeicherterAthlet))
+				return true;
+		} catch (Exception e) {
+			// nothing
+		}
+		return false;
 	}
 
     public void windowClosing(WindowEvent we) {

@@ -19,23 +19,25 @@ public class DateiOeffnen {
 	private String nameAthlet;
 	private long idAthlet;
 	private LinkedList<Leistung> leistungen;
-	protected AthletenListe athletenliste;
+	private Athlet geöffneterAthlet;
+	private String pfad;
 
-	public DateiOeffnen(AthletenListe athletenliste) throws FileNotFoundException, 
-								IOException, AlreadyOpenException, SyntaxException   {
+	public DateiOeffnen()  {
+	}
+	
+	public Athlet getAthlet() throws FileNotFoundException, IOException, SyntaxException{
+		if (pfad == null)
+			throw new FileNotFoundException();
 		
-		this.athletenliste = athletenliste;
-		String pfad = getCSVPfadFromUserDialog();
-		if (! (pfad == null)){
-			Athlet geöffneterAthlet = openAthletFromCSVFile(pfad);
-		    geöffneterAthlet.setSpeicherpfad(pfad);
-		    athletenliste.addAthlet(geöffneterAthlet);			
-		}
+		geöffneterAthlet = openAthletFromCSVFile(pfad);
+	    geöffneterAthlet.setSpeicherpfad(pfad);		
+	    Athlet gelesen = geöffneterAthlet;
 		release();
+		return gelesen;
 	}
 	
 	private Athlet openAthletFromCSVFile (String pfad) throws FileNotFoundException, 
-									IOException, AlreadyOpenException, SyntaxException {	
+									IOException, SyntaxException {	
 		
 	    CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
 	    if (!ValidatorHelper.isSyntacticallyCorrect(pfad)) {
@@ -43,13 +45,6 @@ public class DateiOeffnen {
 	    	throw new SyntaxException();
 	    }
 	    kopfzeileAuslesen(reader);
-	    if (Hauptfenster.aktuellesHauptfenster.checkAthletGeöffnet(nameAthlet,idAthlet)) {
-	    	JOptionPane.showMessageDialog(Hauptfenster.aktuellesHauptfenster,
-	    			"Das ausgewählte Athletenprofil ist bereit geöffnet!",
-	    			"Athletenprofil bereits geöffnet", JOptionPane.WARNING_MESSAGE);
-	    	reader.close();
-	    	throw new AlreadyOpenException();
-	    }
 	    leistungen = getLeistungen(reader);
 	    return new Athlet(idAthlet, nameAthlet, leistungen);
 	}
@@ -84,20 +79,25 @@ public class DateiOeffnen {
     	return new Leistung(streckenId, idAthlet, bezeichnung, datum, geschwindigkeit);
 	}
 
-	private String getCSVPfadFromUserDialog() {
+	public void setCSVPfad (String pfad){
+		this.pfad = pfad;
+	}
+	
+	public void getCSVPfadFromUserDialog
+	() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
 		FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");chooser.addChoosableFileFilter(filter); 
 		if (chooser.showOpenDialog(Hauptfenster.aktuellesHauptfenster) == JFileChooser.APPROVE_OPTION){
-			return chooser.getSelectedFile().getAbsolutePath();        
+			pfad = chooser.getSelectedFile().getAbsolutePath();        
 		}else {
-			return null;
+			pfad = null;
 		}
 	}
 	
 	private void release(){
 		nameAthlet = null;
 		leistungen = null;
-		athletenliste = null;
+		geöffneterAthlet = null;
 	}
 }

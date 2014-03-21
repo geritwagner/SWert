@@ -34,7 +34,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private JButton btnLeistungLöschen;
 	private JButton btnTabSchlieen;
 	
-	private boolean gespeichert = false;
 	private boolean automatischeVerarbeitung = false;
 	private Hauptfenster mainFrame = Hauptfenster.aktuellesHauptfenster;
 	private Athlet athlet;
@@ -66,7 +65,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		}			
 	}
 	
-	public void update(Observable arg0, Object speicherStatusChanged) {
+	public void update(Observable arg0, Object o) {
 		// TODO: Info, wenn Schwelle auf grund eines zu guten/zu schlechten Slope-Faktors nicht gesetzt wird
 		if (athlet.getSlopeFaktorStatus() == "set"){
 			LeistungHelper l = new LeistungHelper();
@@ -80,9 +79,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			setAnalysenVerfügbar(false);
 		}
 		setAlleLeistungen();
-		
-		if ((boolean)speicherStatusChanged)
-			setSpeicherStatus(false);
+		mainFrame.setSpeicherStatus();
 	}
 	
 	protected void release(){
@@ -148,20 +145,20 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 			e.printStackTrace();
 		} catch (SyntaxException e) {
 			JOptionPane.showMessageDialog(this, 
-					"Es ist ein Syntax-Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 
-					"Fehler beim Speichern", JOptionPane.ERROR_MESSAGE);
+				"Es ist ein Syntax-Fehler beim Speichern der Datei aufgetreten, bitte probieren Sie es noch einmal.", 
+				"Fehler beim Speichern", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 		
 	protected void tabSchließenClicked() {
-        	if ( ! gespeichert){
-        		int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+
-        				athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
-        		if (nutzerauswahlSpeichern == 0) {
-        			speichernClicked(false);
-        		} 
-        	}
-        	athletenListe.removeAthlet(athlet);
+        if ( ! mainFrame.isAktuellerAthletGespeichert()){
+        	int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+
+        			athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
+        	if (nutzerauswahlSpeichern == 0) {
+        		speichernClicked(false);
+        	} 
+        }
+        athletenListe.removeAthlet(athlet);
 	}
 	
 	protected void leistungLoeschenPressed() {
@@ -174,15 +171,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	
 	protected void leistungBearbeitenPressed(){
 		controller.leistungBearbeitenPressed();
-	}
-	
-	protected void setSpeicherStatus (boolean gespeichert) {
-		this.gespeichert = gespeichert;
-		mainFrame.setSpeicherStatus(athlet, gespeichert);
-	}
-	
-	protected boolean getSpeicherStatus() {	
-		return gespeichert;
 	}
 
 	protected void setLeistungBearbeitenAvailable(boolean editable){

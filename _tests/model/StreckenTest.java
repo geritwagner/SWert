@@ -1,12 +1,12 @@
 package model;
 
 import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.*;
 
 /**
- * Tests für die Strecken
- * @author Gerit Wagner
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class StreckenTest {
 
 	@Test
