@@ -2,6 +2,7 @@ package model;
 
 import static org.junit.Assert.*;
 import java.util.*;
+
 import org.junit.*;
 import org.junit.rules.*;
 
@@ -20,6 +21,19 @@ public class AthletTest {
 	
 	@Test
 	public void testConstructorAndDataMethods(){
+		
+//		public long getId();
+//		public String getName();
+//		public boolean addLeistung(Leistung leistung);
+//		public LinkedList<Leistung> getLeistungen();
+//		public Leistung getLeistungById(long id);
+//		public void updateLeistung(long id_leistung, int id_strecke, String bezeichnung, String datum, double geschwindigkeit);
+//		public void setSpeicherpfad(String speicherpfad);
+//		public String getSpeicherpfad();
+//		public boolean equalsWithoutID (Athlet andererAthlet);
+//		public boolean removeLeistung(Leistung leistungToRemove);
+		
+		
 		testAthlet = new Athlet(12, "Tester", null);
 		assertEquals(testAthlet.getId(), 12);
 		testAthlet = null;
