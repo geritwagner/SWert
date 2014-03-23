@@ -195,8 +195,7 @@ public class Athlet extends Observable implements AthletInterface {
 			throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
 		// TODO: ggf. von kürzerer/längerer Strecke auf besten slope-Faktor umschreiben?, 
 		// jedenfalls sollte hier kein ungültiger (zu gut/zu schlecht) gesetzt werden.
-		// -> TEST COVERAGE DEHALB HIER NOCH NICHT OPTIMIEREN!!!
-		
+
 		Leistung kürzereStreckenLeistung = alleLeistungen.get(0);
 		Leistung längereStreckenLeistung = alleLeistungen.get(1);
 		for (Leistung aktuelleLeistung : alleLeistungen){
