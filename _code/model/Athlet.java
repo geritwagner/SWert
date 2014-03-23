@@ -116,7 +116,8 @@ public class Athlet extends Observable implements AthletInterface {
 	
 	public boolean equalsWithoutID (Athlet andererAthlet){
 		if ( name.equals(andererAthlet.getName())){
-			try {
+				if (andererAthlet.getLeistungen().size() != alleLeistungen.size())
+					return false;
 				for (int i = 0; i< alleLeistungen.size(); i++){
 					Leistung aktuelleLeistung = alleLeistungen.get(i);
 					Leistung andereLeistung = andererAthlet.getLeistungen().get(i);
@@ -125,9 +126,6 @@ public class Athlet extends Observable implements AthletInterface {
 					}
 				}
 				return true;
-			} catch (Exception e) {
-				return false;
-			}
 		}
 		return false;
 	}
@@ -197,6 +195,7 @@ public class Athlet extends Observable implements AthletInterface {
 			throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
 		// TODO: ggf. von kürzerer/längerer Strecke auf besten slope-Faktor umschreiben?, 
 		// jedenfalls sollte hier kein ungültiger (zu gut/zu schlecht) gesetzt werden.
+		// -> TEST COVERAGE DEHALB HIER NOCH NICHT OPTIMIEREN!!!
 		
 		Leistung kürzereStreckenLeistung = alleLeistungen.get(0);
 		Leistung längereStreckenLeistung = alleLeistungen.get(1);

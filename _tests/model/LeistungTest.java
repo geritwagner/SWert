@@ -83,7 +83,7 @@ public class LeistungTest {
 		assertEquals("00:02:26,50", data[3]);
 		assertEquals("19,66", data[4]);
 		assertEquals("5,46", data[5]);
-		assertEquals("03:03,01", data[6]);
+		assertEquals("03:03,12", data[6]);
 		assertEquals(false, data[7]);
 		assertEquals(1, data[8]);
 		assertEquals("183.125", data[9]);	

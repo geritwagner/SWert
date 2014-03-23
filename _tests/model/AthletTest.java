@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import java.util.*;
 
 import org.junit.*;
-import org.junit.rules.*;
 
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
@@ -16,23 +15,14 @@ public class AthletTest {
 	
 	private Athlet testAthlet;
 	
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
-	
 	@Test
 	public void testConstructorAndDataMethods(){
 		
-//		public long getId();
-//		public String getName();
-//		public boolean addLeistung(Leistung leistung);
-//		public LinkedList<Leistung> getLeistungen();
-//		public Leistung getLeistungById(long id);
-//		public void updateLeistung(long id_leistung, int id_strecke, String bezeichnung, String datum, double geschwindigkeit);
-//		public void setSpeicherpfad(String speicherpfad);
-//		public String getSpeicherpfad();
-//		public boolean equalsWithoutID (Athlet andererAthlet);
-//		public boolean removeLeistung(Leistung leistungToRemove);
+		//	public long getId();
+		//	public String getName();
 		
+		testAthlet = new Athlet ("Athlet ohne ID (wird erzeugt)", null);
+		assertEquals("Athlet ohne ID (wird erzeugt)", testAthlet.getName());
 		
 		testAthlet = new Athlet(12, "Tester", null);
 		assertEquals(testAthlet.getId(), 12);
@@ -41,38 +31,52 @@ public class AthletTest {
 		long naechsteId = testAthlet.getId() + 1;
 		Athlet neuerAthlet = new Athlet ("neuer", null);
 		assertEquals(naechsteId, neuerAthlet.getId());
-		
-		assertTrue( testAthlet.getName() == "Tester");
-		assertTrue( 0 == testAthlet.getLeistungen().size());
+		assertEquals("Tester", testAthlet.getName());
+		assertEquals(0, testAthlet.getLeistungen().size());
+
+		//	public boolean addLeistung(Leistung leistung);
+		//	public LinkedList<Leistung> getLeistungen();
+		//	public Leistung getLeistungById(long id);
+
+		// 2.000m Leistung: 6:00 min
 		Leistung testLeistung = new Leistung(4, 12, "Test Wettkampf", "01-01-2014", 180);
 		testAthlet.addLeistung(testLeistung);
-		
-		testAthlet.updateLeistung(testLeistung.getId(), 4, "updated", "01-01-2014", 180);
-		assertEquals("updated", testLeistung.getBezeichnung());
-		
-		
+		assertEquals(testLeistung, testAthlet.getLeistungen().getFirst());
+		assertEquals(360, testAthlet.getLeistungen().get(0).getZeit(), 0.1);
 		long id = testLeistung.getId();
 		assertTrue(testAthlet.getLeistungById(id).equals(testLeistung));
 		assertEquals(null, testAthlet.getLeistungById(id+1));
+
+		//	public void updateLeistung(long id_leistung, int id_strecke, String bezeichnung, String datum, double geschwindigkeit);
 		
-		
-		assertTrue( testAthlet.getLeistungen().get(0).equals(testLeistung));
-		assertTrue( 360 == testAthlet.getLeistungen().get(0).getZeit());
-		testAthlet.removeLeistung(testLeistung);
-		testAthlet.removeLeistung(testLeistung);
-		assertTrue( 0 == testAthlet.getLeistungen().size());
-		
-		testAthlet = new Athlet ("Athlet ohne ID (wird erzeugt)", null);
-		assertEquals("Athlet ohne ID (wird erzeugt)", testAthlet.getName());
-	}
-	
-	@Test
-	public void testSpeicherPfad(){
-		testAthlet = new Athlet(12, "Tester", null);
+		testAthlet.updateLeistung(testLeistung.getId(), 4, "updated", "01-01-2014", 180);
+		assertEquals("updated", testLeistung.getBezeichnung());
+
+		//	public void setSpeicherpfad(String speicherpfad);
+		//	public String getSpeicherpfad();
+
 		assertEquals(false, testAthlet.isSetSpeicherpfad());
-		testAthlet.setSpeicherpfad("C:/user/athlet.csv");
-		assertEquals("C:/user/athlet.csv", testAthlet.getSpeicherpfad());
+		testAthlet.setSpeicherpfad("C://Ordner/Datei.csv");
+		assertEquals("C://Ordner/Datei.csv", testAthlet.getSpeicherpfad());
 		assertEquals(true, testAthlet.isSetSpeicherpfad());
+
+//		public boolean equalsWithoutID (Athlet andererAthlet);
+		Leistung leistung = new Leistung(4, 20, "updated", "01-01-2014", 180);
+		Athlet gleicherGeoeffneterAthlet = new Athlet(20, "andererName", null);
+		assertFalse(testAthlet.equalsWithoutID(gleicherGeoeffneterAthlet));
+		gleicherGeoeffneterAthlet = new Athlet(20, "Tester", null);
+		assertFalse(testAthlet.equalsWithoutID(gleicherGeoeffneterAthlet));
+		gleicherGeoeffneterAthlet.addLeistung(leistung);
+		assertTrue(testAthlet.equalsWithoutID(gleicherGeoeffneterAthlet));
+		gleicherGeoeffneterAthlet.removeLeistung(leistung);
+		leistung = new Leistung(4, 20, "updated", "01-01-2014", 500);
+		gleicherGeoeffneterAthlet.addLeistung(leistung);
+		assertFalse(testAthlet.equalsWithoutID(gleicherGeoeffneterAthlet));
+
+//		public boolean removeLeistung(Leistung leistungToRemove);
+		testAthlet.removeLeistung(testLeistung);
+		testAthlet.removeLeistung(testLeistung);
+		assertEquals(0, testAthlet.getLeistungen().size());
 	}
 	
 	@Test
@@ -95,7 +99,7 @@ public class AthletTest {
 		assertEquals(testAthlet.getLeistungAuswahlForSlopeFaktor()[0], leistung1);
 		assertEquals(testAthlet.getLeistungAuswahlForSlopeFaktor()[1], leistung2);
 		testAthlet.removeLeistung(leistung2);
-		assertTrue(testAthlet.getLeistungAuswahlForSlopeFaktor()[1] == null);
+		assertEquals(null, testAthlet.getLeistungAuswahlForSlopeFaktor()[1]);
 		assertFalse(testAthlet.isSetSlopeFaktor());
 		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		

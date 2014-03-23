@@ -72,7 +72,7 @@ public class LeistungHelper {
 	public String parseSecInMinutenstring (double sec) {
 		String zeitString = null;
 		double ms = sec - Math.floor(sec);
-		int milliSec = (int) (ms*100); //(sec * 10D) % 100;
+		int milliSec = (int) (ms*100);
 		int intSec = (int) sec;
 		int minuten = intSec / 60;
 		intSec = intSec - (minuten * 60);	
