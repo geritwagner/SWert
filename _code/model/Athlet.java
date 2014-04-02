@@ -213,28 +213,13 @@ public class Athlet extends Observable implements AthletInterface {
 		setChanged();
 		notifyObservers(this);
 	}
-	
-	public boolean isSetSlopeFaktor(){
-		if ( ! isValidLeistungAuswahlForSlopeFaktor()){
-			return false;
-		} 
-		if ( ! isValidSlopeFaktor(slopeFaktor) ){
-			return false;			
-		}
-		return true;			
-	}
-
-	public String getSlopeFaktorStatus(){
+		
+	private void requireSlopeFaktor() throws SlopeFaktorNotSetException{
 		try{
 			triggerCalculations();
+			if (! isValidSlopeFaktor(slopeFaktor))				
+				throw new SlopeFaktorNotSetException();
 		} catch (Exception e){
-			return "notSet";
-		}
-		return "set";
-	}
-	
-	private void requireSlopeFaktor() throws SlopeFaktorNotSetException{
-		if ("set" != getSlopeFaktorStatus()){
 			throw new SlopeFaktorNotSetException();
 		}
 	}
@@ -317,10 +302,7 @@ public class Athlet extends Observable implements AthletInterface {
 		return slopeFaktorBerechnen(LeistungAuswahlForSlopeFaktor[0], LeistungAuswahlForSlopeFaktor[1]);
 	}
 	
-	private void estimateThreshold () throws Exception {
-		if (!isSetSlopeFaktor()){
-			throw new Exception();
-		}
+	private void estimateThreshold () throws SlopeFaktorNotSetException {		
 		double accuracy = 1;
 		double timeToSearch = 3600.0;
 		double diff;

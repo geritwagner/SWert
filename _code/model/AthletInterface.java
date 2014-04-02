@@ -22,9 +22,6 @@ interface AthletInterface {
 	public void resetLeistungAuswahlForSlopeFaktor();
 	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException;
 	
-	public boolean isSetSlopeFaktor();
-	public String getSlopeFaktorStatus();
-
 	// Berechnete Leistungen
 	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws SlopeFaktorNotSetException;
 	public double calculateSpeedSecondsPerKm (double entfernung) throws SlopeFaktorNotSetException;

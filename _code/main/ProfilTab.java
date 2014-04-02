@@ -66,18 +66,15 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}
 	
 	public void update(Observable arg0, Object o) {
-		// TODO: Info, wenn Schwelle auf grund eines zu guten/zu schlechten Slope-Faktors nicht gesetzt wird
-		if (athlet.getSlopeFaktorStatus() == "set"){
-			LeistungHelper l = new LeistungHelper();
-			try {
-				textFieldSchwelle.setText(l.parseSecInMinutenstring(athlet.getAnaerobeSchwelle()));
-			} catch (Exception e) {
-			}			
+		// TODO: Info, wenn Schwelle auf grund eines zu guten/zu schlechten Slope-Faktors nicht gesetzt wird: über eine Exception!
+		LeistungHelper l = new LeistungHelper();
+		try {
+			textFieldSchwelle.setText(l.parseSecInMinutenstring(athlet.getAnaerobeSchwelle()));
 			setAnalysenVerfügbar(true);
-		} else {
+		} catch (Exception e) {
 			textFieldSchwelle.setText("-");
 			setAnalysenVerfügbar(false);
-		}
+		}			
 		setAlleLeistungen();
 		mainFrame.setSpeicherStatus();
 	}

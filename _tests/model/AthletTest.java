@@ -82,26 +82,29 @@ public class AthletTest {
 	@Test
 	public void testSlopeFaktorLogik() throws Exception {
 		
-		// Leistungen für Slope-Faktor bearbeiten
-//		public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception;
-//		public void removeLeistungFromAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung);
-//		public Leistung[] getLeistungAuswahlForSlopeFaktor();
-//		public void resetLeistungAuswahlForSlopeFaktor();
-//		public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException;
-//		
-//		public boolean isSetSlopeFaktor();
-//		public String getSlopeFaktorStatus();
-		
-		// TODO: testen, ob ein "zu guter" Slope-Faktor erkannt & nicht verwendet wird.
 		Leistung leistung1 = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
 		Leistung leistung2 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 300);
 		LinkedList<Leistung> leistungen = new LinkedList<>();
 		leistungen.add(leistung1);
 		leistungen.add(leistung2);
 		
-		testAthlet = new Athlet(12, "Tester", leistungen);
+		
+		// Leistungen für Slope-Faktor bearbeiten
+		// public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception;
+		// public void removeLeistungFromAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung);
+		// public Leistung[] getLeistungAuswahlForSlopeFaktor();
+		// public void resetLeistungAuswahlForSlopeFaktor();
+
+		
+		// public boolean isSetSlopeFaktor();
+		// public String getSlopeFaktorStatus();
+		
+		// TODO: testen, ob ein "zu guter" Slope-Faktor erkannt & nicht verwendet wird.
+
+		// public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException;		
 		testAthlet = new Athlet("Tester", leistungen);
 		testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();
+//		testAthlet.getAnaerobeSchwelle();
 		testAthlet.resetLeistungAuswahlForSlopeFaktor();
 		
 		
@@ -111,17 +114,10 @@ public class AthletTest {
 		assertEquals(leistung2, testAthlet.getLeistungAuswahlForSlopeFaktor()[1]);
 		testAthlet.removeLeistung(leistung2);
 		assertEquals(null, testAthlet.getLeistungAuswahlForSlopeFaktor()[1]);
-		assertFalse(testAthlet.isSetSlopeFaktor());
-		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		
 		leistung2 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 261.53);
-		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
 		testAthlet.addLeistung(leistung2);
-		assertEquals(testAthlet.getSlopeFaktorStatus(), "notSet");
-		assertFalse(testAthlet.isSetSlopeFaktor());
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
-		assertEquals(testAthlet.getSlopeFaktorStatus(), "set");
-		assertTrue(testAthlet.isSetSlopeFaktor());
 		
 		Leistung nichtEnthalteneLeistung = new Leistung(7, 132, "nicht in der Leistungs-Liste enthalten", "01-01-2014", 143.65);
 		testAthlet.removeLeistungFromAuswahlForSlopeFaktor(nichtEnthalteneLeistung);
@@ -144,7 +140,6 @@ public class AthletTest {
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
 		testAthlet.resetLeistungAuswahlForSlopeFaktor();
 		testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();
-		assertEquals("set", testAthlet.getSlopeFaktorStatus());
 		
 		testAthlet.removeLeistung(leistung3);
 		testAthlet.removeLeistung(leistung4);
@@ -159,14 +154,12 @@ public class AthletTest {
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
 		testAthlet.addLeistung(leistung2);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
-		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
 
 		// zu schlechte Slope-Faktoren sollten nicht akzeptiert werden
 		testAthlet.removeLeistung(leistung1);
 		leistung1 = new Leistung(7, 12, "10.000m-Leistung (langsam)", "01-01-2014", 18843.2);
 		testAthlet.addLeistung(leistung1);
 		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
-		assertEquals("notSet", testAthlet.getSlopeFaktorStatus());
 	}
 	
 	@Test

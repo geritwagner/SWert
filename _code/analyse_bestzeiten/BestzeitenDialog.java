@@ -23,16 +23,14 @@ public class BestzeitenDialog extends JDialog {
 	private Athlet athlet;
 	
 	public BestzeitenDialog(Athlet inputAthlet) {
-		if ("set" == inputAthlet.getSlopeFaktorStatus()){
-			this.athlet = inputAthlet;
-			// athlet.addObserver(this) - (noch) nicht notwendig
-			controller = new BestzeitenDialogController(athlet, this);
-			initProperties();
-			Object[][] bestzeiten = controller.generateBestzeitenTableFormat();
-			initComponents(bestzeiten);
-			setModal(true);
-			setVisible(true);
-		}
+		this.athlet = inputAthlet;
+		// athlet.addObserver(this) - (noch) nicht notwendig
+		controller = new BestzeitenDialogController(athlet, this);
+		initProperties();
+		Object[][] bestzeiten = controller.generateBestzeitenTableFormat();
+		initComponents(bestzeiten);
+		setModal(true);
+		setVisible(true);
 	}	
 
 	private void initProperties() {
