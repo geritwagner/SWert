@@ -151,9 +151,8 @@ public class Athlet extends Observable implements AthletInterface {
 		}		
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
-				//TODO: die erste Leistung könnte hinter Index 0 oder 1 stehen!
 				if (getLeistungAuswahlForSlopeFaktor()[0] != null){
-					// checks: werden nur durchgeführt, wenn die zweite Strecke gesetzt wird
+					// checks: werden nur durchgeführt, wenn die zweite Strecke gesetzt werden soll
 					double tempSlopeFaktor = slopeFaktorBerechnen(getLeistungAuswahlForSlopeFaktor()[0], aktuelleLeistung);
 					checkValidityOfSlopeFaktor(tempSlopeFaktor);
 					// throws TooGoodSlopeFaktorException, TooBadSlopeFaktorException
@@ -200,17 +199,21 @@ public class Athlet extends Observable implements AthletInterface {
 	}
 	
 	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() 
-			throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
-		// TODO: ggf. von kürzerer/längerer Strecke auf besten slope-Faktor umschreiben?, 
-		// jedenfalls sollte hier kein ungültiger (zu gut/zu schlecht) gesetzt werden.
+			throws GleicheStreckeException,Exception {
+		// Ein eindeutig bester Slope-Faktor kann nicht immer bestimmt werden, daher wird versucht,
+		// 1.) basierend auf der kürzesten & längsten Strecke einen möglichst zuverlässigen 
+		// bzw. falls dieser nicht zulässig wäre,
+		// 2.) ein zulässigen
+		// Slope-Faktor zu berechnen.
 
 		Leistung kürzereStreckenLeistung = alleLeistungen.get(0);
 		Leistung längereStreckenLeistung = alleLeistungen.get(1);
+		if (kürzereStreckenLeistung == null || längereStreckenLeistung == null)
+			throw new Exception();
 		for (Leistung aktuelleLeistung : alleLeistungen){
 			if (aktuelleLeistung.getStrecke() < kürzereStreckenLeistung.getStrecke())
 				kürzereStreckenLeistung = aktuelleLeistung;
 		}
-
 		for (Leistung aktuelleLeistung : alleLeistungen){
 			if (aktuelleLeistung.getStrecke() > längereStreckenLeistung.getStrecke())
 				längereStreckenLeistung = aktuelleLeistung;
@@ -218,6 +221,7 @@ public class Athlet extends Observable implements AthletInterface {
 		resetLeistungAuswahlForSlopeFaktor();
 		try {
 			// TODO: falls too good/bad slope-Faktoren resultieren würden, sollten andere Leistungen berücksichtigt werden!
+			
 			setLeistungToAuswahlForSlopeFaktor(kürzereStreckenLeistung);
 			setLeistungToAuswahlForSlopeFaktor(längereStreckenLeistung);
 			setChanged();

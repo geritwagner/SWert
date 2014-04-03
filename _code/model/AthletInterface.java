@@ -20,7 +20,7 @@ interface AthletInterface {
 	public void removeLeistungFromAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung);
 	public Leistung[] getLeistungAuswahlForSlopeFaktor();
 	public void resetLeistungAuswahlForSlopeFaktor();
-	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException;
+	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws GleicheStreckeException, Exception;
 	
 	// Berechnete Leistungen
 	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws SlopeFaktorNotSetException;

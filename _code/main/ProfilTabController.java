@@ -52,8 +52,8 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 		}		
 	}
 
-	protected void automatischAuswählen() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException{
-		athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();		
+	protected void automatischAuswählen() throws GleicheStreckeException, Exception{
+		athlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();	
 	}
 	
 	protected void speichern(boolean forceSpeichernUnter) throws IOException, NoFileChosenException, SyntaxException{

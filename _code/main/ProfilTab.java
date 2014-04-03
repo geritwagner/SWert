@@ -100,41 +100,41 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private void auswahlFürSlopeFaktorÄndern (int zeileView, int spalte, boolean setTo) {
     	automatischeVerarbeitung = true;
     	Leistung leistung = getLeistungInZeile(zeileView);
+    	DefaultTableModel tableModel = (DefaultTableModel) leistungenTabelle.getModel();
     	try{
     		controller.auswahlFürSlopeFaktorÄndern(leistung, setTo);
 	    	chckbxLeistungenAuswahl.setSelected(false);
+//TODO: MessageDialogs durch Info-Bubbles ersetzen?
     	} catch (ThreeLeistungenForSlopeFaktorException e){
-        	DefaultTableModel tableModel = (DefaultTableModel) leistungenTabelle.getModel();
         	tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
 			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte dürfen nur zwei Leistungen ausgewählt werden!"
 					, "Zwei Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
     	} catch (GleicheStreckeException e){
-        	DefaultTableModel tableModel = (DefaultTableModel) leistungenTabelle.getModel();
         	tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
 			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte müssen zwei Leistungen über unterschiedliche " +
 					"Distanzen ausgewählt werden!", "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
     	} catch (TooGoodSlopeFaktorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+    		tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
+    		JOptionPane.showMessageDialog(this, "Auf Basis der gewählten Leistungen würden unverhältnismäßig gute Zeiten berechnet. ",
+					"Unzulässige Leistungen",JOptionPane.ERROR_MESSAGE);
 		} catch (TooBadSlopeFaktorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    		tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
+    		JOptionPane.showMessageDialog(this, "Auf Basis der gewählten Leistungen würden unverhältnismäßig schlechte Zeiten berechnet. ",
+					"Unzulässige Leistungen",JOptionPane.ERROR_MESSAGE);
+    	}
     	automatischeVerarbeitung = false;
 	}
-	
+
 	protected void checkboxLeistungenAutomatischWählenClicked() {
 		try{
 			if (chckbxLeistungenAuswahl.isSelected()){
 				controller.automatischAuswählen();
 			}
-    	} catch (ThreeLeistungenForSlopeFaktorException e){
-			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte dürfen nur zwei Leistungen ausgewählt werden!"
-					, "Zwei Leistungen auswählen",JOptionPane.ERROR_MESSAGE);
-    	} catch (GleicheStreckeException e){
-			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte müssen zwei Leistungen über unterschiedliche " +
-					"Distanzen ausgewählt werden!", "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
-    	}
+    	} catch (Exception e) {
+    		JOptionPane.showMessageDialog(this, "Es konnten keine zulässigen Leistungen gefunden werden.",
+					"Unzulässige Leistungen",JOptionPane.ERROR_MESSAGE);
+    		chckbxLeistungenAuswahl.setSelected(false);
+		}
 	}
 		
 	protected void speichernClicked(boolean forceSpeichernUnter){
