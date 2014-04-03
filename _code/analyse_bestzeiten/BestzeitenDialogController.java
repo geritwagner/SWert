@@ -42,7 +42,7 @@ public class BestzeitenDialogController implements ActionListener, DocumentListe
     		
     		double bestzeit;
 			try {
-				bestzeit = athlet.calculateTime(strecke);
+				bestzeit = athlet.getTime(strecke);
 				return lHelper.parseSecInMinutenstring(bestzeit);
 			} catch (Exception e) {
 				return "-";

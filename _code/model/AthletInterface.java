@@ -24,7 +24,7 @@ interface AthletInterface {
 	
 	// Berechnete Leistungen
 	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws SlopeFaktorNotSetException;
-	public double calculateSpeedSecondsPerKm (double entfernung) throws SlopeFaktorNotSetException;
-	public double calculateTime (double entfernung) throws SlopeFaktorNotSetException;
+	public double getSpeedSecondsPerKm (double entfernung) throws SlopeFaktorNotSetException;
+	public double getTime (double entfernung) throws SlopeFaktorNotSetException;
 	public double getAnaerobeSchwelle() throws SlopeFaktorNotSetException;	
 }

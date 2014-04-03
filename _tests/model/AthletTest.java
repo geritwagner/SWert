@@ -199,10 +199,11 @@ public class AthletTest {
 		assertTrue(exceptionThrown);
 		
 		// public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException;		
-//		testAthlet = new Athlet("Tester", leistungen);
-//		testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();
-//		testAthlet.getAnaerobeSchwelle();
-//		testAthlet.resetLeistungAuswahlForSlopeFaktor();
+		// TODO: funktion optimieren und detaillierter testen
+		testAthlet = new Athlet("Tester", leistungen);
+		testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();
+		testAthlet.getAnaerobeSchwelle();
+		testAthlet.resetLeistungAuswahlForSlopeFaktor();
 	}
 	
 	@Test
@@ -210,21 +211,44 @@ public class AthletTest {
 		
 //		// Berechnete Leistungen
 //		public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws SlopeFaktorNotSetException;
-//		public double calculateSpeedSecondsPerKm (double entfernung) throws SlopeFaktorNotSetException;
+//		public double getSpeedSecondsPerKm (double entfernung) throws SlopeFaktorNotSetException;
 //		public double calculateTime (double entfernung) throws SlopeFaktorNotSetException;
 //		public double getAnaerobeSchwelle() throws SlopeFaktorNotSetException;	
 		
 		testAthlet = new Athlet(12, "Tester", null);
-				
+		
+		// Test SlopeFaktorNotSetException
 		boolean exceptionThrown = false;
 		try{
 			testAthlet.getMoeglicheBestzeitenListe();
-		} catch (Exception e){
+		} catch (SlopeFaktorNotSetException e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+
+		exceptionThrown = false;
+		try{
+			testAthlet.getSpeedSecondsPerKm(500);
+		} catch (SlopeFaktorNotSetException e){
 			exceptionThrown = true;
 		}
 		assertTrue(exceptionThrown);
 		
+		exceptionThrown = false;
+		try{
+			testAthlet.getTime(800);
+		} catch (SlopeFaktorNotSetException e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
 		
+		exceptionThrown = false;
+		try{
+			testAthlet.getAnaerobeSchwelle();
+		} catch (SlopeFaktorNotSetException e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
 
 		Leistung leistung1 = new Leistung(7, 12, "10.000m-Leistung", "01-01-2014", 261.53);
 		Leistung leistung2 = new Leistung(7, 12, "andere 10.000m-Leistung", "01-01-2014", 281.53);
@@ -232,20 +256,6 @@ public class AthletTest {
 		testAthlet.addLeistung(leistung1);
 		testAthlet.addLeistung(leistung2);
 		testAthlet.addLeistung(leistung3);
-		testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung1);
-		
-		// es dürfen keine Leistungen über die gleiche Strecke für die Berechnung des Slope-Faktors ausgewählt werden
-		exceptionThrown = false;
-		try{
-			testAthlet.setLeistungToAuswahlForSlopeFaktor(leistung2);
-		} catch (Exception e){
-			exceptionThrown = true;
-		}
-		assertTrue(exceptionThrown);
-		
-		testAthlet.removeLeistung(leistung1);
-		testAthlet.removeLeistung(leistung2);
-		testAthlet.removeLeistung(leistung3);
 
 		Leistung leistung1Langsam = new Leistung(1, 12, "800m-Leistung (langsam)", "01-01-2014", 183.125);
 		Leistung leistung2Langsam = new Leistung(7, 12, "10.00m-Leistung (langsam)", "01-01-2014", 261.53);
@@ -295,7 +305,8 @@ public class AthletTest {
 		LinkedList<Leistung> bestzeiten;
 		bestzeiten = testAthlet.getMoeglicheBestzeitenListe ();
 		assertEquals(465.1, bestzeiten.get(5).getZeit(), 0.1);
-		assertEquals(465.1, testAthlet.calculateTime(3000.0), 0.1);
+		assertEquals(465.1, testAthlet.getTime(3000.0), 0.1);
+		assertEquals(155.03, testAthlet.getSpeedSecondsPerKm(3000), 0.1);
 		testAthlet.removeLeistung(leistung1Schnell);
 		testAthlet.resetLeistungAuswahlForSlopeFaktor();
 	}

@@ -252,7 +252,12 @@ public class Athlet extends Observable implements AthletInterface {
 		return bestzeitenListe; 
 	}
 	
-	public double calculateSpeedSecondsPerKm(double entfernung) throws SlopeFaktorNotSetException {
+	public double getSpeedSecondsPerKm(double entfernung) throws SlopeFaktorNotSetException {
+		requireSlopeFaktor();
+		return calculateSpeedSecondsPerKm(entfernung);
+	}
+	
+	private double calculateSpeedSecondsPerKm(double entfernung) throws SlopeFaktorNotSetException {
 		Leistung referenzLeistung = getLeistungAuswahlForSlopeFaktor()[0];
 		double referenzGeschwindigkeit = referenzLeistung.getGeschwindigkeit();
 		double referenzEntfernung = referenzLeistung.getStrecke();
@@ -260,7 +265,12 @@ public class Athlet extends Observable implements AthletInterface {
 		return speed;
 	}
 	
-	public double calculateTime (double entfernung) throws SlopeFaktorNotSetException {
+	public double getTime (double entfernung) throws SlopeFaktorNotSetException {
+		requireSlopeFaktor();
+		return calculateTime(entfernung);
+	}
+	
+	private double calculateTime (double entfernung) throws SlopeFaktorNotSetException {
 		requireSlopeFaktor();
 		
 		double kilometerGeschwindigkeit = calculateSpeedSecondsPerKm(entfernung);
@@ -278,18 +288,10 @@ public class Athlet extends Observable implements AthletInterface {
 		estimateThreshold();
 	}
 	
-	private void setSlopeFactor(){
-		if (isValidLeistungAuswahlForSlopeFaktor() ){
-			double tempSlopeFaktor = slopeFaktorBerechnen(getLeistungAuswahlForSlopeFaktor());
-			try {
-				checkValidityOfSlopeFaktor(tempSlopeFaktor);
-				this.slopeFaktor = tempSlopeFaktor;
-			} catch (Exception e){
-				this.slopeFaktor = 0;				
-			}
-		} else {
-			this.slopeFaktor = 0;
-		}
+	private void setSlopeFactor() throws Exception{
+		double tempSlopeFaktor = slopeFaktorBerechnen(getLeistungAuswahlForSlopeFaktor());
+		checkValidityOfSlopeFaktor(tempSlopeFaktor);
+		this.slopeFaktor = tempSlopeFaktor;
 	}
 	
 	private double  slopeFaktorBerechnen(Leistung leistung1, Leistung leistung2) {
@@ -342,15 +344,5 @@ public class Athlet extends Observable implements AthletInterface {
 			throw new TooGoodSlopeFaktorException();
 		if (inputSlopeFaktor > MAXIMUM_VALID_SLOPE_FAKTOR)
 			throw new TooBadSlopeFaktorException();
-
-	}
-
-	private boolean isValidLeistungAuswahlForSlopeFaktor() {
-		Leistung leistung1 = getLeistungAuswahlForSlopeFaktor()[0];
-		Leistung leistung2 = getLeistungAuswahlForSlopeFaktor()[1];
-		if (leistung1 != null && leistung2 != null){
-			return true;
-		}
-		return false;
 	}
 }
