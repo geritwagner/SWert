@@ -113,7 +113,13 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         	tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
 			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte müssen zwei Leistungen über unterschiedliche " +
 					"Distanzen ausgewählt werden!", "Unterschiedliche Strecken wählen",JOptionPane.ERROR_MESSAGE);
-    	}
+    	} catch (TooGoodSlopeFaktorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TooBadSlopeFaktorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	automatischeVerarbeitung = false;
 	}
 	

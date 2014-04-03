@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.prefs.*;
 
 /**
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 
 public class Athlet extends Observable implements AthletInterface {
@@ -137,19 +137,27 @@ public class Athlet extends Observable implements AthletInterface {
 	}
 
 	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) 
-			throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException {
+			throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException, TooGoodSlopeFaktorException, TooBadSlopeFaktorException {
 		if(!inAlleLeistungenEnthalten(ausgewaehlteLeistung)){
+			// TODO: throw exception
 			return;
 		}
 		if (getLeistungAuswahlForSlopeFaktor()[1] != null){
 			throw new ThreeLeistungenForSlopeFaktorException();
 		}
-		if (getLeistungAuswahlForSlopeFaktor()[0] != null && 
+		if (	getLeistungAuswahlForSlopeFaktor()[0] != null && 
 				getLeistungAuswahlForSlopeFaktor()[0].getStrecke() == ausgewaehlteLeistung.getStrecke()){
 			throw new GleicheStreckeException();
 		}		
 		for (Leistung aktuelleLeistung: alleLeistungen){
 			if(aktuelleLeistung.equals(ausgewaehlteLeistung)){
+				//TODO: die erste Leistung könnte hinter Index 0 oder 1 stehen!
+				if (getLeistungAuswahlForSlopeFaktor()[0] != null){
+					// checks: werden nur durchgeführt, wenn die zweite Strecke gesetzt wird
+					double tempSlopeFaktor = slopeFaktorBerechnen(getLeistungAuswahlForSlopeFaktor()[0], aktuelleLeistung);
+					checkValidityOfSlopeFaktor(tempSlopeFaktor);
+					// throws TooGoodSlopeFaktorException, TooBadSlopeFaktorException
+				}
 				aktuelleLeistung.setIsUsedForSlopeFaktor(true);
 				setChanged();
 				notifyObservers(this);
@@ -208,25 +216,27 @@ public class Athlet extends Observable implements AthletInterface {
 				längereStreckenLeistung = aktuelleLeistung;
 		}
 		resetLeistungAuswahlForSlopeFaktor();
-		setLeistungToAuswahlForSlopeFaktor(kürzereStreckenLeistung);
-		setLeistungToAuswahlForSlopeFaktor(längereStreckenLeistung);
-		setChanged();
-		notifyObservers(this);
+		try {
+			// TODO: falls too good/bad slope-Faktoren resultieren würden, sollten andere Leistungen berücksichtigt werden!
+			setLeistungToAuswahlForSlopeFaktor(kürzereStreckenLeistung);
+			setLeistungToAuswahlForSlopeFaktor(längereStreckenLeistung);
+			setChanged();
+			notifyObservers(this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+		}
+
 	}
 		
 	private void requireSlopeFaktor() throws SlopeFaktorNotSetException{
 		try{
 			triggerCalculations();
-			if (! isValidSlopeFaktor(slopeFaktor))				
-				throw new SlopeFaktorNotSetException();
+			checkValidityOfSlopeFaktor(slopeFaktor);
 		} catch (Exception e){
 			throw new SlopeFaktorNotSetException();
 		}
 	}
 	
-	/**
-	 * Schätzen der möglichen Bestzeiten anhand SlopeFaktor und einer Referenzleistung
-	 */
 	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws SlopeFaktorNotSetException { 
 		requireSlopeFaktor();
 
@@ -271,10 +281,11 @@ public class Athlet extends Observable implements AthletInterface {
 	private void setSlopeFactor(){
 		if (isValidLeistungAuswahlForSlopeFaktor() ){
 			double tempSlopeFaktor = slopeFaktorBerechnen(getLeistungAuswahlForSlopeFaktor());
-			if(isValidSlopeFaktor(tempSlopeFaktor)){
+			try {
+				checkValidityOfSlopeFaktor(tempSlopeFaktor);
 				this.slopeFaktor = tempSlopeFaktor;
-			} else {
-				this.slopeFaktor = 0;
+			} catch (Exception e){
+				this.slopeFaktor = 0;				
 			}
 		} else {
 			this.slopeFaktor = 0;
@@ -326,13 +337,12 @@ public class Athlet extends Observable implements AthletInterface {
 		return false;
 	}
 	
-	private boolean isValidSlopeFaktor(double inputSlopeFaktor){
-		if (inputSlopeFaktor > MINIMUM_VALID_SLOPE_FAKTOR 
-				&& inputSlopeFaktor < MAXIMUM_VALID_SLOPE_FAKTOR){
-			return true;
-		} else {
-			return false;
-		}
+	private void checkValidityOfSlopeFaktor(double inputSlopeFaktor) throws TooGoodSlopeFaktorException, TooBadSlopeFaktorException{
+		if (inputSlopeFaktor < MINIMUM_VALID_SLOPE_FAKTOR)
+			throw new TooGoodSlopeFaktorException();
+		if (inputSlopeFaktor > MAXIMUM_VALID_SLOPE_FAKTOR)
+			throw new TooBadSlopeFaktorException();
+
 	}
 
 	private boolean isValidLeistungAuswahlForSlopeFaktor() {

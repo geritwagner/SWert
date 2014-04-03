@@ -44,7 +44,7 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 		athlet.removeLeistung(leistung);
 	}
 
-	protected void auswahlFürSlopeFaktorÄndern(Leistung leistung, boolean setTo) throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException{
+	protected void auswahlFürSlopeFaktorÄndern(Leistung leistung, boolean setTo) throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException, TooGoodSlopeFaktorException, TooBadSlopeFaktorException{
 		if (setTo == true){
 			athlet.setLeistungToAuswahlForSlopeFaktor(leistung);
 		} else {
