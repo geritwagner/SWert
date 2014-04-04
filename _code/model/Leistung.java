@@ -9,6 +9,7 @@ import globale_helper.*;
  * Model-Klasse für das "Leistung"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class Leistung implements LeistungInterface{
 	
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());

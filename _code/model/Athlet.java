@@ -318,7 +318,7 @@ public class Athlet extends Observable implements AthletInterface {
 		requireSlopeFaktor();
 		return anaerobeSchwelle;
 	}
-
+	
 	private void triggerCalculations() throws Exception{
 		setSlopeFactor();
 		estimateThreshold();

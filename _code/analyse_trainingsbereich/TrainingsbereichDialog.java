@@ -26,17 +26,16 @@ public class TrainingsbereichDialog extends JDialog {
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 		
 	private TrainingsbereichController controller;
+	private Athlet athlet;
 	
 	public TrainingsbereichDialog(Athlet athlet) {
 		try {
-			// ggf. this.athlet = athlet;
+			this.athlet = athlet;
 			// ggf. athlet.addObserver(this);
 			controller = new TrainingsbereichController(athlet, this);
 
 			initProperties();
-			double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
-			double anaerobeProfilierteSchwelle = anaerobeSchwelle*TrainingsbereichController.getWinzererAufschlag();
-			initComponents(anaerobeSchwelle, anaerobeProfilierteSchwelle);
+			initComponents();
 			setModal(true);
 			setVisible(true);
 		} catch (Exception e) {
@@ -57,9 +56,9 @@ public class TrainingsbereichDialog extends JDialog {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
-	private void initComponents(double anaerobeSchwelle, double anaerobeProfilierteSchwelle) {
+	private void initComponents() throws SlopeFaktorNotSetException {
 		initComponentsGeneral();
-		initComponentsSpecific(anaerobeSchwelle, anaerobeProfilierteSchwelle);
+		initComponentsSpecific();
 		initJTable();
 		initButtonPane();
 	}
@@ -75,7 +74,7 @@ public class TrainingsbereichDialog extends JDialog {
 		contentPanel.add(separator);		
 	}
 
-	private void initComponentsSpecific(double anaerobeSchwelle, double anaerobeProfilierteSchwelle) {
+	private void initComponentsSpecific() throws SlopeFaktorNotSetException {
 		JLabel lblTrainingsbereiche = new JLabel("Trainingsbereiche");
 		lblTrainingsbereiche.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblTrainingsbereiche.setBounds(10, 135, 258, 14);
@@ -86,6 +85,9 @@ public class TrainingsbereichDialog extends JDialog {
 		contentPanel.add(separator_1);		
 		
 		LeistungHelper l = new LeistungHelper();
+		
+		double anaerobeSchwelle = athlet.getAnaerobeSchwelle();
+		double anaerobeProfilierteSchwelle = anaerobeSchwelle*TrainingsbereichController.getWinzererAufschlag();
 		
 		txtAnaerobeSchwelle = new JTextField();
 		txtAnaerobeSchwelle.setText(l.parseSecInMinutenstring(anaerobeSchwelle));
@@ -211,7 +213,7 @@ public class TrainingsbereichDialog extends JDialog {
 	
 	protected void release(){
 		// ggf.: model.deleteObserver(this);
-		// ggf.: model = null;
+		athlet = null;
 		controller.release();
 		controller = null;
 		setVisible(false);

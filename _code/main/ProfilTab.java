@@ -38,12 +38,10 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private Hauptfenster mainFrame = Hauptfenster.aktuellesHauptfenster;
 	private Athlet athlet;
 	private ProfilTabController controller;
-	private AthletenListe athletenListe;
 	
-	public ProfilTab(AthletenListe athletenliste, Athlet athlet) {
-		this.athletenListe = athletenliste;
+	public ProfilTab(Athlet athlet) {
 		this.athlet = athlet;
-		controller = new ProfilTabController(athletenliste, athlet, this);
+		controller = new ProfilTabController(athlet, this);
 		initTab();
 		athlet.addObserver(this);
 	}
@@ -82,7 +80,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	protected void release(){
 		athlet.deleteObserver(this);
 		athlet = null;
-		athletenListe = null;
 		controller.release();
 		controller = null;
 	}
@@ -161,7 +158,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         		speichernClicked(false);
         	} 
         }
-        athletenListe.removeAthlet(athlet);
+        Hauptfenster.athletenListe.removeAthlet(athlet);
 	}
 	
 	protected void leistungLoeschenPressed() {

@@ -9,8 +9,8 @@ import java.util.*;
 public class AthletenListe extends Observable {
 
 	private LinkedList<Athlet> alleAthleten;
-	private Athlet letzterGeoeffneterAthlet;
-	private Athlet letzterGeschlossenerAthlet;
+	private static Athlet letzterGeoeffneterAthlet;
+	private static Athlet letzterGeschlossenerAthlet;
 
 	public AthletenListe(){
 		alleAthleten = new LinkedList<>();

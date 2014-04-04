@@ -27,7 +27,7 @@ public class Hauptfenster extends JFrame implements Observer {
 	
 	public static Hauptfenster aktuellesHauptfenster;	
 	private HauptfensterController controller;
-	private static AthletenListe athletenListe;
+	public static AthletenListe athletenListe;
 	
 	public static void main (String args[]) {
 		EventQueue.invokeLater(new Runnable() {
@@ -106,7 +106,7 @@ public class Hauptfenster extends JFrame implements Observer {
 	}
 		
 	public void createTab (Athlet athlet) {
-		ProfilTab newTab = new ProfilTab(athletenListe, athlet);			
+		ProfilTab newTab = new ProfilTab(athlet);			
 		tabList.add(0, newTab);
 		tabbedPane.insertTab(athlet.getName() + " *", null, newTab, null, 0);
 		tabbedPane.setSelectedIndex(0);

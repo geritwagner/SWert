@@ -19,19 +19,16 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 	private Athlet athlet;
 	private ProfilTab view;
 	private DateiSpeichern speicher;
-	private AthletenListe athletenliste;
 	private Hauptfenster mainframe = Hauptfenster.aktuellesHauptfenster;
 	
-	protected ProfilTabController(AthletenListe athletenliste, Athlet athlet, ProfilTab view){
+	protected ProfilTabController(Athlet athlet, ProfilTab view){
 		this.athlet = athlet;
-		this.athletenliste = athletenliste;
 		this.view = view;
 	}
 
 	protected void release(){
 		view = null;
 		athlet = null;
-		athletenliste = null;
 		speicher = null;
 	}
 	
@@ -89,7 +86,7 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 			new TrainingsbereichDialog(athlet);
 			break;
 		case "Leistungskurve als Grafik":
-			new DiagrammFrame(athletenliste);
+			new DiagrammFrame(Hauptfenster.athletenListe);
 			break;
 		}
 	}
