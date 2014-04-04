@@ -198,12 +198,46 @@ public class AthletTest {
 		}
 		assertTrue(exceptionThrown);
 		
-		// public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException;		
-		// TODO: funktion optimieren und detaillierter testen
+		// public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws SlopeFaktorNotSetException;		
+		// TODO: funktion detaillierter testen
+		// Exceptions, wenn zu wenige Leistungen hinterlegt sind oder nur über die gleiche Strecke
+		testAthlet = new Athlet("Tester", null);
+		exceptionThrown = false;
+		try {
+			testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();			
+		}catch(SlopeFaktorNotSetException e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+		
+		exceptionThrown = false;
+		testAthlet.addLeistung(leistung1);
+		try {
+			testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();			
+		}catch(SlopeFaktorNotSetException e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+		
+		exceptionThrown = false;
+		leistung2 = new Leistung(1, 12, "zweite 800m Leistung", "01-01-2014", 18843.2);
+		testAthlet.addLeistung(leistung2);
+		try {
+			testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();			
+		}catch(SlopeFaktorNotSetException e){
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+		
+		
 		testAthlet = new Athlet("Tester", leistungen);
+		leistung3 = new Leistung (6, 12, "5.000m-Leistung", "11-01-2014", 263);
 		testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();
 		testAthlet.getAnaerobeSchwelle();
 		testAthlet.resetLeistungAuswahlForSlopeFaktor();
+		testAthlet.addLeistung(leistung3);
+		testAthlet.addLeistung(leistung4);
+		testAthlet.setLeistungenAuswahlForSlopeFaktorAutomatisch();
 	}
 	
 	@Test

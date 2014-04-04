@@ -200,11 +200,9 @@ public class Athlet extends Observable implements AthletInterface {
 	
 	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() 
 			throws SlopeFaktorNotSetException {
-		// Ein eindeutig bester Slope-Faktor kann nicht immer bestimmt werden (bzw. ist nicht immer sinnvoll), daher wird versucht,
-		// 1.) basierend auf der kürzesten & längsten Strecke einen möglichst zuverlässigen 
-		// bzw. falls dieser nicht zulässig wäre,
-		// 2.) ein zulässigen
-		// Slope-Faktor zu berechnen.
+		// Ein eindeutig bester Slope-Faktor kann nicht immer bestimmt werden (bzw. ist nicht immer sinnvoll).
+		if(alleLeistungen.size() < 2)
+			throw new SlopeFaktorNotSetException();
 		
 		if (selectShortestAndLongestDistanceForSlopeFaktor()){
 			setChanged();
@@ -219,14 +217,14 @@ public class Athlet extends Observable implements AthletInterface {
 		}
 	}
 	
-	private boolean selectAnyFeasibleCombinationForSlopeFaktor(){
+	private boolean selectAnyFeasibleCombinationForSlopeFaktor() throws SlopeFaktorNotSetException{
 		alleKombinationenTesten:{
 			resetLeistungAuswahlForSlopeFaktor();
 			for(Leistung leistung1 : getLeistungen()){
 				resetLeistungAuswahlForSlopeFaktor();
 				try {
 					setLeistungToAuswahlForSlopeFaktor(leistung1);
-				} catch (Exception e1) {
+				} catch (Exception e) {
 					// nothing
 				}
 				for(Leistung leistung2 : getLeistungen()){
@@ -235,7 +233,7 @@ public class Athlet extends Observable implements AthletInterface {
 						//if no exception: 
 						break alleKombinationenTesten;						
 					} catch (Exception e){
-						//nothing
+						// nothing
 					}
 				}
 			}
@@ -248,8 +246,6 @@ public class Athlet extends Observable implements AthletInterface {
 	private boolean selectShortestAndLongestDistanceForSlopeFaktor(){
 		Leistung kürzereStreckenLeistung = alleLeistungen.get(0);
 		Leistung längereStreckenLeistung = alleLeistungen.get(1);
-		if (kürzereStreckenLeistung == null || längereStreckenLeistung == null)
-			return false;
 		for (Leistung aktuelleLeistung : alleLeistungen){
 			if (aktuelleLeistung.getStrecke() < kürzereStreckenLeistung.getStrecke())
 				kürzereStreckenLeistung = aktuelleLeistung;
