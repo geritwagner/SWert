@@ -16,11 +16,12 @@ interface AthletInterface {
 	public boolean equalsWithoutID (Athlet andererAthlet);
 	
 	// Leistungen für Slope-Faktor bearbeiten
-	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) throws Exception;
+	public void setLeistungToAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung) 
+			throws ThreeLeistungenForSlopeFaktorException, GleicheStreckeException, TooGoodSlopeFaktorException, TooBadSlopeFaktorException;
 	public void removeLeistungFromAuswahlForSlopeFaktor(Leistung ausgewaehlteLeistung);
 	public Leistung[] getLeistungAuswahlForSlopeFaktor();
 	public void resetLeistungAuswahlForSlopeFaktor();
-	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws GleicheStreckeException, Exception;
+	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() throws SlopeFaktorNotSetException;
 	
 	// Berechnete Leistungen
 	public LinkedList<Leistung> getMoeglicheBestzeitenListe () throws SlopeFaktorNotSetException;

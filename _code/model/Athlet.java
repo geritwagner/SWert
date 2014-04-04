@@ -145,8 +145,8 @@ public class Athlet extends Observable implements AthletInterface {
 		if (getLeistungAuswahlForSlopeFaktor()[1] != null){
 			throw new ThreeLeistungenForSlopeFaktorException();
 		}
-		if (	getLeistungAuswahlForSlopeFaktor()[0] != null && 
-				getLeistungAuswahlForSlopeFaktor()[0].getStrecke() == ausgewaehlteLeistung.getStrecke()){
+		if (getLeistungAuswahlForSlopeFaktor()[0] != null && 
+			getLeistungAuswahlForSlopeFaktor()[0].getStrecke() == ausgewaehlteLeistung.getStrecke()){
 			throw new GleicheStreckeException();
 		}		
 		for (Leistung aktuelleLeistung: alleLeistungen){
@@ -199,17 +199,57 @@ public class Athlet extends Observable implements AthletInterface {
 	}
 	
 	public void setLeistungenAuswahlForSlopeFaktorAutomatisch() 
-			throws GleicheStreckeException,Exception {
-		// Ein eindeutig bester Slope-Faktor kann nicht immer bestimmt werden, daher wird versucht,
+			throws SlopeFaktorNotSetException {
+		// Ein eindeutig bester Slope-Faktor kann nicht immer bestimmt werden (bzw. ist nicht immer sinnvoll), daher wird versucht,
 		// 1.) basierend auf der kürzesten & längsten Strecke einen möglichst zuverlässigen 
 		// bzw. falls dieser nicht zulässig wäre,
 		// 2.) ein zulässigen
 		// Slope-Faktor zu berechnen.
-
+		
+		if (selectShortestAndLongestDistanceForSlopeFaktor()){
+			setChanged();
+			notifyObservers(this);
+		} else {
+			if(selectAnyFeasibleCombinationForSlopeFaktor()){
+				setChanged();
+				notifyObservers(this);
+			} else {
+				throw new SlopeFaktorNotSetException();
+			}
+		}
+	}
+	
+	private boolean selectAnyFeasibleCombinationForSlopeFaktor(){
+		alleKombinationenTesten:{
+			resetLeistungAuswahlForSlopeFaktor();
+			for(Leistung leistung1 : getLeistungen()){
+				resetLeistungAuswahlForSlopeFaktor();
+				try {
+					setLeistungToAuswahlForSlopeFaktor(leistung1);
+				} catch (Exception e1) {
+					// nothing
+				}
+				for(Leistung leistung2 : getLeistungen()){
+					try{
+						setLeistungToAuswahlForSlopeFaktor(leistung2);
+						//if no exception: 
+						break alleKombinationenTesten;						
+					} catch (Exception e){
+						//nothing
+					}
+				}
+			}
+		resetLeistungAuswahlForSlopeFaktor();
+		return false;
+		}
+		return true;
+	}
+	
+	private boolean selectShortestAndLongestDistanceForSlopeFaktor(){
 		Leistung kürzereStreckenLeistung = alleLeistungen.get(0);
 		Leistung längereStreckenLeistung = alleLeistungen.get(1);
 		if (kürzereStreckenLeistung == null || längereStreckenLeistung == null)
-			throw new Exception();
+			return false;
 		for (Leistung aktuelleLeistung : alleLeistungen){
 			if (aktuelleLeistung.getStrecke() < kürzereStreckenLeistung.getStrecke())
 				kürzereStreckenLeistung = aktuelleLeistung;
@@ -220,16 +260,12 @@ public class Athlet extends Observable implements AthletInterface {
 		}
 		resetLeistungAuswahlForSlopeFaktor();
 		try {
-			// TODO: falls too good/bad slope-Faktoren resultieren würden, sollten andere Leistungen berücksichtigt werden!
-			
 			setLeistungToAuswahlForSlopeFaktor(kürzereStreckenLeistung);
 			setLeistungToAuswahlForSlopeFaktor(längereStreckenLeistung);
-			setChanged();
-			notifyObservers(this);
+			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			return false;	
 		}
-
 	}
 		
 	private void requireSlopeFaktor() throws SlopeFaktorNotSetException{
