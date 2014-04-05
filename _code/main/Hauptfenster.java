@@ -29,6 +29,9 @@ public class Hauptfenster extends JFrame implements Observer {
 	private HauptfensterController controller;
 	public static AthletenListe athletenListe;
 	
+	public static final String Version = "4.0";
+	public static final String Autoren = "Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner";
+	
 	public static void main (String args[]) {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -271,6 +274,17 @@ public class Hauptfenster extends JFrame implements Observer {
 			mntmLeistungenLoeschen.setEnabled(false);
 			mnLeistungen.add(mntmLeistungenLoeschen);
 			mntmLeistungenLoeschen.addActionListener(controller);
+		
+		JMenu mnHilfe = new JMenu("Hilfe");
+			mnHilfe.setMnemonic('H');
+			mnHilfe.setEnabled(true);
+			menuBar.add(mnHilfe);
+			
+			JMenuItem mntmAbout = new JMenuItem("About");
+			// mntmAbout.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeuerAthlet_16x16.png")));
+			mntmAbout.addActionListener(controller);
+			mnHilfe.add(mntmAbout);
+			// Einstellungen, Dokumentation/Tutorial, Links
 
 		getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
 		tabbedPane = new JTabbedPane(SwingConstants.TOP);

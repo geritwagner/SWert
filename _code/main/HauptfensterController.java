@@ -51,6 +51,9 @@ public class HauptfensterController extends WindowAdapter implements ActionListe
 			case "Leistung löschen":							
 				tab.leistungLoeschenPressed();
 				break;
+			case "About":							
+				new About();
+				break;
 		}
 	}
 	
