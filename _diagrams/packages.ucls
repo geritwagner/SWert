@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+  <package id="1" language="java" name="datei_operationen" project="SWert" file="/SWert/_code/datei_operationen" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="207" y="312"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <package id="2" language="java" name="model" project="SWert" file="/SWert/_code/model" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="879" y="121"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <package id="3" language="java" name="analyse_bestzeiten" project="SWert" file="/SWert/_code/analyse_bestzeiten" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="360" y="312"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <package id="4" language="java" name="globale_helper" project="SWert" file="/SWert/_code/globale_helper" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="876" y="312"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <package id="5" language="java" name="analyse_diagramm" project="SWert" file="/SWert/_code/analyse_diagramm" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="700" y="312"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <package id="6" language="java" name="main" project="SWert" file="/SWert/_code/main" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="549" y="121"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <package id="7" language="java" name="leistung_bearbeiten" project="SWert" file="/SWert/_code/leistung_bearbeiten" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="714" y="121"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <package id="8" language="java" name="analyse_trainingsbereich" project="SWert" 
+    file="/SWert/_code/analyse_trainingsbereich" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="532" y="312"/>    
+    <display autosize="true" stereotype="true" accessors="true"/>  
+  </package>  
+  <dependency id="9">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="10">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="11">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="12">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="13">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="14">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="15">    
+    <bendpoint x="274" y="207"/>    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="false" static="true"/>    
+    <operations public="true" package="true" protected="false" private="false" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

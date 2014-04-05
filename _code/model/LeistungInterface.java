@@ -22,10 +22,11 @@ interface LeistungInterface {
 	public double getGeschwindigkeit();
 	public String getZeitString();
 	public double getZeit();
-	public Object[] getObjectDataForTable();
 	
 	// bei setZeit wird die Geschwindigkeit automatisch berechnet und gesetzt & vice versa
 	public void setZeitFromString(String zeit);
 	public void setZeitAndGeschwindigkeit(double zeit);
 	public void setGeschwindigkeitAndGeschwindigkeit(double geschwindigkeit);
+
+	public Object[] getObjectDataForTable();
 }

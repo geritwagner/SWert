@@ -15,7 +15,6 @@ import model.*;
  */
 public class DateiSpeichern {
 		
-	private Hauptfenster mainFrame = Hauptfenster.aktuellesHauptfenster;
 	private JFileChooser chooser;
 	private FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");	
 	@SuppressWarnings("unused")
@@ -44,7 +43,7 @@ public class DateiSpeichern {
 		initFileChooser();
 		
 		String info = "Profil '"+ athlet.getName() +"' speichern";
-		if (chooser.showDialog(mainFrame, info) == JFileChooser.APPROVE_OPTION){	
+		if (chooser.showDialog(Hauptfenster.aktuellesHauptfenster, info) == JFileChooser.APPROVE_OPTION){	
 			if (DateiGewaehlt = false)
 				throw new NoFileChosenException();
 			String ausgewählterPfad = chooser.getSelectedFile().getAbsolutePath();

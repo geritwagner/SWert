@@ -82,6 +82,10 @@ public class Leistung implements LeistungInterface{
 		}
 	}
 
+	public String getStreckenString() {
+		return Strecken.getStreckenlaengeStringById(getId_strecke());
+	}
+	
 	public String getBezeichnung() {
 		return bezeichnung;
 	}
@@ -200,9 +204,5 @@ public class Leistung implements LeistungInterface{
 						  new Integer(this.getId_strecke()),
 						  String.valueOf(this.getGeschwindigkeit())};
 		return daten;
-	}
-
-	public String getStreckenString() {
-		return Strecken.getStreckenlaengeStringById(getId_strecke());
 	}
 }
