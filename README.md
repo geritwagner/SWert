@@ -12,8 +12,6 @@ Funktionalität
 * (geplant) Drucken
 * (geplant) PDF-Export
 
-Video
------
 to do: Video-Beschreibung erstellen & einfügen
 
 Download & Installation
@@ -23,12 +21,10 @@ SWert ist ein Java-Programm,
 * für den Start wird [Java-Runtime Environment (JRE)](http://www.java.com/de/download/) benötigt,
 * aktuell muss SWert nicht installiert werden (standalone), ein Aufruf der .jar-Datei genügt.
 
-Lizenz
-------
+Lizenz & Entwicklung
+-----------------
 GPL?
 
-Entwicklung
------------
 * Entwickler
 * Feedback
 * Donate?
