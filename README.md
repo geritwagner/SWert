@@ -27,4 +27,5 @@ GPL?
 
 * Entwickler
 * Feedback
+* Kontakt
 * Donate?
