@@ -18,7 +18,7 @@ to do: Video-Beschreibung erstellen & einfügen
 
 Download
 --------
-SWert kann [hier}(https://github.com/geritwagner/SWert/releases) heruntergeladen werden.
+SWert kann [hier](https://github.com/geritwagner/SWert/releases) heruntergeladen werden.
 
 Installation
 ------------
