@@ -1,5 +1,7 @@
 package analyse_diagramm;
 
+import globale_helper.SpeedFormat;
+
 import java.awt.*;
 import java.text.*;
 import java.util.*;
@@ -173,12 +175,13 @@ public class DiagrammFrame extends JFrame {
         renderer.setBaseOutlineStroke(stroke);
 
         // label the points
-        NumberFormat format = NumberFormat.getNumberInstance();
-        format.setMaximumFractionDigits(2);
+        NumberFormat formatStrecken = NumberFormat.getNumberInstance();
+        NumberFormat formatZeiten = new SpeedFormat();
+        formatStrecken.setMaximumFractionDigits(2);
         XYItemLabelGenerator generator =
             new StandardXYItemLabelGenerator(
                 StandardXYItemLabelGenerator.DEFAULT_ITEM_LABEL_FORMAT,
-                format, format);
+                formatStrecken, formatZeiten);
         renderer.setBaseItemLabelGenerator(generator);
         renderer.setBaseItemLabelsVisible(true);
 	}

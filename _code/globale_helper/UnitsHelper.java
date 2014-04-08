@@ -15,6 +15,15 @@ public class UnitsHelper {
 		return (sKm/60);
 	}
 	
+ 	/**
+	 * Umrechnung von [min/km] zu [s/km]
+	 * @param min/km
+	 * @return: sKm
+	 */
+	public static double toSKm (double minKm) {
+		return (minKm*60);
+	}
+
 	/**
 	 * Umrechnung von [s/km] zu [km/h]
 	 * @param sKm
