@@ -20,7 +20,6 @@ public class SchwellenDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private final Dimension d = this.getToolkit().getScreenSize(); 
-	
 	private JRadioButton rdbtnStrecke;
 	private JFormattedTextField textFieldStrecke;
 	private JLabel lblStreckeError;
@@ -39,7 +38,7 @@ public class SchwellenDialog extends JDialog {
 	private Leistung leistung;
 	@SuppressWarnings("unused")
 	private Athlet athlet;
-	private double geschwindigkeit; //Enthält immer die aktuelle, berechnete Geschwindigkeits
+	private double geschwindigkeit; //Enthält immer die aktuelle, berechnete Geschwindigkeit
 	private SchwellenDialogController controller;
 	private boolean neueLeistung;
 	
@@ -590,7 +589,6 @@ public class SchwellenDialog extends JDialog {
 	}
 		
 	protected void release(){
-		// ggf.: model.deleteObserver(this);
 		leistung = null;
 		athlet = null;
 		controller.release();

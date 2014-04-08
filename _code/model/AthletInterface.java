@@ -2,6 +2,10 @@ package model;
 
 import java.util.*;
 
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
+
 interface AthletInterface {
 
 	public long getId();

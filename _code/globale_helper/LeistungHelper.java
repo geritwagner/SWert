@@ -1,10 +1,9 @@
 package globale_helper;
 
-
 /**
- * Controller zum Handlen aller Aktionen, die einzelne Leistungen betreffen
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class LeistungHelper {
 
 	/**
@@ -21,19 +20,13 @@ public class LeistungHelper {
 		return geschwindigkeit;
 	}
 	
-	 /**
-	  * Berechnen der Zeit [sec] anhand Streckenlänge und Geschwindigkeit [s/km]
-	  */
-	public double berechneZeit(int strecke, double geschwindigkeit) {
+	public double berechneZeitInSec(int strecke, double geschwindigkeit) {
 		double sec = 0;
 		double streckeKm = strecke/1000D;
 		sec = geschwindigkeit * streckeKm;
 		return sec;
 	}
 	
-	/**
-	 * Umwandeln des formatierten Strings in [sec]
-	 */
 	public double parseMinStringToSec (String minutenString) {
 		double sec = 0D;
 		String[] zeitArray = new String[3];
@@ -52,7 +45,7 @@ public class LeistungHelper {
 	}
 	 
 	/**
-	 * Umwandeln der [sec] in formatierten Zeitstring (00:00:00,00)
+	 * Formatierter Zeitstring: "00:00:00,00"
 	 */
 	public String parseSecInZeitstring (double sec) {
 		String zeitString = null;
@@ -67,7 +60,7 @@ public class LeistungHelper {
 	}
 	
 	/**
-	 * Umwandeln der [sec] in formatierten Zeitstring ("00:00:00,00" ODER "00:00,00")
+	 * Formatierter Zeitstring:  ("00:00:00,00" ODER "00:00,00")
 	 */
 	public String parseSecInMinutenstring (double sec) {
 		String zeitString = null;

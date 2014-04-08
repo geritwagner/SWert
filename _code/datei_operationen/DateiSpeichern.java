@@ -6,13 +6,13 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import au.com.bytecode.opencsv.CSVWriter;
-
-import main.Hauptfenster;
+import main.*;
 import model.*;
 
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class DateiSpeichern {
 		
 	private JFileChooser chooser;
@@ -41,7 +41,6 @@ public class DateiSpeichern {
 	private void setPfadFromUserDialog () throws NoFileChosenException{	
 		DateiGewaehlt = false;
 		initFileChooser();
-		
 		String info = "Profil '"+ athlet.getName() +"' speichern";
 		if (chooser.showDialog(Hauptfenster.aktuellesHauptfenster, info) == JFileChooser.APPROVE_OPTION){	
 			if (DateiGewaehlt = false)
@@ -87,7 +86,6 @@ public class DateiSpeichern {
 	private void initFileChooser()  {
 		chooser = new JFileChooser(){
 			private static final long serialVersionUID = 1L;
-
 			@Override
 			public void approveSelection() {
 				File file = getSelectedFile();

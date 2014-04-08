@@ -182,7 +182,7 @@ public class Hauptfenster extends JFrame implements Observer {
 		tabList.remove(i);
 	}
 	
-	// ------------------------------- view datstellung -----------------------------------------------
+// ------------------------------- view datstellung -----------------------------------------------
 	
 	private void initHauptfenster(){
 		initializeFrame();

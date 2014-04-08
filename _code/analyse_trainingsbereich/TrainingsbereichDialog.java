@@ -4,13 +4,13 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
-
 import model.*;
 import globale_helper.*;
 
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class TrainingsbereichDialog extends JDialog {
 	
 	private static final long serialVersionUID = 1L;
@@ -31,15 +31,13 @@ public class TrainingsbereichDialog extends JDialog {
 	public TrainingsbereichDialog(Athlet athlet) {
 		try {
 			this.athlet = athlet;
-			// ggf. athlet.addObserver(this);
 			controller = new TrainingsbereichController(athlet, this);
-
 			initProperties();
 			initComponents();
 			setModal(true);
 			setVisible(true);
 		} catch (Exception e) {
-			// Es sollte nicht möglich sein, die Trainingsbereiche zu öffnen, wenn der Slope-Faktor nicht gesetzt ist
+			// nothing: Es sollte nicht möglich sein, die Trainingsbereiche zu öffnen, wenn der Slope-Faktor nicht gesetzt ist
 		}
 	}
 	
@@ -212,7 +210,6 @@ public class TrainingsbereichDialog extends JDialog {
 	}
 	
 	protected void release(){
-		// ggf.: model.deleteObserver(this);
 		athlet = null;
 		controller.release();
 		controller = null;

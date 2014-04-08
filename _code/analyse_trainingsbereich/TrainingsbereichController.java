@@ -4,9 +4,12 @@ import java.awt.event.*;
 import java.text.*;
 import javax.swing.JSlider;
 import javax.swing.event.*;
-
 import globale_helper.*;
 import model.*;
+
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
 public class TrainingsbereichController implements ChangeListener, ActionListener {
 

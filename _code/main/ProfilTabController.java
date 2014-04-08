@@ -4,10 +4,10 @@ import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.event.*;
 import datei_operationen.*;
-import analyse_bestzeiten.BestzeitenDialog;
-import analyse_diagramm.DiagrammFrame;
-import analyse_trainingsbereich.TrainingsbereichDialog;
-import leistung_bearbeiten.LeistungDialog;
+import analyse_bestzeiten.*;
+import analyse_diagramm.*;
+import analyse_trainingsbereich.*;
+import leistung_bearbeiten.*;
 import model.*;
 
 /**

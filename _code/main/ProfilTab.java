@@ -51,7 +51,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}
 	
 	private void setAlleLeistungen(){
-		// TODO: ggf. nicht alles löschen & neu eintragen... - über observing Leistung arbeiten?!!?
 		DefaultTableModel model = (DefaultTableModel) leistungenTabelle.getModel();
 		if (model.getRowCount() > 0) {
 		    for (int i = model.getRowCount() - 1; i > -1; i--) {
@@ -64,7 +63,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	}
 	
 	public void update(Observable arg0, Object o) {
-		// TODO: Info, wenn Schwelle auf grund eines zu guten/zu schlechten Slope-Faktors nicht gesetzt wird: über eine Exception!
 		LeistungHelper l = new LeistungHelper();
 		try {
 			textFieldSchwelle.setText(l.parseSecInMinutenstring(athlet.getAnaerobeSchwelle()));
@@ -84,7 +82,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		controller = null;
 	}
 	
-	// ---------------------------------- Button-Pressed and Status METHODS ----------------------------
+// ---------------------------------- Button-Pressed and Status METHODS ----------------------------
 	
 	private void triggerTableChanged(int zeileView, int spalte, Object data){
 		// automatischeVerarbeitung: bricht den Methodenaufruf hier ab.
@@ -101,7 +99,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	try{
     		controller.auswahlFürSlopeFaktorÄndern(leistung, setTo);
 	    	chckbxLeistungenAuswahl.setSelected(false);
-//TODO: MessageDialogs durch Info-Bubbles ersetzen?
     	} catch (ThreeLeistungenForSlopeFaktorException e){
         	tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
 			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte dürfen nur zwei Leistungen ausgewählt werden!"
@@ -201,7 +198,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		}
 	}
 	
-	// ---------------------------------- TABLE-METHODS ----------------------------
+// ---------------------------------- TABLE-METHODS ----------------------------
 	
 	protected int getSelectedRow(){
 		return leistungenTabelle.getSelectedRow();
@@ -251,7 +248,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		return (String) model.getValueAt(zeile, spalte);		
 	}
 		
-	//----------------------- view darstellung -----------------------
+//----------------------- view darstellung -----------------------
 
 	private void initTab() {
 		initLayout(athlet.getName());

@@ -1,15 +1,13 @@
 package globale_helper;
 
 /**
- * Controller für Umrechnungen der Geschwindigkeitseinheiten
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class UnitsHelper {
 	
 	/**
 	 * Umrechnung von [s/km] zu [min/km]
-	 * @param sKm
-	 * @return: min/km
 	 */
 	public static double toMinKm (double sKm) {
 		return (sKm/60);
@@ -17,8 +15,6 @@ public class UnitsHelper {
 	
  	/**
 	 * Umrechnung von [min/km] zu [s/km]
-	 * @param min/km
-	 * @return: sKm
 	 */
 	public static double toSKm (double minKm) {
 		return (minKm*60);
@@ -26,8 +22,6 @@ public class UnitsHelper {
 
 	/**
 	 * Umrechnung von [s/km] zu [km/h]
-	 * @param sKm
-	 * @return: km/h
 	 */
 	public static double toKmH (double sKm) {
 		return  60*60/sKm;
@@ -35,8 +29,6 @@ public class UnitsHelper {
 	
 	/**
 	 * Umrechnung von [s/km] zu [m/s]
-	 * @param sKm
-	 * @return: m/s
 	 */
 	public static double toMS (double sKm) {
 		return (1000/sKm);
@@ -44,8 +36,6 @@ public class UnitsHelper {
 	
 	/**
 	 * Umrechnung von [min/km] zu [s/km]
-	 * @param minKm
-	 * @return s/km
 	 */
 	public static double minKmToSKm (double minKm) {
 		return minKm*60;
@@ -53,8 +43,6 @@ public class UnitsHelper {
 	
 	/**
 	 * Umrechnung von [km/h] zu [s/km]
-	 * @param kmH
-	 * @return s/km
 	 */
 	public static double kmHToSKm (double kmH) {
 		return (60*60)/kmH;
@@ -62,8 +50,6 @@ public class UnitsHelper {
 	
 	/**
 	 * Umrechnung von [m/s] zu [s/km]
-	 * @param MS
-	 * @return s/km
 	 */
 	public static double MSToSKm (double MS) {
 		return 1000/MS;

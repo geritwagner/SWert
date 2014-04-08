@@ -3,7 +3,7 @@ package model;
 import java.util.*;
 
 /**
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 
 public class AthletenListe extends Observable {

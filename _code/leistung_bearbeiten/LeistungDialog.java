@@ -318,7 +318,7 @@ public class LeistungDialog extends JDialog {
 	private void setzeZeit(double geschwindigkeit) {
 		LeistungHelper lHelper = new LeistungHelper();
 		int strecke = Strecken.getStreckenlaengeById(comboBoxStrecke.getSelectedIndex());
-		double sec = lHelper.berechneZeit(strecke, geschwindigkeit);
+		double sec = lHelper.berechneZeitInSec(strecke, geschwindigkeit);
 		textFieldZeit.setValue(lHelper.parseSecInZeitstring(sec));
 	}
 	

@@ -5,17 +5,14 @@ import java.util.*;
 import java.util.prefs.*;
 import globale_helper.*;
 
+
 /**
- * Model-Klasse für das "Leistung"-Objekt
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 
 public class Leistung implements LeistungInterface{
 	
 	private Preferences pref = Preferences.userRoot().node(this.getClass().getName());
-	
-	// TODO: ggf. später: id_strecke kapseln, beliebige Streckenlängen lösen
-	// TODO: Schwellenleistungen überdenken - ggf. über Polymorphismus
 
 	private static final int ID_SCHWELLENLEISTUNG = -1;
 	
@@ -41,7 +38,7 @@ public class Leistung implements LeistungInterface{
 		} else {
 			int strecke = Strecken.getStreckenlaengeById(id_strecke);
 			LeistungHelper leistungHelper = new LeistungHelper();
-			this.zeit = leistungHelper.berechneZeit(strecke, geschwindigkeit);			
+			this.zeit = leistungHelper.berechneZeitInSec(strecke, geschwindigkeit);			
 		}
 		this.geschwindigkeit = geschwindigkeit;
 		this.bezeichnung = bezeichnung;
@@ -137,7 +134,7 @@ public class Leistung implements LeistungInterface{
 		} else {
 			int strecke = Strecken.getStreckenlaengeById(id_strecke);
 			LeistungHelper leistungHelper = new LeistungHelper();
-			this.zeit = leistungHelper.berechneZeit(strecke, geschwindigkeit);			
+			this.zeit = leistungHelper.berechneZeitInSec(strecke, geschwindigkeit);			
 		}
 		this.geschwindigkeit = geschwindigkeit;
 		String zeitString = leistungHelper.parseSecInZeitstring(zeit);
@@ -171,7 +168,7 @@ public class Leistung implements LeistungInterface{
 
 	public void setGeschwindigkeitAndGeschwindigkeit(double inputGeschwindigkeit) {
 		this.geschwindigkeit = inputGeschwindigkeit;
-		this.zeit = leistungHelper.berechneZeit(getStrecke(), inputGeschwindigkeit);
+		this.zeit = leistungHelper.berechneZeitInSec(getStrecke(), inputGeschwindigkeit);
 	}
 
 	@Override

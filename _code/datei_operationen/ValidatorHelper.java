@@ -3,6 +3,10 @@ package datei_operationen;
 import java.io.*;
 import au.com.bytecode.opencsv.CSVReader;
 
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
+
 public abstract class ValidatorHelper {
 
 	protected static boolean isSyntacticallyCorrect (String pfad) {

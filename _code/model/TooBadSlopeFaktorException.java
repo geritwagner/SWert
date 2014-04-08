@@ -1,7 +1,7 @@
 package model;
 
 /**
- * @author Gerit Wagner
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
 
 public class TooBadSlopeFaktorException extends Exception {

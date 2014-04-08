@@ -1,22 +1,20 @@
 package globale_helper;
 
-import java.text.FieldPosition;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
+import java.text.*;
+
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
 
 public class SpeedFormat extends NumberFormat{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo,
 			FieldPosition pos) {
 		LeistungHelper leistungHelper = new LeistungHelper();
-		UnitsHelper unitsHelper = new UnitsHelper();
-		double time = unitsHelper.toSKm(number);
+		double time = UnitsHelper.toSKm(number);
 		String zeitString = leistungHelper.parseSecInMinutenstring(time);
 		return new StringBuffer(zeitString);
 	}
@@ -33,5 +31,4 @@ public class SpeedFormat extends NumberFormat{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

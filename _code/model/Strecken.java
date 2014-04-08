@@ -1,9 +1,9 @@
 package model;
 
 /**
- * Model-Klasse für die Strecken
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public abstract class Strecken {
 	
 	// Aktuell werden entweder Standardstrecken oder die Schwellenleistung (id = -1) verwaltet

@@ -4,12 +4,14 @@ import java.awt.*;
 import javax.swing.text.*;
 
 /**
- * Erweiterung zum PlainDocument
- * Erweiterungen: Nur Zahlen
- * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta)
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
-public class IntegerDocument extends PlainDocument {
 
+public class IntegerDocument extends PlainDocument {
+	/**
+	 * Erweiterung zum PlainDocument
+	 * Erweiterungen: Nur Zahlen
+	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override

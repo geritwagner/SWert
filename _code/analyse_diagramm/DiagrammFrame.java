@@ -1,25 +1,23 @@
 package analyse_diagramm;
 
-import globale_helper.SpeedFormat;
-
 import java.awt.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
-
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.labels.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.xy.*;
-
+import globale_helper.*;
 import model.*;
 
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class DiagrammFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -32,6 +30,7 @@ public class DiagrammFrame extends JFrame {
 	private XYDataset datenSammlungBestzeiten;
 	private XYLineAndShapeRenderer dotRenderer;
 	private XYLineAndShapeRenderer lineRenderer;
+	private LogAxis xAxis;
 	
 	private Random random = new Random();
 	private Color letzteFarbe = Color.GREEN;
@@ -41,7 +40,6 @@ public class DiagrammFrame extends JFrame {
 	
 	public DiagrammFrame(AthletenListe athletenliste) {
 		this.athletenliste = athletenliste;
-		// ggf. athletenliste.addObserver(this)
 		controller = new DiagrammController(this, athletenliste);		
 
         initWindowProperties();
@@ -56,7 +54,7 @@ public class DiagrammFrame extends JFrame {
 	}
 
 	private JFreeChart initChart(){
-		LogAxis xAxis = new LogAxis("Streckenlänge");
+		xAxis = new LogAxis("Streckenlänge");
 	   	xAxis.setBase(10);
 	   	xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
@@ -94,7 +92,6 @@ public class DiagrammFrame extends JFrame {
         pack();		
 	}
 	protected void release(){
-		// ggf. athletenliste.deleteObserver(this);
 		athletenliste = null;
 		controller.release();
 		controller = null;

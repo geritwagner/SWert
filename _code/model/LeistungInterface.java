@@ -1,5 +1,9 @@
 package model;
 
+/**
+ * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
+ */
+
 interface LeistungInterface {
 	
 	public long getId();
@@ -10,13 +14,10 @@ interface LeistungInterface {
 	public String getBezeichnung();
 	public String getDatum();
 	public boolean isUsedForSlopeFaktor();
-	// wird über den Athleten gesetzt!
-//	void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor);
 	public String toString();
 	public boolean equals(Leistung andereLeistung);
 	public boolean equalsWithoutIDs (Leistung andereLeistung);
 	
-	// TODO: update-Methode im Controller verwenden!
 	public void updateLeistung(int id_strecke, String bezeichnung, String datum, double geschwindigkeit);
 
 	public double getGeschwindigkeit();

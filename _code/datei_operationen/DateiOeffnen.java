@@ -5,7 +5,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import au.com.bytecode.opencsv.CSVReader;
 import main.Hauptfenster;
 import globale_helper.*;
@@ -14,6 +13,7 @@ import model.*;
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class DateiOeffnen {
 
 	private String nameAthlet;
@@ -28,7 +28,6 @@ public class DateiOeffnen {
 	public Athlet getAthlet() throws FileNotFoundException, IOException, SyntaxException{
 		if (pfad == null)
 			throw new FileNotFoundException();
-		
 		geöffneterAthlet = openAthletFromCSVFile(pfad);
 	    geöffneterAthlet.setSpeicherpfad(pfad);		
 	    Athlet gelesen = geöffneterAthlet;
@@ -38,7 +37,6 @@ public class DateiOeffnen {
 	
 	private Athlet openAthletFromCSVFile (String pfad) throws FileNotFoundException, 
 									IOException, SyntaxException {	
-		
 	    CSVReader reader = new CSVReader(new FileReader(pfad), ';', '\0');
 	    if (!ValidatorHelper.isSyntacticallyCorrect(pfad)) {
 	    	reader.close();
@@ -83,8 +81,7 @@ public class DateiOeffnen {
 		this.pfad = pfad;
 	}
 	
-	public void getCSVPfadFromUserDialog
-	() {
+	public void getCSVPfadFromUserDialog () {
 		JFileChooser chooser = new JFileChooser();
 		chooser.removeChoosableFileFilter(chooser.getChoosableFileFilters()[0]);
 		FileFilter filter = new FileNameExtensionFilter("CSV Dateien","csv");chooser.addChoosableFileFilter(filter); 

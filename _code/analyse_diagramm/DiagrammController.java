@@ -9,6 +9,7 @@ import model.*;
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
  */
+
 public class DiagrammController implements WindowListener {
 	
 	private DiagrammFrame view;
