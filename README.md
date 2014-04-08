@@ -12,8 +12,6 @@ Funktionalität
 * (geplant) Drucken
 * (geplant) PDF-Export
 
-to do: Video-Beschreibung erstellen & einfügen
-
 Download & Installation
 -----------------------
 SWert ist ein Java-Programm, 
