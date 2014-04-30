@@ -199,12 +199,18 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private void setAnalysenVerfügbar(boolean AnalyseVerfügbar){
 		if(AnalyseVerfügbar){
 			btnBestzeiten.setEnabled(true);
+			btnBestzeiten.setToolTipText(null);
 			btnLeistungskurve.setEnabled(true);
+			btnLeistungskurve.setToolTipText(null);
 			btnTrainingsbereich.setEnabled(true);										
+			btnTrainingsbereich.setToolTipText(null);
 		} else {
 			btnBestzeiten.setEnabled(false);
+			btnBestzeiten.setToolTipText("Es müssen zwei Leistungen angelegt und ausgewählt werden.");
 			btnLeistungskurve.setEnabled(false);
+			btnLeistungskurve.setToolTipText("Es müssen zwei Leistungen angelegt und ausgewählt werden.");
 			btnTrainingsbereich.setEnabled(false);										
+			btnTrainingsbereich.setToolTipText("Es müssen zwei Leistungen angelegt und ausgewählt werden.");
 		}
 	}
 	
