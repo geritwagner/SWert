@@ -274,7 +274,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		
 		JPanel panel = new JPanel();
 		splitPane.setLeftComponent(panel);
-		panel.setLayout(new MigLayout("", "[200][100][100][grow][100]", "[][][][][][]"));
+		panel.setLayout(new MigLayout("", "[100][100][100][grow][100]", "[][][][][][]"));
 		
 		btnTabSchlieen = new JButton("");
 		btnTabSchlieen.setToolTipText("Tab schlie\u00DFen");
@@ -297,30 +297,20 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		JSeparator separator = new JSeparator();
 		panel.add(separator, "cell 0 4 5 1,growx");
 		
-		JLabel lblAuswahl = new JLabel("1. Leistungen auswählen");
-		panel.add(lblAuswahl, "cell 0 5,alignx left");
-		
-		btnLeistungenAuswahl = new JButton("Automatisch w\u00E4hlen");
-		btnLeistungenAuswahl.addActionListener(controller);
-		panel.add(btnLeistungenAuswahl, "cell 0 6");
-		
-		JLabel lblAnalysen = new JLabel("2. Analysen");
-		panel.add(lblAnalysen, "cell 1 5,alignx left");
-		
 		btnBestzeiten = new JButton("Mögliche Bestzeiten");
 		btnBestzeiten.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Pokal_24x24.png")));
 		btnBestzeiten.addActionListener(controller);
-		panel.add(btnBestzeiten, "cell 1 6,alignx right");
+		panel.add(btnBestzeiten, "cell 0 5,alignx right");
 		
 		btnTrainingsbereich = new JButton("Trainingsbereiche");
 		btnTrainingsbereich.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Berechnen_24x24.png")));
 		btnTrainingsbereich.addActionListener(controller);
-		panel.add(btnTrainingsbereich, "cell 2 6");
+		panel.add(btnTrainingsbereich, "cell 1 5");
 		
 		btnLeistungskurve = new JButton("Leistungskurve als Grafik");
 		btnLeistungskurve.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Diagramm_24x24.png")));
 		btnLeistungskurve.addActionListener(controller);
-		panel.add(btnLeistungskurve, "cell 3 6,alignx left");
+		panel.add(btnLeistungskurve, "cell 2 5,alignx left");
 
 		scrollPane = new JScrollPane();
 		splitPane.setRightComponent(scrollPane);
