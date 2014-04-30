@@ -113,6 +113,7 @@ public class Hauptfenster extends JFrame implements Observer {
 		tabList.add(0, newTab);
 		tabbedPane.insertTab(athlet.getName() + " *", null, newTab, null, 0);
 		tabbedPane.setSelectedIndex(0);
+		newTab.tryAutomatischeAuswahl();
 	}
 	
 	public boolean checkAthletGeöffnet (String name, long id) {		
@@ -171,7 +172,6 @@ public class Hauptfenster extends JFrame implements Observer {
 	private void athletenOeffnen(){
 		Athlet letzterGeoeffneterAthlet = athletenListe.getLetzterGeoeffneterAthlet();
 		createTab(letzterGeoeffneterAthlet);
-		getAktivesTab().checkboxLeistungenAutomatischWählenClicked();
 		setSpeicherStatus();
 	}
 	

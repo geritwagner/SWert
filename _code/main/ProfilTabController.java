@@ -66,6 +66,9 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 		case "Leistung hinzufügen":
 			view.setLeistungBearbeitenAvailable(false);
 			new LeistungDialog(athlet, null);
+			if(view.btnBestzeiten.isEnabled() == false){
+				view.tryAutomatischeAuswahl();
+			}
 			break;
 		case "Leistung bearbeiten":
 			view.leistungBearbeitenPressed();
@@ -76,8 +79,8 @@ public class ProfilTabController implements ActionListener, ListSelectionListene
 		case "":
 			view.tabSchließenClicked();
 			break;
-		case "Leistungen automatisch wählen":
-			view.checkboxLeistungenAutomatischWählenClicked();
+		case "Automatisch wählen":
+			view.LeistungenAutomatischWählenClicked();
 			break;
 		case "Mögliche Bestzeiten":
 			new BestzeitenDialog(athlet);

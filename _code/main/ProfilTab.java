@@ -22,12 +22,12 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private static final int BOOLEAN_SPALTE = 7;
 	
 	private JLabel lblAthletName;
-	private JButton btnBestzeiten;
+	protected JButton btnBestzeiten;
 	private JButton btnTrainingsbereich;
 	private JButton btnLeistungskurve;
 	private JScrollPane scrollPane;
 	private JTextField textFieldSchwelle;
-	private JCheckBox chckbxLeistungenAuswahl;
+	private JButton btnLeistungenAuswahl;
 	private JTable leistungenTabelle;
 	private TableRowSorter<TableModel> sorter;
 	private JButton btnLeistungBearbeiten;
@@ -42,10 +42,24 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	public ProfilTab(Athlet athlet) {
 		this.athlet = athlet;
 		controller = new ProfilTabController(athlet, this);
-		initTab();
+		initTab(athlet.getName());
+		initLeistungen();
 		athlet.addObserver(this);
 	}
-		
+	
+	private void initLeistungen(){
+		setAlleLeistungen();
+		setAnalysenVerfügbar(false);
+		setLeistungBearbeitenAvailable(false);
+	}
+	
+	protected void tryAutomatischeAuswahl(){
+		try {
+			controller.automatischAuswählen();
+		} catch (Exception e) {
+		}
+	}
+	
 	protected Athlet getAthlet(){
 		return athlet;
 	}
@@ -98,7 +112,6 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	DefaultTableModel tableModel = (DefaultTableModel) leistungenTabelle.getModel();
     	try{
     		controller.auswahlFürSlopeFaktorÄndern(leistung, setTo);
-	    	chckbxLeistungenAuswahl.setSelected(false);
     	} catch (ThreeLeistungenForSlopeFaktorException e){
         	tableModel.setValueAt(false, sorter.convertRowIndexToModel(zeileView), spalte);
 			JOptionPane.showMessageDialog(this, "Zum Berechnen der Werte dürfen nur zwei Leistungen ausgewählt werden!"
@@ -119,15 +132,12 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
     	automatischeVerarbeitung = false;
 	}
 
-	protected void checkboxLeistungenAutomatischWählenClicked() {
+	protected void LeistungenAutomatischWählenClicked() {
 		try{
-			if (chckbxLeistungenAuswahl.isSelected()){
-				controller.automatischAuswählen();
-			}
+			controller.automatischAuswählen();
     	} catch (Exception e) {
     		JOptionPane.showMessageDialog(this, "Es konnten keine zulässigen Leistungen gefunden werden.",
 					"Unzulässige Leistungen",JOptionPane.ERROR_MESSAGE);
-    		chckbxLeistungenAuswahl.setSelected(false);
 		}
 	}
 		
@@ -250,21 +260,9 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		
 //----------------------- view darstellung -----------------------
 
-	private void initTab() {
-		initLayout(athlet.getName());
+	private void initTab(String athletenName) {
+		initLayout(athletenName);
 		initJTable();
-		setAlleLeistungen();
-		setAnalysenVerfügbar(false);
-		setLeistungBearbeitenAvailable(false);
-		tryAutomatischeAuswahl();
-	}
-	
-	private void tryAutomatischeAuswahl(){
-		try {
-			controller.automatischAuswählen();
-			chckbxLeistungenAuswahl.setSelected(true);
-		} catch (Exception e) {
-		}
 	}
 	
 	private void initLayout(String Athletenname) {
@@ -276,7 +274,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		
 		JPanel panel = new JPanel();
 		splitPane.setLeftComponent(panel);
-		panel.setLayout(new MigLayout("", "[100][100][100][grow][100]", "[][][][][][]"));
+		panel.setLayout(new MigLayout("", "[200][100][100][grow][100]", "[][][][][][]"));
 		
 		btnTabSchlieen = new JButton("");
 		btnTabSchlieen.setToolTipText("Tab schlie\u00DFen");
@@ -296,28 +294,33 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 		panel.add(textFieldSchwelle, "cell 1 2,growx");
 		textFieldSchwelle.setColumns(10);
 		
-		chckbxLeistungenAuswahl = new JCheckBox("Leistungen automatisch w\u00E4hlen");
-		chckbxLeistungenAuswahl.setSelected(false);
-		chckbxLeistungenAuswahl.addActionListener(controller);
-		panel.add(chckbxLeistungenAuswahl, "cell 2 2");
-		
 		JSeparator separator = new JSeparator();
 		panel.add(separator, "cell 0 4 5 1,growx");
+		
+		JLabel lblAuswahl = new JLabel("1. Leistungen auswählen");
+		panel.add(lblAuswahl, "cell 0 5,alignx left");
+		
+		btnLeistungenAuswahl = new JButton("Automatisch w\u00E4hlen");
+		btnLeistungenAuswahl.addActionListener(controller);
+		panel.add(btnLeistungenAuswahl, "cell 0 6");
+		
+		JLabel lblAnalysen = new JLabel("2. Analysen");
+		panel.add(lblAnalysen, "cell 1 5,alignx left");
 		
 		btnBestzeiten = new JButton("Mögliche Bestzeiten");
 		btnBestzeiten.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Pokal_24x24.png")));
 		btnBestzeiten.addActionListener(controller);
-		panel.add(btnBestzeiten, "cell 0 5,alignx right");
+		panel.add(btnBestzeiten, "cell 1 6,alignx right");
 		
 		btnTrainingsbereich = new JButton("Trainingsbereiche");
 		btnTrainingsbereich.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Berechnen_24x24.png")));
 		btnTrainingsbereich.addActionListener(controller);
-		panel.add(btnTrainingsbereich, "cell 1 5");
+		panel.add(btnTrainingsbereich, "cell 2 6");
 		
 		btnLeistungskurve = new JButton("Leistungskurve als Grafik");
 		btnLeistungskurve.setIcon(new ImageIcon(ProfilTab.class.getResource("/bilder/Diagramm_24x24.png")));
 		btnLeistungskurve.addActionListener(controller);
-		panel.add(btnLeistungskurve, "cell 2 5,alignx left");
+		panel.add(btnLeistungskurve, "cell 3 6,alignx left");
 
 		scrollPane = new JScrollPane();
 		splitPane.setRightComponent(scrollPane);
