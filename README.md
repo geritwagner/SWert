@@ -11,6 +11,8 @@ Funktionalität
 * Graphische Analyse von Leistungsprofilen
 * (geplant) Drucken
 * (geplant) PDF-Export
+* (mögliche Erweiterung) Entwurf individualisierter Trainingspläne
+* (mögliche Erweiterung) Darstellung von Entwicklungsprofilen einzelner Athleten
 
 Download & Installation
 -----------------------
