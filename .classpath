@@ -10,6 +10,7 @@
 	<classpathentry kind="lib" path="_lib/jfreechart-1.0.16.jar"/>
 	<classpathentry kind="lib" path="_lib/miglayout15-swing.jar"/>
 	<classpathentry kind="lib" path="_lib/opencsv-2.3.jar"/>
+	<classpathentry kind="lib" path="_lib/h2-1.4.180.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
