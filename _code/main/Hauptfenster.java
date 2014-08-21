@@ -3,9 +3,12 @@ package main;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
+
 import net.miginfocom.swing.MigLayout;
 import datei_operationen.*;
+import datenbank_kommunikation.DBVerbindung;
 import model.*;
 
 /**
@@ -28,8 +31,10 @@ public class Hauptfenster extends JFrame implements Observer {
 	public static Hauptfenster aktuellesHauptfenster;	
 	private HauptfensterController controller;
 	public static AthletenListe athletenListe;
+	public DBVerbindung db;
 	
-	public static final String Version = "4.0";
+	public static final String SWert_Version = "4.0";
+	public static final int Db_Version = 1;
 	public static final String Autoren = "Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner";
 	
 	public static void main (String args[]) {
@@ -47,6 +52,7 @@ public class Hauptfenster extends JFrame implements Observer {
 	}
 	
 	public Hauptfenster() {
+		db = new DBVerbindung();
 		athletenListe = new AthletenListe();
 		athletenListe.addObserver(this);
 		controller = new HauptfensterController(athletenListe, this);
@@ -58,6 +64,7 @@ public class Hauptfenster extends JFrame implements Observer {
 		athletenListe = null;
 		controller.release();
 		controller = null;
+		db.verbindungBeenden();
 		setEnabled(false);
 		dispose();
 	}

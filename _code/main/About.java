@@ -23,7 +23,7 @@ public class About extends JDialog {
 	    
 	    
 	    EmptyBorder eBorder = new EmptyBorder(2, 10, 2, 10);
-        JLabel version = new JLabel("SWert Version " + Hauptfenster.Version);
+        JLabel version = new JLabel("SWert Version " + Hauptfenster.SWert_Version);
         version.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(), eBorder)); 
 
         JLabel authors = new JLabel("Entwickler: " + Hauptfenster.Autoren);
