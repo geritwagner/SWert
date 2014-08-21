@@ -23,7 +23,7 @@ public class DBVerbindung {
 			athlet = new DBTableAthlet();
 			leistung = new DBTableLeistung();
 			strecke = new DBTableStrecke();
-			pruefeDbVersion();
+			aktualisiereDbVersion();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -73,22 +73,25 @@ public class DBVerbindung {
 	 * Falls nötig werden inkrementelle Updates durchgeführt, bis die benötigte DB-Version installiert ist.
 	 * @throws SQLException
 	 */
-	private void pruefeDbVersion () throws SQLException {
+	private void aktualisiereDbVersion () throws SQLException {
 		db_version_existing = getAktuelleDbVersion();
 		if (db_version_existing == DB_VERSION_NEEDED) {
 			System.out.println ("Passt alles!");
+			return;
 		}
-		while (db_version_existing < DB_VERSION_NEEDED) {
-			System.out.println("Update notwendig");
-			switch (db_version_existing) {
-				default:
-					installiereSchemaVersion_1();
-					db_version_existing = getAktuelleDbVersion();
-					break;
-				case 1:
-					System.out.println("Wenn das kommt, passt was nicht!");
-					break;
-			}
+		if (db_version_existing > DB_VERSION_NEEDED){
+			// to do: notify user
+			System.out.println ("Bitte neue Applikation verwenden/installieren!");
+			return;
+		}
+
+		System.out.println("Update notwendig");
+		switch (db_version_existing) {
+			case 0: // kein Schema installiert
+				installiereSchemaVersion_1();
+			case 1:
+				System.out.println("Passt, solage DB-Version 1 von der Applikation benötigt wird " +
+						"alternativ müsste hier ein update aufgerufen werden.");
 		}
 	}
 	
