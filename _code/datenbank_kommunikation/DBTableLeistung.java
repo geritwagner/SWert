@@ -30,22 +30,13 @@ public class DBTableLeistung extends DBTableAbstract {
 
 	public int einfuegen (String beschreibung, String datum, double zeit, boolean selectedForCalculatingSlopeFaktor, int athlet_id,	int strecke_id,	int strecke_laenge) throws SQLException {
 		int leistung_id = 0;
-		if (strecke_id == -1) {
-			leistung_id = einfuegenMitNeueStrecke(beschreibung, datum, zeit, selectedForCalculatingSlopeFaktor, athlet_id, strecke_laenge);
-		} else {
-			leistung_id = einfuegenOhneNeueStrecke(beschreibung, datum, zeit, selectedForCalculatingSlopeFaktor, athlet_id, strecke_id);
-		}
+		if (strecke_id == -1)
+			strecke_id = dbStrecke.neueStrecke(strecke_laenge);
+		leistung_id = leistungEinfuegen(beschreibung, datum, zeit, selectedForCalculatingSlopeFaktor, athlet_id, strecke_id);
 		return leistung_id;
 	}
 	
-	
-	
-	private int einfuegenMitNeueStrecke (String beschreibung, String datum, double zeit, boolean selectedForCalculatingSlopeFaktor, int athlet_id,	int strecke_laenge) throws SQLException {
-		int strecke_id = dbStrecke.neueStrecke(strecke_laenge);
-		return einfuegenOhneNeueStrecke(beschreibung, datum, zeit, selectedForCalculatingSlopeFaktor, athlet_id, strecke_id);
-	}
-	
-	private int einfuegenOhneNeueStrecke (String beschreibung, String datum, double zeit, boolean selectedForCalculatingSlopeFaktor, int athlet_id, int strecke_id) throws SQLException {
+	private int leistungEinfuegen (String beschreibung, String datum, double zeit, boolean selectedForCalculatingSlopeFaktor, int athlet_id, int strecke_id) throws SQLException {
 		String insertLeistung = "INSERT INTO Leistung(beschreibung, datum, zeit, selectedForCalculatingSlopeFaktor, athlet_id, strecke_id)"
 				+ "VALUES ('"+beschreibung+"', '"+datum+"', "+zeit+", "+selectedForCalculatingSlopeFaktor+", "+athlet_id+", "+strecke_id+")";
 		stmt.executeUpdate(insertLeistung);
