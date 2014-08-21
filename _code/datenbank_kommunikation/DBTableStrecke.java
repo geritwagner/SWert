@@ -46,6 +46,7 @@ public class DBTableStrecke extends DBTableAbstract{
 	 * @throws SQLException
 	 */
 	public int einfuegen (String bezeichnung, int laenge) throws SQLException {
+		// to do: ggf. prüfen, ob Streckenlänge schon vorhanden, dann einfach existierende ID zurückgeben?
 		String insertStrecke = "INSERT INTO Strecke (bezeichnung, laenge) "
 				+ "VALUES ('"+bezeichnung+"', "+laenge+")";
 		stmt.executeUpdate(insertStrecke);
