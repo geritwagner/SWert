@@ -70,6 +70,7 @@ public class Athlet extends Observable implements AthletInterface {
 	}
 	
 	public boolean addLeistung(Leistung leistung) {
+		leistung.setAthletID(this.id);
 		alleLeistungen.add(leistung);
 		setChanged();
 		notifyObservers(this);

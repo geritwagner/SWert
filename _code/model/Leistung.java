@@ -95,7 +95,7 @@ public class Leistung implements LeistungInterface{
 		return selectedForCalculatingSlopeFaktor;
 	}
 
-	protected void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor) {
+	public void setIsUsedForSlopeFaktor(boolean berechnungSlopeFaktor) {
 		this.selectedForCalculatingSlopeFaktor = berechnungSlopeFaktor;
 	}
 
@@ -146,6 +146,10 @@ public class Leistung implements LeistungInterface{
 	public double getGeschwindigkeit() {
 		return geschwindigkeit;
 	}
+	
+	public boolean getSelectedForSlopeFaktor() {
+		return selectedForCalculatingSlopeFaktor;
+	}
 
 	public String getZeitString() {
 		LeistungHelper leistungHelper = new LeistungHelper();
@@ -154,6 +158,14 @@ public class Leistung implements LeistungInterface{
 	
 	public double getZeit(){
 		return this.zeit;
+	}
+	
+	public void setAthletID (long athlet_id) {
+		this.id_athlet = athlet_id;
+	}
+	
+	public void setLeistungID (long leistung_id) {
+		this.id_leistung = leistung_id;
 	}
 	
 	public void setZeitFromString(String inputZeitString) {

@@ -13,8 +13,9 @@ public class DBStrecke {
 		tableStrecke = new DBTableStrecke();
 	}
 	
-	public int neueStrecke (int laenge) {
-		String bezeichnung = laenge + "m";
+	public int neueStrecke (Strecke strecke) {
+		int laenge = strecke.getLaenge();
+		String bezeichnung = strecke.getBezeichnung();
 		try {
 			return tableStrecke.einfuegen(bezeichnung, laenge);
 		} catch (SQLException e) {
@@ -27,7 +28,8 @@ public class DBStrecke {
 	public void aendereStrecke (int strecke_id, int neue_laenge) {
 		try {
 			String bezeichnung = neue_laenge+"m";
-			tableStrecke.aendern(strecke_id, bezeichnung, neue_laenge);
+			tableStrecke.aendernLaenge(strecke_id, neue_laenge);
+			tableStrecke.aendernBezeichnung(strecke_id, bezeichnung);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

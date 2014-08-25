@@ -6,16 +6,10 @@ import model.Strecke;
 
 public class DBTableStrecke extends DBTableAbstract{
 
-	/**
-	 * Konstruktor, der den Super-Konstruktor der Klasse DBTableAbstract aufruft
-	 */
 	public DBTableStrecke() {
 		super();
 	}
 
-	/**
-	 * Installiert die Tabelle 'Strecke' für die Datenbank-Schema-Version 1
-	 */
 	public void installiereSchemaVersion1() throws SQLException {
 		String createStrecke = "CREATE TABLE IF NOT EXISTS Strecke "
 				+ "(strecke_id INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL, "
@@ -37,16 +31,13 @@ public class DBTableStrecke extends DBTableAbstract{
 				+ "(12, 'Marathon', 42195),";
 		stmt.executeUpdate(insertStrecke);
 	}
-	
-	/**
-	 * Fügt in die 'Strecken'-Tabelle der Datenbank eine neue Zeile ein
-	 * @param bezeichnung: Bezeichnung der Strecke
-	 * @param laenge: Laenge der Strecke
-	 * @return ID der eingefügten Strecke; 0 falls die Strecke nicht eingefügt werden konnte
-	 * @throws SQLException
-	 */
+
 	public int einfuegen (String bezeichnung, int laenge) throws SQLException {
-		// to do: ggf. prüfen, ob Streckenlänge schon vorhanden, dann einfach existierende ID zurückgeben?
+		String checkStreckenlaenge = "SELECT strecke_id FROM STRECKE WHERE laenge="+laenge;
+		ResultSet checkResult = stmt.executeQuery(checkStreckenlaenge);
+		if(checkResult.next()) {
+			return checkResult.getInt(1);
+		}
 		String insertStrecke = "INSERT INTO Strecke (bezeichnung, laenge) "
 				+ "VALUES ('"+bezeichnung+"', "+laenge+")";
 		stmt.executeUpdate(insertStrecke);
@@ -57,30 +48,23 @@ public class DBTableStrecke extends DBTableAbstract{
 		return -1;
 	}
 	
-	/**
-	 * Setzt Bezeichung und Länge einer Zeile in der 'Strecke'-Tabelle neu
-	 * @param strecke_id: ID zum Identifiziern der zu verändernden Zeile
-	 * @param bezeichnung: Neue Bezeichnung der Strecke
-	 * @param laenge: Neue Streckenlänge
-	 * @throws SQLException
-	 */
-	public void aendern (int strecke_id, String bezeichnung, int laenge) throws SQLException {
-		String updateStrecke = "UPDATE Strecke SET bezeichnung='"+bezeichnung+"', laenge="+laenge+" "
+	public void aendernLaenge (int strecke_id, int laenge) throws SQLException {
+		String updateStrecke = "UPDATE Strecke SET laenge="+laenge+" "
 				+ "WHERE strecke_id="+strecke_id;
 		stmt.executeUpdate(updateStrecke);
 	}
 	
-	/**
-	 * Ruft eine Zeile aus der 
-	 * @param strecke_id
-	 * @return
-	 * @throws SQLException
-	 */
+	public void aendernBezeichnung (int strecke_id, String bezeichnung) throws SQLException {
+		String updateStrecke = "UPDATE Strecke SET bezeichnung='"+bezeichnung+"' "
+				+ "WHERE strecke_id="+strecke_id;
+		stmt.executeUpdate(updateStrecke);
+	}
+
 	public Strecke abrufen (int strecke_id) throws SQLException {	
 		Strecke strecke = null;
 		String selectStrecke = "SELECT * FROM Strecke WHERE strecke_id="+strecke_id+" LIMIT 1";
 		ResultSet result = stmt.executeQuery(selectStrecke);
-		while(result.next()) {
+		if(result.next()) {
 			strecke_id = result.getInt(1);
 			String bezeichnung = result.getString(2);
 			int laenge = result.getInt(3);
@@ -88,12 +72,7 @@ public class DBTableStrecke extends DBTableAbstract{
 		}
 		return strecke;
 	}
-	
-	/**
-	 * Löscht eine Zeile aus der 'Strecke'-Tabelle
-	 * @param strecke_id: ID der zu löschenden Zeile
-	 * @throws SQLException
-	 */
+
 	public void loeschen (int strecke_id) throws SQLException {
 		String deleteStrecke = "DELETE FROM Strecke WHERE strecke_id="+strecke_id;
 		stmt.executeUpdate(deleteStrecke);

@@ -3,10 +3,12 @@ package main;
 import java.awt.Font;
 import java.io.IOException;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.RowSorter.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+
 import datei_operationen.*;
 import net.miginfocom.swing.MigLayout;
 import globale_helper.*;
@@ -27,6 +29,7 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
 	private JButton btnLeistungskurve;
 	private JScrollPane scrollPane;
 	private JTextField textFieldSchwelle;
+	@SuppressWarnings("unused")
 	private JButton btnLeistungenAuswahl;
 	private JTable leistungenTabelle;
 	private TableRowSorter<TableModel> sorter;

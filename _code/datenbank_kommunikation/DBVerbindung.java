@@ -76,7 +76,6 @@ public class DBVerbindung {
 	private void aktualisiereDbVersion () throws SQLException {
 		db_version_existing = getAktuelleDbVersion();
 		if (db_version_existing == DB_VERSION_NEEDED) {
-			System.out.println ("Passt alles!");
 			return;
 		}
 		if (db_version_existing > DB_VERSION_NEEDED){

@@ -11,6 +11,11 @@ public class Strecke {
 		this.setBezeichnung(bezeichnung);
 		this.setLaenge(laenge);
 	}
+	
+	public Strecke (int laenge) {
+		this.setLaenge(laenge);
+		this.setBezeichnung(laenge+"m");
+	}
 
 	/**
 	 * @return the strecken_id
