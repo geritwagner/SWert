@@ -1,11 +1,15 @@
 package datenbank_kommunikation;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import model.Strecke;
 
-public class DBTableStrecke extends DBTableAbstract{
+public class DBTableStrecke implements DBTableInterface{
 
+	private PreparedStatement stmt;
+	
 	public DBTableStrecke() {
 		super();
 	}
@@ -15,7 +19,8 @@ public class DBTableStrecke extends DBTableAbstract{
 				+ "(strecke_id INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL, "
 				+ "bezeichnung VARCHAR(255) NOT NULL,"
 				+ "laenge INT NOT NULL)";
-		stmt.executeUpdate(createStrecke);
+		stmt = DBVerbindung.getStatement(createStrecke);
+		stmt.executeUpdate();
 		String insertStrecke = "INSERT INTO Strecke (strecke_id, bezeichnung, laenge)"
 				+ "VALUES (1, '400m', 400), "
 				+ "(2, '800m', 800),"
@@ -29,41 +34,59 @@ public class DBTableStrecke extends DBTableAbstract{
 				+ "(10, 'Halbmarathon', 21098), "
 				+ "(11, '25km', 25000), "
 				+ "(12, 'Marathon', 42195),";
-		stmt.executeUpdate(insertStrecke);
+		stmt = DBVerbindung.getStatement(insertStrecke);
+		stmt.executeUpdate();
 	}
 
 	public int einfuegen (String bezeichnung, int laenge) throws SQLException {
-		String checkStreckenlaenge = "SELECT strecke_id FROM STRECKE WHERE laenge="+laenge;
-		ResultSet checkResult = stmt.executeQuery(checkStreckenlaenge);
+		String checkStreckenlaenge = "SELECT strecke_id FROM STRECKE WHERE laenge=?";
+		stmt = DBVerbindung.getStatement(checkStreckenlaenge);
+		stmt.setInt(1, laenge);
+		ResultSet checkResult = stmt.executeQuery();
 		if(checkResult.next()) {
-			return checkResult.getInt(1);
+			int id = checkResult.getInt(1);
+			checkResult.close();
+			return id;
 		}
+		checkResult.close();
 		String insertStrecke = "INSERT INTO Strecke (bezeichnung, laenge) "
-				+ "VALUES ('"+bezeichnung+"', "+laenge+")";
-		stmt.executeUpdate(insertStrecke);
+				+ "VALUES (?, ?)";
+		stmt = DBVerbindung.getStatement(insertStrecke);
+		stmt.setString(1, bezeichnung);
+		stmt.setInt(2, laenge);
+		stmt.executeUpdate();
 		ResultSet result_id = stmt.getGeneratedKeys();
 		if (result_id.next()) {
-			return result_id.getInt(1);
+			int id = result_id.getInt(1);
+			result_id.close();
+			return id;
 		}
+		result_id.close();
 		return -1;
 	}
 	
 	public void aendernLaenge (int strecke_id, int laenge) throws SQLException {
-		String updateStrecke = "UPDATE Strecke SET laenge="+laenge+" "
-				+ "WHERE strecke_id="+strecke_id;
-		stmt.executeUpdate(updateStrecke);
+		String updateStrecke = "UPDATE Strecke SET laenge=? WHERE strecke_id=?";
+		stmt = DBVerbindung.getStatement(updateStrecke);
+		stmt.setInt(1, laenge);
+		stmt.setInt(2, strecke_id);
+		stmt.executeUpdate();
 	}
 	
 	public void aendernBezeichnung (int strecke_id, String bezeichnung) throws SQLException {
-		String updateStrecke = "UPDATE Strecke SET bezeichnung='"+bezeichnung+"' "
-				+ "WHERE strecke_id="+strecke_id;
-		stmt.executeUpdate(updateStrecke);
+		String updateStrecke = "UPDATE Strecke SET bezeichnung=? WHERE strecke_id=?";
+		stmt = DBVerbindung.getStatement(updateStrecke);
+		stmt.setString(1, bezeichnung);
+		stmt.setInt(2, strecke_id);
+		stmt.executeUpdate();
 	}
 
 	public Strecke abrufen (int strecke_id) throws SQLException {	
 		Strecke strecke = null;
-		String selectStrecke = "SELECT * FROM Strecke WHERE strecke_id="+strecke_id+" LIMIT 1";
-		ResultSet result = stmt.executeQuery(selectStrecke);
+		String selectStrecke = "SELECT * FROM Strecke WHERE strecke_id=? LIMIT 1";
+		stmt = DBVerbindung.getStatement(selectStrecke);
+		stmt.setInt(1, strecke_id);
+		ResultSet result = stmt.executeQuery();
 		if(result.next()) {
 			strecke_id = result.getInt(1);
 			String bezeichnung = result.getString(2);
@@ -74,7 +97,15 @@ public class DBTableStrecke extends DBTableAbstract{
 	}
 
 	public void loeschen (int strecke_id) throws SQLException {
-		String deleteStrecke = "DELETE FROM Strecke WHERE strecke_id="+strecke_id;
-		stmt.executeUpdate(deleteStrecke);
+		String deleteStrecke = "DELETE FROM Strecke WHERE strecke_id=?";
+		stmt = DBVerbindung.getStatement(deleteStrecke);
+		stmt.setInt(1, strecke_id);
+		stmt.executeUpdate();
+	}
+	
+	public void freeTable() throws SQLException {
+		if (stmt != null) {
+			stmt.close();			
+		}
 	}
 }

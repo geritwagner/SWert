@@ -7,8 +7,7 @@ public class DBVerbindung {
 	private final String DB_PFAD = "~/.swert/swert";
 	private final int DB_VERSION_NEEDED = 1;
 	
-	private Connection con = null;
-	private static Statement stmt = null;
+	private static Connection con = null;
 	private DBTableConfig config;
 	private DBTableAthlet athlet;
 	private DBTableLeistung leistung;
@@ -18,7 +17,6 @@ public class DBVerbindung {
 	public DBVerbindung () {
 		try {
 			con = DriverManager.getConnection("jdbc:h2:"+DB_PFAD, "", "");
-			stmt = con.createStatement();
 			config = new DBTableConfig();
 			athlet = new DBTableAthlet();
 			leistung = new DBTableLeistung();
@@ -36,9 +34,6 @@ public class DBVerbindung {
 	 */
 	public void verbindungBeenden () {
 		try {
-			if (stmt != null) {
-				stmt.close();
-			}
 			if (con != null) {
 				con.close();
 			}
@@ -48,7 +43,14 @@ public class DBVerbindung {
 		}
 	}
 	
-	protected static Statement getStatement() {
+	protected static PreparedStatement getStatement(String query) {
+		PreparedStatement stmt = null;
+		try {
+			stmt = con.prepareStatement(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return stmt;
 	}
 	
@@ -102,10 +104,12 @@ public class DBVerbindung {
 	private int getAktuelleDbVersion () throws SQLException {
 		int db_version = 0;
 		if (pruefeTabelle ("Config")) {
-			ResultSet versionRS = stmt.executeQuery("SELECT db_version FROM Config LIMIT 1");
+			String query = "SELECT db_version FROM Config LIMIT 1";
+			ResultSet versionRS = getStatement(query).executeQuery();
 			while (versionRS.next()) {
 				db_version = versionRS.getInt(1);
 			}			
+			versionRS.close();
 		}
 		return db_version;
 	}
@@ -119,11 +123,17 @@ public class DBVerbindung {
 	private boolean pruefeTabelle (String table_name) throws SQLException {
 		String tablesQ = "SELECT TABLE_NAME "
 				+ "FROM INFORMATION_SCHEMA.TABLES "
-				+ "WHERE TABLE_SCHEMA='PUBLIC' AND TABLE_NAME='"+table_name.toUpperCase()+"'";
-        ResultSet tablesRS = stmt.executeQuery(tablesQ);
+				+ "WHERE TABLE_SCHEMA='PUBLIC' AND TABLE_NAME=?";
+        PreparedStatement stmt = getStatement(tablesQ);
+        stmt.setString(1, table_name.toUpperCase());
+		ResultSet tablesRS = stmt.executeQuery();
         while (tablesRS.next()) {
+        	tablesRS.close();
+        	stmt.close();
         	return true;
         }
+        tablesRS.close();
+    	stmt.close();
 		return false;
 	}
 	

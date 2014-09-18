@@ -79,7 +79,21 @@ public class DBTest {
 		assertEquals(testAthlet.getName(), assertAthlet.getName());
 		assertEquals(testAthlet.getLeistungen(), assertAthlet.getLeistungen());
 		
+		Athlet testAthlet_2 = new Athlet (name_1, leistungen_1);
+		int athlet_id_2 = dbAthlet.neuerAthlet(testAthlet_2);
+		
+		LinkedList<Athlet> alleAthleten = dbAthlet.holeAlleAthleten();
+		assertAthlet = alleAthleten.getFirst();
+		assertEquals(athlet_id, assertAthlet.getId());
+		assertEquals(testAthlet.getName(), assertAthlet.getName());
+		assertEquals(testAthlet.getLeistungen(), assertAthlet.getLeistungen());
+		assertAthlet = alleAthleten.getLast();
+		assertEquals(athlet_id_2, assertAthlet.getId());
+		assertEquals(testAthlet_2.getName(), assertAthlet.getName());
+		assertEquals(testAthlet_2.getLeistungen(), assertAthlet.getLeistungen());
+		
 		dbAthlet.loescheAthlet(athlet_id);
+		dbAthlet.loescheAthlet(athlet_id_2);
 	}
 	
 	@Test

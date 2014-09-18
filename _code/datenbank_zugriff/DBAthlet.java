@@ -55,6 +55,17 @@ public class DBAthlet {
 		return athlet;
 	}
 	
+	public LinkedList<Athlet> holeAlleAthleten() {
+		LinkedList<Athlet> alleAthleten = new LinkedList<Athlet>();
+		try {
+			alleAthleten = tableAthlet.alleAbrufen();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return alleAthleten;
+	}
+	
 	public void loescheAthlet(int athlet_id) {
 		try {
 			tableAthlet.loeschen(athlet_id);

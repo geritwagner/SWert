@@ -1,11 +1,14 @@
 package datenbank_kommunikation;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import main.Hauptfenster;
 
-public class DBTableConfig extends DBTableAbstract {
+public class DBTableConfig implements DBTableInterface {
 
+	private PreparedStatement stmt = null;
+	
 	public DBTableConfig() {
 		super();
 	}
@@ -14,10 +17,19 @@ public class DBTableConfig extends DBTableAbstract {
 		String createConfig = "CREATE TABLE IF NOT EXISTS Config "
 				+ "(db_version INT NOT NULL, "
 				+ "active_athlet INT NOT NULL)";
-		stmt.executeUpdate(createConfig);
+		stmt = DBVerbindung.getStatement(createConfig);
+		stmt.executeUpdate();
 		String fillConfig = "INSERT INTO Config (db_version, active_athlet) "
-				+ "VALUES ("+Hauptfenster.Db_Version+", -1)";
-		stmt.executeUpdate(fillConfig);
+				+ "VALUES (?, -1)";
+		stmt = DBVerbindung.getStatement(fillConfig);
+		stmt.setInt(1, Hauptfenster.Db_Version);
+		stmt.executeUpdate();
+	}
+
+	public void freeTable() throws SQLException {
+		if (stmt != null) {
+			stmt.close();			
+		}
 	}
 
 }
