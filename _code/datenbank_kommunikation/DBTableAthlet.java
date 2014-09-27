@@ -22,8 +22,15 @@ public class DBTableAthlet implements DBTableInterface{
 	public void installiereSchemaVersion1() throws SQLException {
 		String createAthlet = "CREATE TABLE IF NOT EXISTS Athlet "
 				+ "(athlet_id INT PRIMARY KEY AUTO_INCREMENT(1,1) NOT NULL, "
-				+ "name VARCHAR(255) NOT NULL)";
+				+ "name VARCHAR(255) NOT NULL,"
+				+ "geoeffnet BOOLEAN DEFAULT 0)";
 		stmt = DBVerbindung.getStatement(createAthlet);
+		stmt.executeUpdate();
+		
+		String insertTestAthlets = "INSERT INTO Athlet (name)"
+				+ "VALUES ('Dummy Athlet1'),"
+				+ "('Dummy Athlet2')";
+		stmt = DBVerbindung.getStatement(insertTestAthlets);
 		stmt.executeUpdate();
 	}
 	

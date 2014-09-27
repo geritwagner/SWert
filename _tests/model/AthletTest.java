@@ -32,6 +32,10 @@ public class AthletTest {
 		assertEquals(naechsteId, neuerAthlet.getId());
 		assertEquals("Tester", testAthlet.getName());
 		assertEquals(0, testAthlet.getLeistungen().size());
+		long testId = 666;
+		neuerAthlet.setId(testId);
+		assertEquals(testId, neuerAthlet.getId());
+		neuerAthlet.setId(naechsteId);
 
 		//	public boolean addLeistung(Leistung leistung);
 		//	public LinkedList<Leistung> getLeistungen();

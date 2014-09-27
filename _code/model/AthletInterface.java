@@ -8,6 +8,7 @@ import java.util.*;
 
 interface AthletInterface {
 
+	public void setId (long id);
 	public long getId();
 	public String getName();
 	public LinkedList<Leistung> getLeistungen();

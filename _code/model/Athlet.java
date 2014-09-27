@@ -16,6 +16,7 @@ public class Athlet extends Observable implements AthletInterface {
 	
 	private long id;
 	private String name;
+	private boolean geoeffnet;
 	private double slopeFaktor;
 	private double anaerobeSchwelle;
 	private LinkedList<Leistung> alleLeistungen;
@@ -55,6 +56,10 @@ public class Athlet extends Observable implements AthletInterface {
 	
 	private void writeAthletId(long id) {
 		pref.put("ahletId", String.valueOf(id+1));
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 	
 	public long getId() {

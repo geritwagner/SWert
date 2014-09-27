@@ -83,11 +83,11 @@ public class DBTest {
 		int athlet_id_2 = dbAthlet.neuerAthlet(testAthlet_2);
 		
 		LinkedList<Athlet> alleAthleten = dbAthlet.holeAlleAthleten();
-		assertAthlet = alleAthleten.getFirst();
+		assertAthlet = alleAthleten.get(2);
 		assertEquals(athlet_id, assertAthlet.getId());
 		assertEquals(testAthlet.getName(), assertAthlet.getName());
 		assertEquals(testAthlet.getLeistungen(), assertAthlet.getLeistungen());
-		assertAthlet = alleAthleten.getLast();
+		assertAthlet = alleAthleten.get(3);
 		assertEquals(athlet_id_2, assertAthlet.getId());
 		assertEquals(testAthlet_2.getName(), assertAthlet.getName());
 		assertEquals(testAthlet_2.getLeistungen(), assertAthlet.getLeistungen());

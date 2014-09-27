@@ -22,6 +22,7 @@ public class DBAthlet {
 		int athlet_id = -1;
 		try {
 			athlet_id = tableAthlet.einfuegen(name);
+			athlet.setId(athlet_id);
 			LinkedList<Leistung> alleLeistungen = athlet.getLeistungen();
 			for(Leistung leistung : alleLeistungen) {
 				leistung.setAthletID(athlet_id);

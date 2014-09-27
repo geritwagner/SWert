@@ -1,11 +1,12 @@
 package datenbank_kommunikation;
 
 import java.sql.*;
+import main.Hauptfenster;
 
 public class DBVerbindung {
 	
 	private final String DB_PFAD = "~/.swert/swert";
-	private final int DB_VERSION_NEEDED = 1;
+	private final int DB_VERSION_NEEDED = Hauptfenster.Db_Version;
 	
 	private static Connection con = null;
 	private DBTableConfig config;
@@ -36,7 +37,11 @@ public class DBVerbindung {
 		try {
 			if (con != null) {
 				con.close();
-			}
+				config.freeTable();
+				athlet.freeTable();
+				leistung.freeTable();
+				strecke.freeTable();
+			}			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,18 +75,13 @@ public class DBVerbindung {
 		return strecke;
 	}
 	
-	/**
-	 * Vergleicht die aktuelle installiert DB-Version mit der benötigten DB-Version.
-	 * Falls nötig werden inkrementelle Updates durchgeführt, bis die benötigte DB-Version installiert ist.
-	 * @throws SQLException
-	 */
 	private void aktualisiereDbVersion () throws SQLException {
 		db_version_existing = getAktuelleDbVersion();
 		if (db_version_existing == DB_VERSION_NEEDED) {
 			return;
 		}
 		if (db_version_existing > DB_VERSION_NEEDED){
-			// to do: notify user
+			// TODO: notify user
 			System.out.println ("Bitte neue Applikation verwenden/installieren!");
 			return;
 		}
@@ -96,17 +96,12 @@ public class DBVerbindung {
 		}
 	}
 	
-	/**
-	 * Abrufen der Version der aktuellen, lokalen Datenbank
-	 * @return Versionsnummer der Datenbank (0 falls keine lokale DB installiert ist)
-	 * @throws SQLException
-	 */
 	private int getAktuelleDbVersion () throws SQLException {
 		int db_version = 0;
 		if (pruefeTabelle ("Config")) {
 			String query = "SELECT db_version FROM Config LIMIT 1";
 			ResultSet versionRS = getStatement(query).executeQuery();
-			while (versionRS.next()) {
+			if (versionRS.next()) {
 				db_version = versionRS.getInt(1);
 			}			
 			versionRS.close();
@@ -114,12 +109,6 @@ public class DBVerbindung {
 		return db_version;
 	}
 	
-	/**
-	 * Prüft, ob eine bestimmte Tabelle in der Datenbank vorhanden ist.
-	 * @param table_name: Zu suchender Tabellen-Name
-	 * @return TRUE, wenn Tabelle vorhanden ist | FALSE, wenn Tabelle nicht vorhanden ist
-	 * @throws SQLException
-	 */
 	private boolean pruefeTabelle (String table_name) throws SQLException {
 		String tablesQ = "SELECT TABLE_NAME "
 				+ "FROM INFORMATION_SCHEMA.TABLES "
@@ -133,17 +122,11 @@ public class DBVerbindung {
         	return true;
         }
         tablesRS.close();
-    	stmt.close();
+        stmt.close();
 		return false;
 	}
 	
-	/**
-	 * Installiert die Datenbank-Version 1.
-	 * Diese Methode wird nur aufgerufen, wenn noch keine lokale Datenbank "swert" verfügbar ist.
-	 * @throws SQLException 
-	 */
 	private void installiereSchemaVersion_1 () throws SQLException {
-		System.out.println("Schema V1 wird installiert");
 		config.installiereSchemaVersion1();
 		athlet.installiereSchemaVersion1();
 		strecke.installiereSchemaVersion1();

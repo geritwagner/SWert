@@ -19,6 +19,7 @@ public class DBTableConfig implements DBTableInterface {
 				+ "active_athlet INT NOT NULL)";
 		stmt = DBVerbindung.getStatement(createConfig);
 		stmt.executeUpdate();
+		
 		String fillConfig = "INSERT INTO Config (db_version, active_athlet) "
 				+ "VALUES (?, -1)";
 		stmt = DBVerbindung.getStatement(fillConfig);

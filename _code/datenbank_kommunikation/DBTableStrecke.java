@@ -49,6 +49,7 @@ public class DBTableStrecke implements DBTableInterface{
 			return id;
 		}
 		checkResult.close();
+		
 		String insertStrecke = "INSERT INTO Strecke (bezeichnung, laenge) "
 				+ "VALUES (?, ?)";
 		stmt = DBVerbindung.getStatement(insertStrecke);
