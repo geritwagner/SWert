@@ -1,6 +1,7 @@
 package model;
 
 import globale_helper.*;
+
 import java.util.*;
 import java.util.prefs.*;
 
@@ -393,5 +394,15 @@ public class Athlet extends Observable implements AthletInterface {
 
 	public void setGeoeffnet(boolean geoeffnet) {
 		this.geoeffnet = geoeffnet;
+	}
+	
+	public Object[] getObjectDataForTable() {
+		Object[] daten = {
+			this.getId(),
+			this.getName(),
+			this.isGeoeffnet()
+		};
+				
+		return daten;
 	}
 }
