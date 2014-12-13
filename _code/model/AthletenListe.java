@@ -1,6 +1,7 @@
 package model;
 
 import java.util.*;
+import datenbank_zugriff.DBAthlet;
 
 /**
  * @author Honors-WInfo-Projekt (Fabian Böhm, Alexander Puchta), Gerit Wagner
@@ -9,11 +10,13 @@ import java.util.*;
 public class AthletenListe extends Observable {
 
 	private LinkedList<Athlet> alleAthleten;
+	private DBAthlet tableAthlet;
 	private static Athlet letzterGeoeffneterAthlet;
 	private static Athlet letzterGeschlossenerAthlet;
 
 	public AthletenListe(){
-		alleAthleten = new LinkedList<>();
+		tableAthlet = new DBAthlet();
+		alleAthleten = tableAthlet.holeAlleAthleten();
 		setChanged();
 		notifyObservers();
 	}

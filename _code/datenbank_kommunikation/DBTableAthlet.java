@@ -50,10 +50,18 @@ public class DBTableAthlet implements DBTableInterface{
 		return -1;
 	}
 	
-	public void aendern (int athlet_id, String name) throws SQLException {
+	public void name_aendern (int athlet_id, String name) throws SQLException {
 		String updateAthlet = "UPDATE Athlet SET name=? WHERE athlet_id=?";
 		stmt = DBVerbindung.getStatement(updateAthlet);
 		stmt.setString(1, name);
+		stmt.setInt(2, athlet_id);
+		stmt.executeUpdate();
+	}
+	
+	public void status_aendern (int athlet_id, boolean status) throws SQLException {
+		String updateAthlet = "UPDATE Athlet SET boolean=? WHERE athlet_id=?";
+		stmt = DBVerbindung.getStatement(updateAthlet);
+		stmt.setBoolean(1, status);
 		stmt.setInt(2, athlet_id);
 		stmt.executeUpdate();
 	}
@@ -67,9 +75,11 @@ public class DBTableAthlet implements DBTableInterface{
 		if (rs.next()) {
 			long id = rs.getInt(1);
 			String name = rs.getString(2);
+			boolean geoeffnet = rs.getBoolean(3);
 			LinkedList<Leistung> alleLeistungen = null;
 			alleLeistungen = dbLeistung.holeAlleLeistungen(athlet_id);
 			athlet = new Athlet(id, name, alleLeistungen);
+			athlet.setGeoeffnet(geoeffnet);
 		}
 		rs.close();
 		return athlet;
@@ -83,8 +93,11 @@ public class DBTableAthlet implements DBTableInterface{
 		while (athleten_rs.next()) {
 			long id = athleten_rs.getInt(1);
 			String name = athleten_rs.getString(2);
+			boolean geoeffnet = athleten_rs.getBoolean(3);
 			LinkedList<Leistung> alleLeistungen = dbLeistung.holeAlleLeistungen((int) (id));
-			alleAthleten.add(new Athlet(id, name, alleLeistungen));
+			Athlet athlet = new Athlet(id, name, alleLeistungen);
+			athlet.setGeoeffnet(geoeffnet);
+			alleAthleten.add(athlet);
 		}
 		athleten_rs.close();
 		return alleAthleten;

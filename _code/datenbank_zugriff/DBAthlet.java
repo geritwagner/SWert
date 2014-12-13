@@ -38,7 +38,7 @@ public class DBAthlet {
 	
 	public void aendereAthlet(int athlet_id, String name) {
 		try {
-			tableAthlet.aendern(athlet_id, name);
+			tableAthlet.name_aendern(athlet_id, name);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,6 +70,24 @@ public class DBAthlet {
 	public void loescheAthlet(int athlet_id) {
 		try {
 			tableAthlet.loeschen(athlet_id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void oeffneAthlet(int athlet_id) {
+		try {
+			tableAthlet.status_aendern(athlet_id, true);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void schliesseAthlet(int athlet_id) {
+		try {
+			tableAthlet.status_aendern(athlet_id, false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

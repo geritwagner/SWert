@@ -386,4 +386,12 @@ public class Athlet extends Observable implements AthletInterface {
 		if (inputSlopeFaktor > MAXIMUM_VALID_SLOPE_FAKTOR)
 			throw new TooBadSlopeFaktorException();
 	}
+
+	public boolean isGeoeffnet() {
+		return geoeffnet;
+	}
+
+	public void setGeoeffnet(boolean geoeffnet) {
+		this.geoeffnet = geoeffnet;
+	}
 }
