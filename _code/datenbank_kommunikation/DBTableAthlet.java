@@ -59,7 +59,7 @@ public class DBTableAthlet implements DBTableInterface{
 	}
 	
 	public void status_aendern (int athlet_id, boolean status) throws SQLException {
-		String updateAthlet = "UPDATE Athlet SET boolean=? WHERE athlet_id=?";
+		String updateAthlet = "UPDATE Athlet SET geoeffnet=? WHERE athlet_id=?";
 		stmt = DBVerbindung.getStatement(updateAthlet);
 		stmt.setBoolean(1, status);
 		stmt.setInt(2, athlet_id);

@@ -119,7 +119,7 @@ public class DBTableLeistung implements DBTableInterface {
 	}
 	
 	public LinkedList<Leistung> alleAbrufen(int athlet_id) throws SQLException {
-		LinkedList<Leistung> alleLeistungen = new LinkedList<Leistung>();
+		LinkedList<Leistung> alleLeistungen = new LinkedList<>();
 		String selectLeistungen = "SELECT * FROM Leistung WHERE athlet_id=?";
 		stmt = DBVerbindung.getStatement(selectLeistungen);
 		stmt.setInt(1, athlet_id);

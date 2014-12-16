@@ -14,7 +14,7 @@ public class TestAthletenListe {
 	@Test
 	public void testConstructorAndDataMethods(){
 		liste = new AthletenListe();
-		assertEquals(0, liste.getAlleAthleten().size());
+		assertEquals(0, liste.getAlleGeoeffnetenAthleten().size());
 		assertEquals(null, liste.getLetzterGeoeffneterAthlet());
 		assertEquals(null, liste.getLetzterGeschlossenerAthlet());
 		

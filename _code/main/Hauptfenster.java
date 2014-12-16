@@ -21,6 +21,7 @@ public class Hauptfenster extends JFrame implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	private JTabbedPane tabbedPane;
+	private JPanel dummyTab;
 	private LinkedList<ProfilTab> tabList = new LinkedList<ProfilTab>();
 	
 	private JMenuItem mntmAthletenprofilSchliessen;
@@ -47,6 +48,7 @@ public class Hauptfenster extends JFrame implements Observer {
 				try {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					aktuellesHauptfenster = new Hauptfenster();
+					aktuellesHauptfenster.initAthletTable();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -74,6 +76,7 @@ public class Hauptfenster extends JFrame implements Observer {
 	
 	protected void fensterSchlieﬂen() {
 		while (getAnzahlTabs() > 1) {
+			tabbedPane.setSelectedIndex(0);
 			getAktivesTab().tabSchlieﬂenClicked();
 		}
 		release();
@@ -169,7 +172,7 @@ public class Hauptfenster extends JFrame implements Observer {
 	
 	public void update(Observable arg0, Object arg1) {
 		int anzahlGeoffneteAthleten = tabList.size();
-		int anzahlAngelegteAthleten = athletenListe.getAlleAthleten().size();
+		int anzahlAngelegteAthleten = athletenListe.getAlleGeoeffnetenAthleten().size();
 		
 		if (anzahlGeoffneteAthleten < anzahlAngelegteAthleten){
 			athletenOeffnen();
@@ -303,7 +306,7 @@ public class Hauptfenster extends JFrame implements Observer {
 	}
 	
 	private void initDummyPane(){
-		JPanel dummyTab = new JPanel();
+		dummyTab = new JPanel();
 		tabbedPane.addTab("Start", new ImageIcon(Hauptfenster.class.getResource("/bilder/Logo_16x16.png")), dummyTab, null);
 		dummyTab.setLayout(new MigLayout("", "[grow]", "[grow][23px]"));
 		
@@ -311,7 +314,16 @@ public class Hauptfenster extends JFrame implements Observer {
 		btnNeuesAthletenprofilAnlegen.setToolTipText("Anlegen eines neuen Athletenprofils");
 		btnNeuesAthletenprofilAnlegen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/NeuerAthlet_24x24.png")));
 		btnNeuesAthletenprofilAnlegen.addActionListener(controller);
+		dummyTab.add(btnNeuesAthletenprofilAnlegen, "flowx,cell 0 1");
 		
+		JButton btnAthletenprofilffnen = new JButton("Athletenprofil \u00F6ffnen");
+		btnAthletenprofilffnen.setToolTipText("\u00D6ffnen und Bearbeiten eines bestehende Athletenprofils");
+		btnAthletenprofilffnen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditAthlet_24x24.png")));
+		btnAthletenprofilffnen.addActionListener(controller);
+		dummyTab.add(btnAthletenprofilffnen, "cell 0 1");
+	}
+	
+	private void initAthletTable() {
 		athlet_table = new JTable();
 		athlet_table.setFillsViewportHeight(true);
 		athlet_table.getTableHeader().setReorderingAllowed(false);
@@ -323,6 +335,10 @@ public class Hauptfenster extends JFrame implements Observer {
 				"ID", "Name", "geoeffnet"
 			}
 		) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			Class[] columnTypes = new Class[] {
 				Long.class, String.class, Boolean.class
 			};
@@ -340,19 +356,18 @@ public class Hauptfenster extends JFrame implements Observer {
 		athlet_table.getColumnModel().getColumn(1).setResizable(false);
 		athlet_table.getColumnModel().getColumn(2).setResizable(false);
 		
+		//athlet_table.getColumnModel().getColumn(0).setMinWidth(0);
+		//athlet_table.getColumnModel().getColumn(0).setMaxWidth(0);
+		//athlet_table.getColumnModel().getColumn(0).setWidth(0);
+		//athlet_table.getColumnModel().getColumn(2).setMinWidth(0);
+		//athlet_table.getColumnModel().getColumn(2).setMaxWidth(0);
+		//athlet_table.getColumnModel().getColumn(2).setWidth(0);
+		
 		JScrollPane scroll_pane = new JScrollPane();
 		//scroll_pane.add(athlet_table);
 		scroll_pane.setViewportView(athlet_table);
 		dummyTab.add(scroll_pane, "cell 0 0,grow");
-		dummyTab.add(btnNeuesAthletenprofilAnlegen, "flowx,cell 0 1");
 		setAlleAthleten();
-		
-		JButton btnAthletenprofilffnen = new JButton("Athletenprofil \u00F6ffnen");
-		btnAthletenprofilffnen.setToolTipText("\u00D6ffnen und Bearbeiten eines bestehende Athletenprofils");
-		btnAthletenprofilffnen.setIcon(new ImageIcon(Hauptfenster.class.getResource("/bilder/EditAthlet_24x24.png")));
-		btnAthletenprofilffnen.addActionListener(controller);
-		
-		dummyTab.add(btnAthletenprofilffnen, "cell 0 1");
 	}
 	
 	private void setAlleAthleten(){
@@ -364,6 +379,9 @@ public class Hauptfenster extends JFrame implements Observer {
 		}
 		for (Athlet aktuellerAthlet: athletenListe.getAlleAthleten()){
 			model.addRow(aktuellerAthlet.getObjectDataForTable());
+			if (aktuellerAthlet.isGeoeffnet()) {
+				athletenListe.addAthlet(aktuellerAthlet);
+			}
 		}			
 	}
 }

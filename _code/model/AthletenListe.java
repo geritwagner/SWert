@@ -10,6 +10,7 @@ import datenbank_zugriff.DBAthlet;
 public class AthletenListe extends Observable {
 
 	private LinkedList<Athlet> alleAthleten;
+	private LinkedList<Athlet> alleGeoeffnetenAthleten;
 	private DBAthlet tableAthlet;
 	private static Athlet letzterGeoeffneterAthlet;
 	private static Athlet letzterGeschlossenerAthlet;
@@ -17,6 +18,7 @@ public class AthletenListe extends Observable {
 	public AthletenListe(){
 		tableAthlet = new DBAthlet();
 		alleAthleten = tableAthlet.holeAlleAthleten();
+		alleGeoeffnetenAthleten = new LinkedList<Athlet>();
 		setChanged();
 		notifyObservers();
 	}
@@ -33,23 +35,32 @@ public class AthletenListe extends Observable {
 		return aktuellerAthlet;
 	}
 
-	
 	public LinkedList<Athlet> getAlleAthleten(){
 		return alleAthleten;
 	}
 	
+	public LinkedList<Athlet> getAlleGeoeffnetenAthleten(){
+		return alleGeoeffnetenAthleten;
+	}
+	
 	public void addAthlet (Athlet athlet){
-		alleAthleten.add(athlet);
+		alleGeoeffnetenAthleten.add(athlet);
 		letzterGeoeffneterAthlet = athlet;
 		setChanged();
 		notifyObservers();
 	}
 	
 	public void removeAthlet (Athlet athlet){
-		for (int i = 0; i<alleAthleten.size(); i++){
-			if (alleAthleten.get(i).equals(athlet)){
-				alleAthleten.remove(i);
+		for (int i = 0; i<alleGeoeffnetenAthleten.size(); i++){
+			if (alleGeoeffnetenAthleten.get(i).equals(athlet)){
+				tableAthlet.schliesseAthlet(i);
+				alleGeoeffnetenAthleten.remove(i);
 				letzterGeschlossenerAthlet = athlet;
+				for (int j = 0; j<alleAthleten.size(); j++) {
+					if (alleAthleten.get(j).equals(athlet)){
+						alleAthleten.get(j).setGeoeffnet(false);
+					}
+				}
 				setChanged();
 				notifyObservers();				
 			}

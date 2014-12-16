@@ -26,7 +26,7 @@ public class DiagrammController implements WindowListener {
 	}
 
 	protected void openAllAthletes(){
-		for (Athlet aktuellerAthlet : athletenListe.getAlleAthleten()){
+		for (Athlet aktuellerAthlet : athletenListe.getAlleGeoeffnetenAthleten()){
 			try {
 				plotLeistungen(aktuellerAthlet);	
 				plotBerechneteBestzeiten(aktuellerAthlet);

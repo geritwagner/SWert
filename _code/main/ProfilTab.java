@@ -164,11 +164,13 @@ public class ProfilTab extends JPanel implements TableModelListener, Observer {
         if ( ! mainFrame.isAktuellerAthletGespeichert()){
         	int nutzerauswahlSpeichern = JOptionPane.showConfirmDialog(this, "Wollen Sie die Änderungen am Profil '"+
         			athlet.getName()+"' speichern?", "Achtung!", JOptionPane.YES_NO_CANCEL_OPTION);
-        	if (nutzerauswahlSpeichern == 0) {
+        	if (nutzerauswahlSpeichern == JOptionPane.OK_OPTION) {
         		speichernClicked(false);
-        	} 
+        		Hauptfenster.athletenListe.removeAthlet(athlet);
+        	} else if (nutzerauswahlSpeichern == JOptionPane.NO_OPTION) {
+        		Hauptfenster.athletenListe.removeAthlet(athlet);
+        	}
         }
-        Hauptfenster.athletenListe.removeAthlet(athlet);
 	}
 	
 	protected void leistungLoeschenPressed() {

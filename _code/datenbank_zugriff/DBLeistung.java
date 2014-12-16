@@ -65,7 +65,7 @@ public class DBLeistung {
 	}
 	
 	public LinkedList<Leistung> holeAlleLeistungen(int athlet_id) {
-		LinkedList<Leistung> alleLeistungen = new LinkedList<Leistung>();
+		LinkedList<Leistung> alleLeistungen = new LinkedList<>();
 		try {
 			alleLeistungen = tableLeistung.alleAbrufen(athlet_id);
 		} catch (SQLException e) {
